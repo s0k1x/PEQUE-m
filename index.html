@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para ti 🤍</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Poppins:wght@300;400;500;600&display=swap');
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    overflow:hidden;
+    font-family:Poppins,sans-serif;
+    background:
+        radial-gradient(circle at 20% 20%,#ffe4ef 0%,transparent 35%),
+        radial-gradient(circle at 85% 80%,#e5e0ff 0%,transparent 38%),
+        #fffafc;
+    color:#746875;
+}
+
+/* FONDO */
+
+.background{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+}
+
+.blur{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(45px);
+    opacity:.55;
+}
+
+.blur.one{
+    width:180px;
+    height:180px;
+    background:#ffd5e5;
+    top:8%;
+    left:-50px;
+}
+
+.blur.two{
+    width:220px;
+    height:220px;
+    background:#ddd8ff;
+    bottom:-70px;
+    right:-50px;
+}
+
+.petal{
+    position:absolute;
+    color:white;
+    opacity:.65;
+    animation:fall linear infinite;
+}
+
+@keyframes fall{
+    from{
+        transform:translateY(-100px) rotate(0deg);
+    }
+    to{
+        transform:translateY(110vh) rotate(360deg);
+    }
+}
+
+/* PANTALLA */
+
+.screen{
+    position:relative;
+    z-index:2;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:25px;
+}
+
+/* INTRO */
+
+.intro{
+    text-align:center;
+    transition:1s ease;
+}
+
+.intro.hide{
+    opacity:0;
+    transform:translateY(-30px);
+    pointer-events:none;
+}
+
+.intro h1{
+    font-family:"DM Serif Display",serif;
+    font-size:42px;
+    font-weight:400;
+    color:#7b6c78;
+}
+
+.intro p{
+    margin-top:10px;
+    font-size:14px;
+    color:#a398a3;
+}
+
+/* SOBRE */
+
+.envelope{
+    position:relative;
+    width:280px;
+    height:190px;
+    margin:45px auto 0;
+    cursor:pointer;
+    filter:drop-shadow(0 20px 30px rgba(180,150,170,.25));
+    transition:.4s ease;
+}
+
+.envelope:hover{
+    transform:translateY(-7px);
+}
+
+.envelope-body{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(145deg,#f9dce8,#f4d3e2);
+    border-radius:18px;
+    overflow:hidden;
+}
+
+.envelope-body:before,
+.envelope-body:after{
+    content:"";
+    position:absolute;
+    bottom:0;
+    width:0;
+    height:0;
+    border-style:solid;
+}
+
+.envelope-body:before{
+    left:0;
+    border-width:95px 140px 0 0;
+    border-color:#f0cbdc transparent transparent transparent;
+}
+
+.envelope-body:after{
+    right:0;
+    border-width:0 140px 95px 0;
+    border-color:transparent #edc5d7 transparent transparent;
+}
+
+.flap{
+    position:absolute;
+    z-index:3;
+    top:0;
+    left:0;
+    width:0;
+    height:0;
+    border-left:140px solid transparent;
+    border-right:140px solid transparent;
+    border-top:105px solid #f8d8e6;
+    transform-origin:top;
+    transition:1s ease;
+}
+
+.envelope.open .flap{
+    transform:rotateX(180deg);
+}
+
+.heart{
+    position:absolute;
+    z-index:5;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    font-size:38px;
+    color:white;
+    transition:.5s ease;
+}
+
+.envelope.open .heart{
+    transform:translate(-50%,-50%) scale(.7);
+    opacity:0;
+}
+
+/* CARTA */
+
+.letter{
+    position:absolute;
+    width:min(90vw,390px);
+    min-height:470px;
+    padding:42px 30px;
+    background:#fffdfb;
+    border-radius:25px;
+    box-shadow:0 25px 80px rgba(140,110,130,.22);
+    opacity:0;
+    transform:translateY(80px) scale(.8);
+    pointer-events:none;
+    transition:1s cubic-bezier(.2,.8,.2,1);
+}
+
+.letter.show{
+    opacity:1;
+    transform:translateY(0) scale(1);
+    pointer-events:auto;
+}
+
+.letter-top{
+    text-align:center;
+}
+
+.small-heart{
+    font-size:28px;
+}
+
+.letter h2{
+    margin-top:10px;
+    font-family:"DM Serif Display",serif;
+    font-size:35px;
+    font-weight:400;
+    color:#796b76;
+}
+
+.date{
+    margin-top:7px;
+    font-size:11px;
+    letter-spacing:2px;
+    color:#b7aab3;
+    text-transform:uppercase;
+}
+
+.line{
+    width:55px;
+    height:2px;
+    margin:25px auto;
+    background:#efd2df;
+    border-radius:20px;
+}
+
+.letter-text{
+    font-family:"DM Serif Display",serif;
+    font-size:18px;
+    line-height:1.8;
+    text-align:center;
+    color:#827681;
+}
+
+.letter-text span{
+    color:#c08ca3;
+}
+
+.options{
+    margin-top:30px;
+    display:grid;
+    gap:10px;
+}
+
+.option{
+    border:none;
+    background:#fff4f8;
+    color:#8b7883;
+    border-radius:50px;
+    padding:13px;
+    font-family:Poppins;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.option:hover{
+    background:#f9e3ed;
+    transform:scale(1.03);
+}
+
+/* MENSAJE */
+
+.message{
+    position:absolute;
+    inset:0;
+    background:rgba(255,250,252,.96);
+    border-radius:25px;
+    padding:45px 30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    opacity:0;
+    pointer-events:none;
+    transition:.5s;
+}
+
+.message.show{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.message h3{
+    font-family:"DM Serif Display",serif;
+    font-size:29px;
+    color:#7c6b77;
+}
+
+.message p{
+    margin-top:15px;
+    line-height:1.8;
+    font-size:14px;
+    color:#958792;
+}
+
+.close{
+    margin-top:25px;
+    border:none;
+    padding:11px 25px;
+    border-radius:50px;
+    background:#f3dce7;
+    color:#806d79;
+}
+
+/* CORAZONES */
+
+.floating-heart{
+    position:fixed;
+    pointer-events:none;
+    color:white;
+    animation:rise 4s ease-out forwards;
+    z-index:10;
+}
+
+@keyframes rise{
+    0%{
+        transform:translateY(0) scale(.5);
+        opacity:0;
+    }
+    20%{
+        opacity:1;
+    }
+    100%{
+        transform:translateY(-300px) scale(1.3);
+        opacity:0;
+    }
+}
+
+@media(max-width:400px){
+    .intro h1{
+        font-size:35px;
+    }
+
+    .envelope{
+        width:250px;
+        height:170px;
+    }
+
+    .flap{
+        border-left-width:125px;
+        border-right-width:125px;
+        border-top-width:95px;
+    }
+
+    .envelope-body:before{
+        border-width:85px 125px 0 0;
+    }
+
+    .envelope-body:after{
+        border-width:0 125px 85px 0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="background">
+    <div class="blur one"></div>
+    <div class="blur two"></div>
+
+    <div class="petal" style="left:8%;animation-duration:9s;">♡</div>
+    <div class="petal" style="left:25%;animation-duration:12s;animation-delay:2s;">♡</div>
+    <div class="petal" style="left:47%;animation-duration:10s;animation-delay:4s;">♡</div>
+    <div class="petal" style="left:70%;animation-duration:13s;animation-delay:1s;">♡</div>
+    <div class="petal" style="left:90%;animation-duration:11s;animation-delay:3s;">♡</div>
+</div>
+
+
+<div class="screen">
+
+    <!-- INTRO -->
+
+    <div class="intro" id="intro">
+
+        <h1>Tengo algo para ti</h1>
+
+        <p>
+            No es mucho... pero está hecho con todo mi corazón.
+        </p>
+
+        <div class="envelope" id="envelope" onclick="openLetter()">
+
+            <div class="envelope-body"></div>
+
+            <div class="flap"></div>
+
+            <div class="heart">🤍</div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CARTA -->
+
+    <div class="letter" id="letter">
+
+        <div class="letter-top">
+
+            <div class="small-heart">🤍</div>
+
+            <h2>Para ti</h2>
+
+            <div class="date">
+                desde mi corazón
+            </div>
+
+        </div>
+
+        <div class="line"></div>
+
+        <div class="letter-text">
+
+            Quería hacerte un pequeño lugar
+            que fuera solamente nuestro.
+
+            <br><br>
+
+            Porque hay personas que llegan
+            y hacen que todo se sienta
+            <span>un poquito más bonito.</span>
+
+        </div>
+
+        <div class="options">
+
+            <button class="option"
+                onclick="showMessage('💌 Una carta',
+                'Aquí irá nuestra carta de verdad. Podemos escribirla juntos y hacer que aparezca poco a poco, como si estuviera escrita a mano.')">
+                💌 Leer mi carta
+            </button>
+
+            <button class="option"
+                onclick="showMessage('🌷 Nuestros recuerdos',
+                'Aquí podemos poner nuestras fotos, nuestras fechas y todos esos pequeños momentos que quiero recordar contigo.')">
+                🌷 Nuestros recuerdos
+            </button>
+
+            <button class="option"
+                onclick="showMessage('🤍 Nuestro corazón',
+                'El blanco es nuestro color. Tranquilo, bonito y especial. Como ese pequeño lugar que solamente nosotros entendemos.')">
+                🤍 Nuestro corazón
+            </button>
+
+        </div>
+
+        <div class="message" id="message">
+
+            <div>
+
+                <h3 id="messageTitle"></h3>
+
+                <p id="messageText"></p>
+
+                <button class="close" onclick="closeMessage()">
+                    Volver 🤍
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function openLetter(){
+
+    const envelope =
+        document.getElementById("envelope");
+
+    const intro =
+        document.getElementById("intro");
+
+    const letter =
+        document.getElementById("letter");
+
+    envelope.classList.add("open");
+
+    setTimeout(() => {
+        intro.classList.add("hide");
+    },400);
+
+    setTimeout(() => {
+        letter.classList.add("show");
+        createHearts();
+    },900);
+}
+
+
+function showMessage(title,text){
+
+    document.getElementById("messageTitle")
+        .innerText=title;
+
+    document.getElementById("messageText")
+        .innerText=text;
+
+    document.getElementById("message")
+        .classList.add("show");
+}
+
+
+function closeMessage(){
+
+    document.getElementById("message")
+        .classList.remove("show");
+}
+
+
+function createHearts(){
+
+    for(let i=0;i<18;i++){
+
+        const heart =
+            document.createElement("div");
+
+        heart.className="floating-heart";
+
+        heart.innerHTML="🤍";
+
+        heart.style.left =
+            Math.random()*100+"vw";
+
+        heart.style.bottom =
+            Math.random()*30+"vh";
+
+        heart.style.fontSize =
+            12+Math.random()*20+"px";
+
+        document.body.appendChild(heart);
+
+        setTimeout(()=>{
+            heart.remove();
+        },4000);
+    }
+}
+
+</script>
+
+</body>
+</html>

@@ -1,112 +1,187 @@
-🤍 Nuestro Corazón
+<div align="center">
 
-<p align="center">
-  <i>Un sitio pequeñito que hice para ti.</i>
-</p>
+🤍
+
+PARA TI
+
+Si algún día dudas de cuánto te quiero, vuelve aquí.
+
 <br>
-
-🌷 ¿Por qué existe esto?
-
-No sé muy bien en qué momento se me ocurrió hacer una página para nosotros.
-
-Solo pensé que estaría bonito tener un sitio que fuera nuestro, donde pudiera dejar guardadas algunas cosas que normalmente se quedan perdidas entre mensajes, fotos y recuerdos.
-
-Así que… aquí estamos.
-
-Esta página todavía está empezando, pero precisamente por eso me gusta.
-
-Porque la iremos llenando poco a poco.
 
 ⸻
 
-💌 Lo que quiero guardar aquí
+🌷 Esto lo hice para ti
 
-No quiero que esto sea solamente una página bonita.
+No sé si una página puede explicar todo lo que siento por una persona.
 
-Quiero que cuando entres puedas encontrar cosas que te hagan sonreír.
+Probablemente no.
 
-Una carta que escribí un día cualquiera.
+Pero quería intentarlo.
 
-Una foto que quizá ahora no parezca importante, pero que dentro de un tiempo nos recuerde un momento.
+Porque hay cosas que me cuesta decir de repente, cosas que quizá no digo todas las veces que debería, y sentimientos que son demasiado grandes para quedarse solamente en un mensaje.
 
-Una fecha.
+Así que hice esto.
 
-Una conversación.
+Un pequeño lugar al que puedas volver cuando quieras.
 
-Una tontería que nos hizo reír muchísimo.
+Y cada vez que lo hagas, quiero que recuerdes una cosa:
 
-Cualquier cosa que algún día queramos volver a recordar.
+Te quiero muchísimo. 🤍
+
+⸻
+
+💌 ¿Por qué hice esto?
+
+Porque quería que existiera un sitio donde estuviera todo lo que siento por ti.
+
+No solamente una carta.
+
+No solamente una foto.
+
+No solamente una fecha.
+
+Tú.
+
+Tus recuerdos.
+
+Nuestros momentos.
+
+Las cosas que nos hacen reír.
+
+Las cosas que solamente nosotros entendemos.
+
+Y todas esas pequeñas cosas que hacen que seas tú.
+
+⸻
+
+🌙 Si estás leyendo esto…
+
+Probablemente estés mirando una página que fui construyendo poco a poco.
+
+Y quizá pienses:
+
+”¿Por qué se ha esforzado tanto en hacer esto?”
+
+La respuesta es bastante sencilla.
+
+Porque eres importante para mí.
+
+Y cuando alguien importa de verdad, quieres hacer cosas por esa persona.
+
+Aunque sean pequeñas.
+
+Aunque nadie más las vea.
+
+Aunque solamente sirvan para hacerla sonreír durante un minuto.
 
 ⸻
 
 🤍 Nuestro corazón
 
-El corazón blanco es nuestro pequeño detalle.
+Este corazón blanco va a aparecer muchas veces por aquí.
 
-No porque tenga un significado enorme ni porque haya una explicación profunda detrás.
+No porque sea el emoji más bonito.
 
-Simplemente porque es nuestro.
+Sino porque quiero que termine siendo algo nuestro.
 
-Y me gusta que algo tan pequeño pueda representar este lugar.
+Que cuando lo veas pienses en mí.
 
-🤍
-
-⸻
-
-🌸 Esto acaba de empezar
-
-La página todavía está bastante vacía.
-
-Y sinceramente, espero que siga siendo así durante un tiempo.
-
-Porque quiero que lo que falta se vaya llenando con cosas que todavía no hemos vivido.
-
-        NUESTRA HISTORIA
-        ────────────────
-              🤍
-        ────────────────
-        Capítulo 01
-        "Esto acaba de empezar."
-        Capítulo 02
-        Próximamente...
-        Capítulo 03
-        Próximamente...
-        Y quién sabe cuántos más.
-
-⸻
-
-🎀 Cositas que quiero añadir
-
-* 💌 Una carta que puedas abrir cuando quieras
-* 📸 Nuestras fotos favoritas
-* 🌷 Una sección con nuestros recuerdos
-* ⏳ Un contador de cuánto llevamos
-* 🎵 Una canción que sea nuestra
-* 💭 Pequeñas frases y cosas que me recuerden a ti
-* 🎁 Alguna sorpresa que todavía no voy a contar
-* 🤍 Y muchas cosas más
-
-⸻
-
-🫶 Una última cosa
-
-Probablemente cuando estés leyendo esto la página todavía no esté terminada.
-
-Pero creo que eso también tiene algo bonito.
-
-Porque no quiero hacerla toda de golpe.
-
-Quiero ir haciéndola contigo, aunque tú no tengas que tocar una sola línea de código.
-
-Que cada vez que vuelva a añadir algo sea porque tenemos un recuerdo nuevo que guardar.
-
-Así que…
-
-bienvenida a nuestro pequeño rincón.
+Y cuando yo lo vea, piense en ti.
 
 🤍
+
+⸻
+
+🌷 Quiero que esta página crezca contigo
+
+Hoy puede que haya pocas cosas.
+
+Mañana habrá más.
+
+Después más todavía.
+
+Porque quiero ir llenándola con nuestra historia.
+
+        ┌─────────────────────────┐
+        │                         │
+        │       NUESTRO           │
+        │       CORAZÓN           │
+        │                         │
+        │          🤍             │
+        │                         │
+        │    todavía escribiendo  │
+        │                         │
+        └─────────────────────────┘
+
+Cada recuerdo nuevo puede convertirse en una parte de esta página.
+
+Cada foto puede quedarse aquí.
+
+Cada momento importante puede tener su pequeño espacio.
+
+Y algún día podremos mirar atrás y ver todo lo que hemos ido construyendo.
+
+⸻
+
+🫶 Y si algún día las cosas no están bien…
+
+Quiero que recuerdes algo.
+
+No hice esto solamente para los días buenos.
+
+También quiero que exista para esos días en los que estés triste, tengas dudas o simplemente necesites recordar que hay alguien que te quiere muchísimo.
+
+No tienes que hacer nada.
+
+Solo entrar.
+
+Y recordar.
+
+🤍 Eres muy especial para mí.
+
+⸻
+
+✨ Esto todavía no está terminado
+
+Y probablemente nunca lo esté.
+
+Porque siempre habrá otro recuerdo.
+
+Otra foto.
+
+Otra carta.
+
+Otra fecha.
+
+Otra tontería que quiera guardar.
+
+Otra razón para añadir algo.
+
+Así que si algún día vuelves y encuentras algo nuevo…
+
+significa que en algún momento pensé:
+
+“Esto quiero guardarlo para ella.”
+
+⸻
 
 <br>
-<p align="center">
-  <i>Hecho despacito, con mucho cariño y pensando en ti.</i>
-</p>
+
+🤍
+
+Te quiero.
+
+Mucho más de lo que probablemente consiga explicar aquí.
+
+<br>
+
+⸻
+
+<sub>
+
+Hecho por alguien que tuvo una idea muy sencilla:
+
+hacer un pequeño lugar para la persona que quiere.
+
+</sub>
+</div>

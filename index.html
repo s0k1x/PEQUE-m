@@ -3,29 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Para ti 🤍</title>
+
+<title>Para Pequee 🤍</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Poppins:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Parisienne&family=Poppins:wght@300;400;500;600&display=swap');
+
+:root{
+    --cream:#fffaf5;
+    --pink:#f3c6d8;
+    --pink-dark:#c985a2;
+    --lavender:#d8d2ef;
+    --lavender-dark:#9489b7;
+    --text:#655866;
+    --soft:#9b8d98;
+    --white:#ffffff;
+}
 
 *{
-    box-sizing:border-box;
     margin:0;
     padding:0;
+    box-sizing:border-box;
 }
 
 body{
     min-height:100vh;
     overflow:hidden;
-    font-family:Poppins,sans-serif;
     background:
-        radial-gradient(circle at 20% 20%,#ffe4ef 0%,transparent 35%),
-        radial-gradient(circle at 85% 80%,#e5e0ff 0%,transparent 38%),
-        #fffafc;
-    color:#746875;
+        radial-gradient(circle at 10% 10%, #ffdbe9 0%, transparent 32%),
+        radial-gradient(circle at 90% 85%, #dcd7f4 0%, transparent 35%),
+        linear-gradient(135deg,#fffaf6 0%,#fff5f8 45%,#f8f5ff 100%);
+    font-family:Poppins,sans-serif;
+    color:var(--text);
 }
 
-/* FONDO */
+/* =========================
+   FONDO
+========================= */
 
 .background{
     position:fixed;
@@ -34,50 +48,94 @@ body{
     pointer-events:none;
 }
 
-.blur{
+.glow{
     position:absolute;
     border-radius:50%;
-    filter:blur(45px);
-    opacity:.55;
+    filter:blur(60px);
+    opacity:.5;
 }
 
-.blur.one{
-    width:180px;
-    height:180px;
-    background:#ffd5e5;
-    top:8%;
-    left:-50px;
+.glow1{
+    width:250px;
+    height:250px;
+    background:#ffd0e1;
+    top:-80px;
+    left:-80px;
 }
 
-.blur.two{
-    width:220px;
-    height:220px;
-    background:#ddd8ff;
-    bottom:-70px;
-    right:-50px;
+.glow2{
+    width:280px;
+    height:280px;
+    background:#d7d1f1;
+    bottom:-120px;
+    right:-80px;
 }
 
-.petal{
+.glow3{
+    width:160px;
+    height:160px;
+    background:#ffe9c9;
+    top:45%;
+    left:75%;
+}
+
+/* puntitos */
+
+.sparkle{
     position:absolute;
     color:white;
-    opacity:.65;
-    animation:fall linear infinite;
+    font-size:10px;
+    opacity:.7;
+    animation:sparkle 3s ease-in-out infinite;
 }
 
-@keyframes fall{
-    from{
-        transform:translateY(-100px) rotate(0deg);
+@keyframes sparkle{
+    0%,100%{
+        opacity:.2;
+        transform:scale(.7);
     }
-    to{
-        transform:translateY(110vh) rotate(360deg);
+    50%{
+        opacity:1;
+        transform:scale(1.3);
     }
 }
 
-/* PANTALLA */
+/* corazones */
+
+.floating-heart{
+    position:absolute;
+    color:white;
+    opacity:.55;
+    animation:float 12s linear infinite;
+}
+
+@keyframes float{
+    0%{
+        transform:translateY(110vh) rotate(0);
+        opacity:0;
+    }
+
+    15%{
+        opacity:.6;
+    }
+
+    85%{
+        opacity:.5;
+    }
+
+    100%{
+        transform:translateY(-120px) rotate(35deg);
+        opacity:0;
+    }
+}
+
+/* =========================
+   CONTENEDOR
+========================= */
 
 .screen{
     position:relative;
-    z-index:2;
+    z-index:5;
     min-height:100vh;
     display:flex;
     justify-content:center;
@@ -85,214 +143,417 @@ body{
     padding:25px;
 }
 
-/* INTRO */
+/* =========================
+   INTRO
+========================= */
 
 .intro{
     text-align:center;
-    transition:1s ease;
+    transition:
+        opacity .9s ease,
+        transform .9s ease;
 }
 
 .intro.hide{
     opacity:0;
-    transform:translateY(-30px);
+    transform:translateY(-40px) scale(.96);
     pointer-events:none;
 }
 
+.intro-small{
+    font-size:12px;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    color:var(--pink-dark);
+}
+
 .intro h1{
+    margin-top:12px;
     font-family:"DM Serif Display",serif;
-    font-size:42px;
+    font-size:clamp(45px,12vw,70px);
     font-weight:400;
-    color:#7b6c78;
+    color:#6f5d69;
+    letter-spacing:-1px;
 }
 
-.intro p{
-    margin-top:10px;
+.intro h1 span{
+    color:var(--pink-dark);
+}
+
+.intro-description{
+    max-width:320px;
+    margin:12px auto 0;
+    color:#948692;
     font-size:14px;
-    color:#a398a3;
+    line-height:1.7;
 }
 
-/* SOBRE */
+/* =========================
+   SOBRE
+========================= */
 
 .envelope{
     position:relative;
-    width:280px;
-    height:190px;
-    margin:45px auto 0;
+    width:300px;
+    height:205px;
+    margin:48px auto 0;
     cursor:pointer;
-    filter:drop-shadow(0 20px 30px rgba(180,150,170,.25));
+
+    filter:
+        drop-shadow(0 25px 35px rgba(154,117,137,.22));
+
     transition:.4s ease;
 }
 
 .envelope:hover{
-    transform:translateY(-7px);
+    transform:translateY(-8px) rotate(-1deg);
 }
 
 .envelope-body{
     position:absolute;
     inset:0;
-    background:linear-gradient(145deg,#f9dce8,#f4d3e2);
-    border-radius:18px;
-    overflow:hidden;
+
+    background:
+        linear-gradient(135deg,
+            #f7d9e5,
+            #efd0e0);
+
+    border-radius:20px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.8);
 }
 
-.envelope-body:before,
+/* triángulos del sobre */
+
+.envelope-body:before{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:0;
+
+    width:0;
+    height:0;
+
+    border-style:solid;
+    border-width:
+        105px
+        150px
+        0
+        0;
+
+    border-color:
+        #e9bfd2
+        transparent
+        transparent
+        transparent;
+}
+
 .envelope-body:after{
     content:"";
     position:absolute;
+    right:0;
     bottom:0;
+
     width:0;
     height:0;
+
     border-style:solid;
+    border-width:
+        0
+        150px
+        105px
+        0;
+
+    border-color:
+        transparent
+        #e5b9ce
+        transparent
+        transparent;
 }
 
-.envelope-body:before{
-    left:0;
-    border-width:95px 140px 0 0;
-    border-color:#f0cbdc transparent transparent transparent;
-}
-
-.envelope-body:after{
-    right:0;
-    border-width:0 140px 95px 0;
-    border-color:transparent #edc5d7 transparent transparent;
-}
+/* solapa */
 
 .flap{
     position:absolute;
-    z-index:3;
+    z-index:4;
+
     top:0;
     left:0;
+
     width:0;
     height:0;
-    border-left:140px solid transparent;
-    border-right:140px solid transparent;
-    border-top:105px solid #f8d8e6;
+
+    border-left:150px solid transparent;
+    border-right:150px solid transparent;
+    border-top:115px solid #f9dfE9;
+
     transform-origin:top;
-    transition:1s ease;
+    transition:
+        transform 1s cubic-bezier(.2,.8,.2,1);
 }
 
 .envelope.open .flap{
     transform:rotateX(180deg);
 }
 
-.heart{
+/* corazón */
+
+.envelope-heart{
     position:absolute;
-    z-index:5;
+    z-index:8;
+
     left:50%;
-    top:50%;
+    top:53%;
+
     transform:translate(-50%,-50%);
-    font-size:38px;
-    color:white;
-    transition:.5s ease;
+
+    width:62px;
+    height:62px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.55);
+
+    backdrop-filter:blur(8px);
+
+    box-shadow:
+        0 8px 25px rgba(150,110,130,.16);
+
+    font-size:31px;
+
+    transition:.6s ease;
 }
 
-.envelope.open .heart{
-    transform:translate(-50%,-50%) scale(.7);
+.envelope.open .envelope-heart{
+    transform:
+        translate(-50%,-50%)
+        scale(.5);
+
     opacity:0;
 }
 
-/* CARTA */
+/* texto debajo */
+
+.tap{
+    margin-top:20px;
+    color:#9d8e99;
+    font-size:12px;
+    letter-spacing:1px;
+    animation:tap 2s infinite;
+}
+
+@keyframes tap{
+    0%,100%{opacity:.45;}
+    50%{opacity:1;}
+}
+
+/* =========================
+   CARTA
+========================= */
 
 .letter{
     position:absolute;
-    width:min(90vw,390px);
-    min-height:470px;
-    padding:42px 30px;
-    background:#fffdfb;
-    border-radius:25px;
-    box-shadow:0 25px 80px rgba(140,110,130,.22);
+
+    width:min(92vw,430px);
+    max-height:88vh;
+    overflow:auto;
+
+    padding:43px 30px 32px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.98),
+            rgba(255,249,245,.97)
+        );
+
+    border:1px solid rgba(255,255,255,.9);
+
+    border-radius:30px;
+
+    box-shadow:
+        0 35px 100px rgba(119,91,110,.22),
+        0 5px 20px rgba(255,255,255,.8) inset;
+
     opacity:0;
-    transform:translateY(80px) scale(.8);
+
+    transform:
+        translateY(100px)
+        scale(.82)
+        rotate(2deg);
+
     pointer-events:none;
-    transition:1s cubic-bezier(.2,.8,.2,1);
+
+    transition:
+        1.1s cubic-bezier(.16,.8,.2,1);
 }
 
 .letter.show{
     opacity:1;
-    transform:translateY(0) scale(1);
+
+    transform:
+        translateY(0)
+        scale(1)
+        rotate(0);
+
     pointer-events:auto;
 }
 
-.letter-top{
+.letter::-webkit-scrollbar{
+    width:4px;
+}
+
+.letter::-webkit-scrollbar-thumb{
+    background:#ead4df;
+    border-radius:10px;
+}
+
+.letter-header{
     text-align:center;
 }
 
-.small-heart{
+.letter-heart{
     font-size:28px;
 }
 
 .letter h2{
-    margin-top:10px;
-    font-family:"DM Serif Display",serif;
-    font-size:35px;
+    margin-top:8px;
+
+    font-family:"Parisienne",cursive;
+
+    font-size:55px;
     font-weight:400;
-    color:#796b76;
+
+    color:#bd819b;
 }
 
-.date{
-    margin-top:7px;
-    font-size:11px;
-    letter-spacing:2px;
-    color:#b7aab3;
+.letter-subtitle{
+    margin-top:-5px;
+
+    font-size:10px;
+    letter-spacing:3px;
     text-transform:uppercase;
+
+    color:#aa9ca6;
 }
 
-.line{
-    width:55px;
+.divider{
+    width:70px;
     height:2px;
-    margin:25px auto;
-    background:#efd2df;
+
+    margin:24px auto;
+
     border-radius:20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #e6bdcf,
+            #cfc8e9,
+            transparent
+        );
 }
 
 .letter-text{
+    text-align:center;
+
+    color:#7e717b;
+
     font-family:"DM Serif Display",serif;
+
     font-size:18px;
     line-height:1.8;
-    text-align:center;
-    color:#827681;
 }
 
-.letter-text span{
-    color:#c08ca3;
+.letter-text .highlight{
+    color:#bd819b;
 }
+
+/* =========================
+   OPCIONES
+========================= */
 
 .options{
-    margin-top:30px;
     display:grid;
-    gap:10px;
+    gap:11px;
+
+    margin-top:29px;
 }
 
 .option{
+    position:relative;
+
+    width:100%;
+
+    padding:15px 18px;
+
     border:none;
-    background:#fff4f8;
-    color:#8b7883;
     border-radius:50px;
-    padding:13px;
-    font-family:Poppins;
+
+    background:
+        linear-gradient(
+            100deg,
+            #fff0f5,
+            #f0edfb
+        );
+
+    color:#776a74;
+
+    font-family:Poppins,sans-serif;
+    font-size:13px;
+    font-weight:500;
+
     cursor:pointer;
-    transition:.3s;
+
+    box-shadow:
+        0 5px 15px rgba(160,130,150,.08);
+
+    transition:.3s ease;
 }
 
 .option:hover{
-    background:#f9e3ed;
-    transform:scale(1.03);
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 10px 22px rgba(160,130,150,.15);
 }
 
-/* MENSAJE */
+.option:active{
+    transform:scale(.97);
+}
+
+/* =========================
+   MENSAJE
+========================= */
 
 .message{
     position:absolute;
     inset:0;
-    background:rgba(255,250,252,.96);
-    border-radius:25px;
-    padding:45px 30px;
+
     display:flex;
     align-items:center;
     justify-content:center;
-    text-align:center;
+
+    padding:30px;
+
+    border-radius:30px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,248,251,.98),
+            rgba(247,244,255,.98)
+        );
+
     opacity:0;
     pointer-events:none;
+
     transition:.5s;
 }
 
@@ -301,74 +562,126 @@ body{
     pointer-events:auto;
 }
 
+.message-inner{
+    text-align:center;
+}
+
+.message-icon{
+    font-size:38px;
+}
+
 .message h3{
+    margin-top:12px;
+
     font-family:"DM Serif Display",serif;
-    font-size:29px;
-    color:#7c6b77;
+
+    font-size:30px;
+
+    color:#806b78;
 }
 
 .message p{
     margin-top:15px;
-    line-height:1.8;
+
+    color:#938590;
+
     font-size:14px;
-    color:#958792;
+    line-height:1.8;
 }
 
 .close{
-    margin-top:25px;
+    margin-top:24px;
+
     border:none;
-    padding:11px 25px;
+
+    padding:11px 24px;
+
     border-radius:50px;
-    background:#f3dce7;
-    color:#806d79;
+
+    background:#efdce6;
+
+    color:#7f6b76;
+
+    cursor:pointer;
 }
 
-/* CORAZONES */
+/* =========================
+   CORAZONES AL ABRIR
+========================= */
 
-.floating-heart{
+.burst-heart{
     position:fixed;
+
+    z-index:50;
+
     pointer-events:none;
+
     color:white;
-    animation:rise 4s ease-out forwards;
-    z-index:10;
+
+    animation:burst 3s ease-out forwards;
 }
 
-@keyframes rise{
+@keyframes burst{
+
     0%{
-        transform:translateY(0) scale(.5);
+        transform:
+            translate(0,0)
+            scale(.3);
+
         opacity:0;
     }
-    20%{
+
+    15%{
         opacity:1;
     }
+
     100%{
-        transform:translateY(-300px) scale(1.3);
+        transform:
+            translate(
+                var(--x),
+                var(--y)
+            )
+            scale(1.2);
+
         opacity:0;
     }
 }
 
+/* =========================
+   MÓVIL
+========================= */
+
 @media(max-width:400px){
-    .intro h1{
-        font-size:35px;
-    }
 
     .envelope{
-        width:250px;
-        height:170px;
+        width:265px;
+        height:180px;
     }
 
     .flap{
-        border-left-width:125px;
-        border-right-width:125px;
-        border-top-width:95px;
+        border-left-width:132.5px;
+        border-right-width:132.5px;
+        border-top-width:102px;
     }
 
     .envelope-body:before{
-        border-width:85px 125px 0 0;
+        border-width:90px 132px 0 0;
     }
 
     .envelope-body:after{
-        border-width:0 125px 85px 0;
+        border-width:0 132px 90px 0;
+    }
+
+    .letter{
+        padding:35px 23px 28px;
+    }
+
+    .letter h2{
+        font-size:49px;
+    }
+
+    .letter-text{
+        font-size:17px;
     }
 }
 </style>
@@ -377,14 +690,36 @@ body{
 <body>
 
 <div class="background">
-    <div class="blur one"></div>
-    <div class="blur two"></div>
 
-    <div class="petal" style="left:8%;animation-duration:9s;">♡</div>
-    <div class="petal" style="left:25%;animation-duration:12s;animation-delay:2s;">♡</div>
-    <div class="petal" style="left:47%;animation-duration:10s;animation-delay:4s;">♡</div>
-    <div class="petal" style="left:70%;animation-duration:13s;animation-delay:1s;">♡</div>
-    <div class="petal" style="left:90%;animation-duration:11s;animation-delay:3s;">♡</div>
+    <div class="glow glow1"></div>
+    <div class="glow glow2"></div>
+    <div class="glow glow3"></div>
+
+    <div class="sparkle" style="left:12%;top:18%;animation-delay:.2s;">✦</div>
+    <div class="sparkle" style="left:25%;top:72%;animation-delay:1s;">✦</div>
+    <div class="sparkle" style="left:80%;top:20%;animation-delay:.6s;">✦</div>
+    <div class="sparkle" style="left:90%;top:65%;animation-delay:1.5s;">✦</div>
+
+    <div class="floating-heart"
+         style="left:7%;animation-delay:1s;">
+        ♡
+    </div>
+
+    <div class="floating-heart"
+         style="left:28%;animation-delay:4s;">
+        ♡
+    </div>
+
+    <div class="floating-heart"
+         style="left:57%;animation-delay:2s;">
+        ♡
+    </div>
+
+    <div class="floating-heart"
+         style="left:82%;animation-delay:6s;">
+        ♡
+    </div>
+
 </div>
 
 
@@ -394,20 +729,36 @@ body{
 
     <div class="intro" id="intro">
 
-        <h1>Tengo algo para ti</h1>
+        <div class="intro-small">
+            algo pequeño para ti
+        </div>
 
-        <p>
-            No es mucho... pero está hecho con todo mi corazón.
+        <h1>
+            Para <span>Pequee</span>
+        </h1>
+
+        <p class="intro-description">
+            Hice este pequeño rincón porque quería
+            dejarte algo que fuera solamente nuestro. 🤍
         </p>
 
-        <div class="envelope" id="envelope" onclick="openLetter()">
+        <div
+            class="envelope"
+            id="envelope"
+            onclick="openLetter()">
 
             <div class="envelope-body"></div>
 
             <div class="flap"></div>
 
-            <div class="heart">🤍</div>
+            <div class="envelope-heart">
+                🤍
+            </div>
 
+        </div>
+
+        <div class="tap">
+            toca el sobre
         </div>
 
     </div>
@@ -417,65 +768,124 @@ body{
 
     <div class="letter" id="letter">
 
-        <div class="letter-top">
+        <div class="letter-header">
 
-            <div class="small-heart">🤍</div>
+            <div class="letter-heart">
+                🤍
+            </div>
 
-            <h2>Para ti</h2>
+            <h2>
+                Pequee
+            </h2>
 
-            <div class="date">
-                desde mi corazón
+            <div class="letter-subtitle">
+                una carta para ti
             </div>
 
         </div>
 
-        <div class="line"></div>
+        <div class="divider"></div>
 
         <div class="letter-text">
 
-            Quería hacerte un pequeño lugar
-            que fuera solamente nuestro.
+            Quería hacerte un sitio al que pudieras
+            volver cuando quisieras.
 
             <br><br>
 
-            Porque hay personas que llegan
-            y hacen que todo se sienta
-            <span>un poquito más bonito.</span>
+            Un sitio que te recuerde que
+            <span class="highlight">
+                te quiero muchísimo
+            </span>
+
+            y que eres una persona
+            muy especial para mí.
+
+            <br><br>
+
+            Y esto...
+
+            <br>
+
+            <span class="highlight">
+                solo acaba de empezar. 🤍
+            </span>
 
         </div>
+
 
         <div class="options">
 
-            <button class="option"
-                onclick="showMessage('💌 Una carta',
-                'Aquí irá nuestra carta de verdad. Podemos escribirla juntos y hacer que aparezca poco a poco, como si estuviera escrita a mano.')">
-                💌 Leer mi carta
+            <button
+                class="option"
+                onclick="showMessage(
+                '💌 Una carta para ti',
+                'Aquí vamos a poner nuestra carta de verdad. La iremos escribiendo juntos hasta que sea exactamente lo que quiero decirte.'
+                )">
+
+                💌 Mi carta
             </button>
 
-            <button class="option"
-                onclick="showMessage('🌷 Nuestros recuerdos',
-                'Aquí podemos poner nuestras fotos, nuestras fechas y todos esos pequeños momentos que quiero recordar contigo.')">
+
+            <button
+                class="option"
+                onclick="showMessage(
+                '🌷 Nuestros recuerdos',
+                'Aquí iremos guardando nuestras fotos, momentos favoritos y todas esas pequeñas cosas que algún día querremos recordar.'
+                )">
+
                 🌷 Nuestros recuerdos
             </button>
 
-            <button class="option"
-                onclick="showMessage('🤍 Nuestro corazón',
-                'El blanco es nuestro color. Tranquilo, bonito y especial. Como ese pequeño lugar que solamente nosotros entendemos.')">
+
+            <button
+                class="option"
+                onclick="showMessage(
+                '🤍 Nuestro corazón',
+                'Este corazón blanco es nuestro pequeño símbolo. Cada vez que lo veas quiero que pienses en nosotros.'
+                )">
+
                 🤍 Nuestro corazón
+            </button>
+
+
+            <button
+                class="option"
+                onclick="showMessage(
+                '✨ Algo más...',
+                'Todavía no te voy a contar todo lo que quiero poner aquí. Algunas cosas tendrán que ser sorpresa. 👀'
+                )">
+
+                ✨ Hay algo más...
             </button>
 
         </div>
 
-        <div class="message" id="message">
 
-            <div>
+        <!-- MENSAJE -->
+
+        <div
+            class="message"
+            id="message">
+
+            <div class="message-inner">
+
+                <div
+                    class="message-icon"
+                    id="messageIcon">
+                    🤍
+                </div>
 
                 <h3 id="messageTitle"></h3>
 
                 <p id="messageText"></p>
 
-                <button class="close" onclick="closeMessage()">
-                    Volver 🤍
+                <button
+                    class="close"
+                    onclick="closeMessage()">
+
+                    volver 🤍
+
                 </button>
 
             </div>
@@ -488,6 +898,10 @@ body{
 
 
 <script>
+
+/* =========================
+   ABRIR CARTA
+========================= */
 
 function openLetter(){
 
@@ -502,16 +916,21 @@ function openLetter(){
 
     envelope.classList.add("open");
 
-    setTimeout(() => {
-        intro.classList.add("hide");
-    },400);
+    createHeartBurst();
 
-    setTimeout(() => {
+    setTimeout(()=>{
+        intro.classList.add("hide");
+    },350);
+
+    setTimeout(()=>{
         letter.classList.add("show");
-        createHearts();
     },900);
 }
 
+
+/* =========================
+   MENSAJES
+========================= */
 
 function showMessage(title,text){
 
@@ -533,31 +952,45 @@ function closeMessage(){
 }
 
 
-function createHearts(){
+/* =========================
+   CORAZONES
+========================= */
 
-    for(let i=0;i<18;i++){
+function createHeartBurst(){
+
+    for(let i=0;i<25;i++){
 
         const heart =
             document.createElement("div");
 
-        heart.className="floating-heart";
+        heart.className="burst-heart";
 
-        heart.innerHTML="🤍";
+        heart.innerText =
+            Math.random()>.5
+            ? "🤍"
+            : "♡";
 
-        heart.style.left =
-            Math.random()*100+"vw";
+        heart.style.left="50%";
+        heart.style.top="50%";
 
-        heart.style.bottom =
-            Math.random()*30+"vh";
+        heart.style.setProperty(
+            "--x",
+            `${(Math.random()-.5)*600}px`
+        );
+
+        heart.style.setProperty(
+            "--y",
+            `${(Math.random()-.5)*600}px`
+        );
 
         heart.style.fontSize =
-            12+Math.random()*20+"px";
+            `${12+Math.random()*22}px`;
 
         document.body.appendChild(heart);
 
         setTimeout(()=>{
             heart.remove();
-        },4000);
+        },3000);
     }
 }
 

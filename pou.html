@@ -65,11 +65,12 @@
     #video-mascota {
       width: 100%;
       max-width: 260px;
+      min-height: 260px;
+      object-fit: contain;
       display: block;
       margin: 0 auto 22px;
       border: 1px solid var(--linea);
       background: var(--hueso);
-      mix-blend-mode: screen;
       cursor: pointer;
       transition: transform 0.15s ease;
     }
@@ -165,7 +166,7 @@
     <a href="index.html" class="volver-link">‹ Volver</a>
     <h1>Tu mascota</h1>
 
-    <video id="video-mascota" src="Quieto.mp4" autoplay muted loop playsinline></video>
+    <video id="video-mascota" src="Quieto.mp4" autoplay muted loop playsinline preload="auto"></video>
 
     <div class="necesidad">
       <div class="necesidad-fila">🍽️ Hambre <span class="valor" id="valor-hambre">--</span></div>
@@ -257,7 +258,7 @@
     function reproducirVideo(src) {
       video.loop = false;
       video.src = src;
-      video.muted = false;
+      video.muted = true;
       video.play().catch(() => {});
       video.onended = () => {
         video.loop = true;

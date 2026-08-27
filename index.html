@@ -373,15 +373,53 @@
       limpiarFormCarta();
     });
 
-    function leerArchivosComoBase64(archivos) {
-      const lecturas = Array.from(archivos).map(archivo => {
-        return new Promise(resolve => {
-          const lector = new FileReader();
-          lector.onload = () => resolve(lector.result);
-          lector.readAsDataURL(archivo);
-        });
+    // Solo comprime si la foto pesa más de ~700KB en base64 (deja margen bajo
+    // el límite de 1MB de Firestore); las que ya son ligeras se suben tal cual
+    const LIMITE_BASE64 = 700000;
+
+    function comprimirDataUrl(dataUrl, calidad, maxAncho) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => {
+          const escala = Math.min(1, maxAncho / img.width);
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width * escala;
+          canvas.height = img.height * escala;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', calidad));
+        };
+        img.src = dataUrl;
       });
-      return Promise.all(lecturas);
+    }
+
+    async function procesarImagen(archivo) {
+      const dataUrlOriginal = await new Promise(resolve => {
+        const lector = new FileReader();
+        lector.onload = () => resolve(lector.result);
+        lector.readAsDataURL(archivo);
+      });
+
+      if (dataUrlOriginal.length <= LIMITE_BASE64) return dataUrlOriginal;
+
+      let resultado = dataUrlOriginal;
+      let calidad = 0.8;
+      let maxAncho = 1600;
+
+      while (resultado.length > LIMITE_BASE64 && (calidad > 0.25 || maxAncho > 400)) {
+        resultado = await comprimirDataUrl(dataUrlOriginal, calidad, maxAncho);
+        if (calidad > 0.25) {
+          calidad -= 0.15;
+        } else {
+          maxAncho -= 300;
+        }
+      }
+
+      return resultado;
+    }
+
+    function leerArchivosComoBase64(archivos) {
+      return Promise.all(Array.from(archivos).map(procesarImagen));
     }
 
     btnGuardarCarta.addEventListener('click', () => {
@@ -536,6 +574,64 @@
       db.collection('fotos').orderBy('creado').onSnapshot(snapshot => {
         const fotos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderizarFotos(fotos);
+      });
+    }
+
+    // ---------- Bucket List ----------
+    const metaTexto = document.getElementById('meta-texto');
+    const btnAgregarMeta = document.getElementById('btn-agregar-meta');
+    const listaMetas = document.getElementById('lista-metas');
+
+    btnAgregarMeta.addEventListener('click', () => {
+      if (!db) {
+        alert('No se pudo conectar con la base de datos. Revisa tu conexión e inténtalo de nuevo.');
+        return;
+      }
+      const texto = metaTexto.value.trim();
+      if (!texto) return;
+
+      db.collection('metas').add({
+        texto,
+        hecho: false,
+        creado: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      metaTexto.value = '';
+    });
+
+    function renderizarMetas(metas) {
+      listaMetas.innerHTML = '';
+
+      metas.forEach(meta => {
+        const li = document.createElement('li');
+        if (meta.hecho) li.classList.add('completada');
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = meta.hecho;
+        checkbox.addEventListener('change', () => {
+          db.collection('metas').doc(meta.id).update({ hecho: checkbox.checked });
+        });
+
+        const span = document.createElement('span');
+        span.textContent = meta.texto;
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.textContent = '✕';
+        btnEliminar.addEventListener('click', () => {
+          db.collection('metas').doc(meta.id).delete();
+        });
+
+        li.appendChild(checkbox);
+        li.appendChild(span);
+        li.appendChild(btnEliminar);
+        listaMetas.appendChild(li);
+      });
+    }
+
+    if (db) {
+      db.collection('metas').orderBy('creado').onSnapshot(snapshot => {
+        const metas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderizarMetas(metas);
       });
     }
   </script>

@@ -279,7 +279,9 @@
       padding: 15px 0;
     }
     .carta-titulo-btn {
-      display: block;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
       width: 100%;
       background: none;
       border: none;
@@ -290,13 +292,39 @@
       font-weight: 600;
       color: var(--tinta);
       padding: 0;
+      cursor: pointer;
     }
+    .carta-fecha {
+      font-family: 'Work Sans', sans-serif;
+      font-style: normal;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      color: var(--gris);
+      text-transform: uppercase;
+    }
+    .flecha-acordeon {
+      margin-left: auto;
+      color: var(--naranja);
+      font-size: 13px;
+      font-style: normal;
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+    .carta.abierta .flecha-acordeon { transform: rotate(90deg); }
     .carta-contenido {
-      margin-top: 14px;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
       font-family: 'Cormorant Garamond', serif;
       font-size: 17px;
       line-height: 1.7;
       color: #4a3f36;
+      transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.4s ease;
+    }
+    .carta.abierta .carta-contenido {
+      max-height: 2000px;
+      opacity: 1;
+      margin-top: 14px;
     }
     .carta-acciones { margin-top: 14px; }
     .adjunto-carta {
@@ -385,7 +413,10 @@
       height: 110px;
       object-fit: cover;
       border: 1px solid var(--linea);
+      cursor: pointer;
+      transition: opacity 0.2s;
     }
+    #galeria-fotos img:hover { opacity: 0.85; }
     #galeria-videos {
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     }
@@ -402,6 +433,56 @@
       top: 5px;
       right: 5px;
     }
+    .media-fecha {
+      display: block;
+      font-size: 9.5px;
+      color: var(--gris);
+      letter-spacing: 0.3px;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    #visor-media {
+      position: fixed;
+      inset: 0;
+      background: rgba(38,34,32,0.94);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 999;
+      padding: 24px;
+      opacity: 0;
+      animation: visorFade 0.25s ease forwards;
+    }
+    #visor-media img {
+      max-width: 100%;
+      max-height: 78vh;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      transform: scale(0.94);
+      opacity: 0;
+      animation: visorZoom 0.3s cubic-bezier(.2,.8,.2,1) forwards;
+    }
+    #cerrar-visor-media {
+      position: fixed;
+      top: 20px;
+      right: 22px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 26px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    #visor-media-fecha {
+      color: var(--naranja-suave);
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    @keyframes visorFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes visorZoom { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
     /* Sorpresa */
     #candado-sorpresa, #sorpresa-desbloqueada { text-align: center; padding: 20px 0; }
@@ -549,7 +630,7 @@
       <div id="menu-principal">
         <button class="btn-opcion" data-target="seccion-1">Cartas</button>
         <button class="btn-opcion" data-target="seccion-2">Fotos y Videos</button>
-        <button class="btn-opcion" data-target="seccion-3">🎁 Sorpresa</button>
+        <button class="btn-opcion" data-target="seccion-3" id="btn-sorpresa">🎁 Sorpresa</button>
         <button class="btn-opcion" data-target="seccion-4">💫 Metas</button>
       </div>
 
@@ -599,6 +680,12 @@
         <div id="galeria-videos"></div>
 
         <button class="btn-volver">Volver</button>
+
+        <div id="visor-media" hidden>
+          <button id="cerrar-visor-media">✕</button>
+          <img id="visor-media-img" src="">
+          <span id="visor-media-fecha"></span>
+        </div>
       </div>
 
       <div id="seccion-3" class="seccion" hidden>
@@ -698,6 +785,7 @@
     const candadoSorpresa = document.getElementById('candado-sorpresa');
     const sorpresaDesbloqueada = document.getElementById('sorpresa-desbloqueada');
     const cuentaRegresiva = document.getElementById('cuenta-regresiva');
+    const btnSorpresa = document.getElementById('btn-sorpresa');
 
     function actualizarCuentaRegresiva() {
       const ahora = new Date();
@@ -706,9 +794,12 @@
       if (diferencia <= 0) {
         candadoSorpresa.hidden = true;
         sorpresaDesbloqueada.hidden = false;
+        btnSorpresa.textContent = '🎁 Sorpresa';
         clearInterval(intervaloCuentaRegresiva);
         return;
       }
+
+      btnSorpresa.textContent = '🔒 Sorpresa (bloqueada)';
 
       const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
       const horas = Math.floor((diferencia / (1000 * 60 * 60)) % 24);
@@ -845,6 +936,12 @@
       });
     }
 
+    // Convierte un timestamp de Firestore en una fecha legible (ej: "27 ago 2026")
+    function formatearFecha(timestamp) {
+      if (!timestamp || !timestamp.toDate) return '';
+      return timestamp.toDate().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
     async function procesarImagen(archivo) {
       const dataUrlOriginal = await new Promise(resolve => {
         const lector = new FileReader();
@@ -923,11 +1020,10 @@
 
         const btnAbrir = document.createElement('button');
         btnAbrir.className = 'carta-titulo-btn';
-        btnAbrir.textContent = `💌 ${carta.titulo}`;
+        btnAbrir.innerHTML = `<span>💌 ${carta.titulo}</span><span class="carta-fecha">${formatearFecha(carta.creado)}</span><span class="flecha-acordeon">▸</span>`;
 
         const contenido = document.createElement('div');
         contenido.className = 'carta-contenido';
-        contenido.hidden = true;
         contenido.style.color = carta.color;
         contenido.style.fontSize = carta.tamano;
 
@@ -969,7 +1065,7 @@
         contenido.appendChild(acciones);
 
         btnAbrir.addEventListener('click', () => {
-          contenido.hidden = !contenido.hidden;
+          contenedor.classList.toggle('abierta');
         });
 
         contenedor.appendChild(btnAbrir);
@@ -1234,6 +1330,23 @@
       });
     }
 
+    // Visor de foto en grande
+    const visorMedia = document.getElementById('visor-media');
+    const visorMediaImg = document.getElementById('visor-media-img');
+    const visorMediaFecha = document.getElementById('visor-media-fecha');
+    const cerrarVisorMedia = document.getElementById('cerrar-visor-media');
+
+    function abrirVisorMedia(src, fecha) {
+      visorMediaImg.src = src;
+      visorMediaFecha.textContent = fecha;
+      visorMedia.hidden = false;
+    }
+
+    cerrarVisorMedia.addEventListener('click', () => { visorMedia.hidden = true; });
+    visorMedia.addEventListener('click', (e) => {
+      if (e.target === visorMedia) visorMedia.hidden = true;
+    });
+
     function crearItemMultimedia(item, esVideo) {
       const div = document.createElement('div');
       div.className = 'foto-item';
@@ -1244,6 +1357,10 @@
       btnEliminar.addEventListener('click', () => {
         eliminarItemMultimedia(item);
       });
+
+      const fecha = document.createElement('span');
+      fecha.className = 'media-fecha';
+      fecha.textContent = formatearFecha(item.creado);
 
       if (esVideo) {
         const video = document.createElement('video');
@@ -1265,9 +1382,11 @@
       } else {
         const img = document.createElement('img');
         img.src = item.src;
+        img.addEventListener('click', () => abrirVisorMedia(item.src, fecha.textContent));
         div.appendChild(img);
       }
 
+      div.appendChild(fecha);
       div.appendChild(btnEliminar);
       return div;
     }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mascota — Próximamente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blanco: #ffffff;
+      --hueso: #fbf8f4;
+      --tinta: #262220;
+      --gris: #948c82;
+      --naranja: #e8703a;
+      --naranja-suave: #f6ddc9;
+      --linea: #ece4d8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at top, #fffdfb 0%, var(--hueso) 60%);
+      font-family: 'Work Sans', sans-serif;
+      color: var(--tinta);
+      padding: 24px;
+    }
+    .tarjeta {
+      max-width: 360px;
+      width: 100%;
+      background: var(--blanco);
+      border: 1px solid var(--linea);
+      padding: 40px 28px;
+      text-align: center;
+    }
+    img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 26px;
+      margin: 0 0 12px;
+    }
+    p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--gris);
+      margin: 0 0 26px;
+    }
+    a {
+      display: inline-block;
+      background: var(--naranja);
+      color: var(--blanco);
+      text-decoration: none;
+      padding: 12px 26px;
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="tarjeta">
+    <img src="MENU.PNG" alt="mascota">
+    <h1>Muy pronto 🐾</h1>
+    <p>Aquí vas a poder cuidar de tu mascota. Estamos trabajando en ello…</p>
+    <a href="index.html">Volver</a>
+  </div>
+</body>
+</html>

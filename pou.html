@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mascota — Próximamente</title>
+  <title>Tu mascota</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --blanco: #ffffff;
@@ -15,64 +15,314 @@
       --naranja: #e8703a;
       --naranja-suave: #f6ddc9;
       --linea: #ece4d8;
+      --rojo: #c96a4e;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       background: radial-gradient(ellipse at top, #fffdfb 0%, var(--hueso) 60%);
       font-family: 'Work Sans', sans-serif;
       color: var(--tinta);
-      padding: 24px;
+      padding: 28px 16px 60px;
     }
-    .tarjeta {
-      max-width: 360px;
-      width: 100%;
+    .contenedor {
+      max-width: 380px;
+      margin: 0 auto;
       background: var(--blanco);
       border: 1px solid var(--linea);
-      padding: 40px 28px;
-      text-align: center;
+      padding: 30px 24px;
+      position: relative;
     }
-    img {
-      width: 90px;
-      height: 90px;
-      object-fit: contain;
-      margin-bottom: 16px;
+    .contenedor::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 24px; right: 24px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--naranja-suave), transparent);
+    }
+    .volver-link {
+      display: inline-block;
+      background: none;
+      border: none;
+      color: var(--gris);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      margin-bottom: 18px;
     }
     h1 {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
       font-size: 26px;
-      margin: 0 0 12px;
+      margin: 0 0 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--linea);
+      text-align: center;
     }
-    p {
-      font-size: 14px;
-      line-height: 1.6;
-      color: var(--gris);
-      margin: 0 0 26px;
+
+    #video-mascota {
+      width: 100%;
+      max-width: 260px;
+      display: block;
+      margin: 0 auto 22px;
+      border: 1px solid var(--linea);
+      background: var(--hueso);
     }
-    a {
-      display: inline-block;
-      background: var(--naranja);
-      color: var(--blanco);
-      text-decoration: none;
-      padding: 12px 26px;
-      font-weight: 500;
+
+    .necesidad {
+      margin-bottom: 16px;
+    }
+    .necesidad-fila {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
       font-size: 12px;
-      letter-spacing: 2px;
+      color: var(--gris);
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
+    }
+    .necesidad-fila span.valor {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 14px;
+      color: var(--naranja);
+      text-transform: none;
+    }
+    .barra-fondo {
+      height: 6px;
+      background: var(--linea);
+      overflow: hidden;
+    }
+    .barra-relleno {
+      height: 100%;
+      background: var(--naranja);
+      transition: width 0.4s ease, background 0.4s ease;
+    }
+    .barra-relleno.baja { background: var(--rojo); }
+
+    .acciones {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .btn-accion {
+      background: var(--hueso);
+      border: 1px solid var(--linea);
+      color: var(--tinta);
+      padding: 12px 4px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      font-size: 10.5px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-align: center;
+    }
+    .btn-accion:active { background: var(--naranja-suave); }
+    .btn-accion .icono { display: block; font-size: 18px; margin-bottom: 4px; }
+
+    #mensaje-mascota {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 13.5px;
+      color: var(--gris);
+      min-height: 18px;
+      margin-top: 16px;
     }
   </style>
 </head>
 <body>
-  <div class="tarjeta">
-    <img src="MENU.PNG" alt="mascota">
-    <h1>Muy pronto 🐾</h1>
-    <p>Aquí vas a poder cuidar de tu mascota. Estamos trabajando en ello…</p>
-    <a href="index.html">Volver</a>
+
+  <div class="contenedor">
+    <a href="index.html" class="volver-link">‹ Volver</a>
+    <h1>Tu mascota</h1>
+
+    <video id="video-mascota" src="Quieto.mp4" autoplay muted loop playsinline></video>
+
+    <div class="necesidad">
+      <div class="necesidad-fila">🍽️ Hambre <span class="valor" id="valor-hambre">--</span></div>
+      <div class="barra-fondo"><div class="barra-relleno" id="barra-hambre"></div></div>
+    </div>
+    <div class="necesidad">
+      <div class="necesidad-fila">😴 Sueño <span class="valor" id="valor-sueno">--</span></div>
+      <div class="barra-fondo"><div class="barra-relleno" id="barra-sueno"></div></div>
+    </div>
+    <div class="necesidad">
+      <div class="necesidad-fila">💛 Felicidad <span class="valor" id="valor-felicidad">--</span></div>
+      <div class="barra-fondo"><div class="barra-relleno" id="barra-felicidad"></div></div>
+    </div>
+
+    <div class="acciones">
+      <button class="btn-accion" id="btn-comer"><span class="icono">🍽️</span>Comer</button>
+      <button class="btn-accion" id="btn-dormir"><span class="icono">😴</span>Dormir</button>
+      <button class="btn-accion" id="btn-jugar-mascota"><span class="icono">🎾</span>Jugar</button>
+      <button class="btn-accion" id="btn-saltar"><span class="icono">🦘</span>Saltar</button>
+    </div>
+
+    <p id="mensaje-mascota"></p>
   </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCZhcqS0r9w8H1EJ-cDG4XBJjNEjzKPlPY",
+      authDomain: "pequee.firebaseapp.com",
+      projectId: "pequee",
+      storageBucket: "pequee.firebasestorage.app",
+      messagingSenderId: "422064272343",
+      appId: "1:422064272343:web:3b1ff306ef45621e7a9192"
+    };
+    let db = null;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+    } catch (e) {
+      console.error('No se pudo iniciar Firebase:', e);
+    }
+  </script>
+
+  <script>
+    const video = document.getElementById('video-mascota');
+    const mensajeMascota = document.getElementById('mensaje-mascota');
+
+    const barras = {
+      hambre: document.getElementById('barra-hambre'),
+      sueno: document.getElementById('barra-sueno'),
+      felicidad: document.getElementById('barra-felicidad')
+    };
+    const valores = {
+      hambre: document.getElementById('valor-hambre'),
+      sueno: document.getElementById('valor-sueno'),
+      felicidad: document.getElementById('valor-felicidad')
+    };
+
+    // Puntos que baja cada necesidad por hora real transcurrida
+    const DECAIMIENTO_POR_HORA = 3;
+    const MAX = 100;
+
+    let estadoActual = { hambre: MAX, sueno: MAX, felicidad: MAX };
+    let referenciaDoc = null;
+
+    function actualizarBarras(estado) {
+      Object.keys(barras).forEach(clave => {
+        const valor = Math.max(0, Math.min(MAX, Math.round(estado[clave])));
+        barras[clave].style.width = valor + '%';
+        barras[clave].classList.toggle('baja', valor <= 25);
+        valores[clave].textContent = valor;
+      });
+    }
+
+    function calcularDecaimiento(estado, ultimaFecha) {
+      if (!ultimaFecha) return estado;
+      const horasPasadas = (Date.now() - ultimaFecha.getTime()) / (1000 * 60 * 60);
+      if (horasPasadas <= 0) return estado;
+      const resta = horasPasadas * DECAIMIENTO_POR_HORA;
+      return {
+        hambre: Math.max(0, estado.hambre - resta),
+        sueno: Math.max(0, estado.sueno - resta),
+        felicidad: Math.max(0, estado.felicidad - resta)
+      };
+    }
+
+    function reproducirVideo(src) {
+      video.loop = false;
+      video.src = src;
+      video.muted = false;
+      video.play().catch(() => {});
+      video.onended = () => {
+        video.loop = true;
+        video.muted = true;
+        video.src = 'Quieto.mp4';
+        video.play().catch(() => {});
+      };
+    }
+
+    function mostrarMensaje(texto) {
+      mensajeMascota.textContent = texto;
+      setTimeout(() => {
+        if (mensajeMascota.textContent === texto) mensajeMascota.textContent = '';
+      }, 2500);
+    }
+
+    async function realizarAccion(clave, cantidad, srcVideo, mensaje) {
+      if (!referenciaDoc) return;
+      reproducirVideo(srcVideo);
+      mostrarMensaje(mensaje);
+
+      const nuevoEstado = { ...estadoActual };
+      nuevoEstado[clave] = Math.min(MAX, nuevoEstado[clave] + cantidad);
+      estadoActual = nuevoEstado;
+      actualizarBarras(estadoActual);
+
+      await referenciaDoc.set({
+        hambre: estadoActual.hambre,
+        sueno: estadoActual.sueno,
+        felicidad: estadoActual.felicidad,
+        actualizado: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+
+    document.getElementById('btn-comer').addEventListener('click', () => {
+      realizarAccion('hambre', 30, 'Comer.mp4', '¡Qué rico! 🍽️');
+    });
+    document.getElementById('btn-dormir').addEventListener('click', () => {
+      realizarAccion('sueno', 30, 'Dormir.mp4', 'Zzz... 😴');
+    });
+    document.getElementById('btn-jugar-mascota').addEventListener('click', () => {
+      realizarAccion('felicidad', 30, 'Jugar.mp4', '¡Qué divertido! 🎾');
+    });
+    document.getElementById('btn-saltar').addEventListener('click', () => {
+      realizarAccion('felicidad', 8, 'Saltar.mp4', '¡Wiii! 🦘');
+    });
+
+    if (db) {
+      referenciaDoc = db.collection('mascota').doc('estado');
+
+      referenciaDoc.get().then(doc => {
+        if (!doc.exists) {
+          return referenciaDoc.set({
+            hambre: MAX,
+            sueno: MAX,
+            felicidad: MAX,
+            actualizado: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+      }).then(() => {
+        // Escucha en tiempo real: si el otro también está cuidando a la mascota, se ve reflejado al instante
+        referenciaDoc.onSnapshot(doc => {
+          if (!doc.exists) return;
+          const datos = doc.data();
+          const ultimaFecha = datos.actualizado && datos.actualizado.toDate ? datos.actualizado.toDate() : new Date();
+          estadoActual = calcularDecaimiento({
+            hambre: datos.hambre,
+            sueno: datos.sueno,
+            felicidad: datos.felicidad
+          }, ultimaFecha);
+          actualizarBarras(estadoActual);
+        });
+      });
+
+      // Cada minuto, vuelve a calcular el decaimiento y lo guarda (así avanza aunque no toques nada)
+      setInterval(() => {
+        if (!referenciaDoc) return;
+        referenciaDoc.set({
+          hambre: estadoActual.hambre,
+          sueno: estadoActual.sueno,
+          felicidad: estadoActual.felicidad,
+          actualizado: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+      }, 60000);
+    } else {
+      mostrarMensaje('No se pudo conectar. Revisa tu conexión.');
+    }
+  </script>
+
 </body>
 </html>

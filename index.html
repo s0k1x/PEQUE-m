@@ -4,6 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nuestro Corazón</title>
+  <style>
+    #barra-progreso-contenedor {
+      width: 100%;
+      height: 8px;
+      background: #eee;
+    }
+    #barra-progreso {
+      height: 100%;
+      width: 0%;
+      background: gray;
+      transition: width 0.3s;
+    }
+  </style>
 </head>
 <body>
 
@@ -20,43 +33,49 @@
     <!-- Pantalla 2: cuestionario -->
     <section id="cuestionario" hidden>
 
-      <div class="pregunta" data-respuesta="b">
-        <p>1. ¿Cuándo es mi cumpleaños?</p>
+      <div id="barra-progreso-contenedor">
+        <div id="barra-progreso"></div>
+      </div>
+      <p id="texto-progreso">Pregunta 1 de 5</p>
+
+      <div class="pregunta" data-respuesta="b" data-pista="Es en primavera, mes 4️⃣">
+        <p>¿Cuándo es mi cumpleaños?</p>
         <label><input type="radio" name="p1" value="a"> 4 de abril</label>
         <label><input type="radio" name="p1" value="b"> 11 de abril</label>
         <label><input type="radio" name="p1" value="c"> 11 de mayo</label>
       </div>
 
-      <div class="pregunta" data-respuesta="a">
-        <p>2. ¿Cuál es mi color favorito?</p>
+      <div class="pregunta" data-respuesta="a" data-pista="Es el color de un atardecer 🧡" hidden>
+        <p>¿Cuál es mi color favorito?</p>
         <label><input type="radio" name="p2" value="a"> Naranja</label>
         <label><input type="radio" name="p2" value="b"> Azul</label>
         <label><input type="radio" name="p2" value="c"> Rojo</label>
       </div>
 
-      <div class="pregunta" data-respuesta="c">
-        <p>3. ¿Cuál es mi plan favorito?</p>
+      <div class="pregunta" data-respuesta="c" data-pista="Tiene que ver con el cielo cuando cae la tarde" hidden>
+        <p>¿Cuál es mi plan favorito?</p>
         <label><input type="radio" name="p3" value="a"> Ir al cine</label>
         <label><input type="radio" name="p3" value="b"> Salir a comer</label>
         <label><input type="radio" name="p3" value="c"> Ir a ver el atardecer contigo</label>
       </div>
 
-      <div class="pregunta" data-respuesta="b">
-        <p>4. ¿Piscina o playa?</p>
+      <div class="pregunta" data-respuesta="b" data-pista="Hay arena y olas 🌊" hidden>
+        <p>¿Piscina o playa?</p>
         <label><input type="radio" name="p4" value="a"> Piscina</label>
         <label><input type="radio" name="p4" value="b"> Playa</label>
         <label><input type="radio" name="p4" value="c"> Ninguna de las dos</label>
       </div>
 
-      <div class="pregunta" data-respuesta="a">
-        <p>5. ¿Cómo me gusta decirte de cariño?</p>
+      <div class="pregunta" data-respuesta="a" data-pista="Empieza con P" hidden>
+        <p>¿Cómo me gusta decirte de cariño?</p>
         <label><input type="radio" name="p5" value="a"> Pequee</label>
         <label><input type="radio" name="p5" value="b"> Amor</label>
         <label><input type="radio" name="p5" value="c"> Bebé</label>
       </div>
 
-      <button id="btn-enviar">Enviar respuestas</button>
-      <p id="mensaje-error" hidden>Alguna respuesta está mal, ¡intenta de nuevo!</p>
+      <button id="btn-siguiente">Siguiente</button>
+      <p id="mensaje-error" hidden>Esa no es, ¡intenta de nuevo!</p>
+      <p id="mensaje-pista" hidden></p>
 
     </section>
 
@@ -99,7 +118,6 @@
     const mensajeInicial = document.getElementById('mensaje-inicial');
     const cuestionario = document.getElementById('cuestionario');
     const contenido = document.getElementById('contenido');
-    const btnEnviar = document.getElementById('btn-enviar');
     const mensajeError = document.getElementById('mensaje-error');
 
     const cancionFondo = document.getElementById('cancion-fondo');
@@ -117,28 +135,59 @@
       mensajeInicial.hidden = true;
       cuestionario.hidden = false;
       cancionFondo.play();
+      mostrarPregunta(0);
     });
 
-    btnEnviar.addEventListener('click', () => {
-      const preguntas = document.querySelectorAll('.pregunta');
-      let todasCorrectas = true;
+    // Cuestionario: una pregunta a la vez
+    const preguntas = document.querySelectorAll('.pregunta');
+    const btnSiguiente = document.getElementById('btn-siguiente');
+    const barraProgreso = document.getElementById('barra-progreso');
+    const textoProgreso = document.getElementById('texto-progreso');
+    const mensajePista = document.getElementById('mensaje-pista');
 
-      preguntas.forEach((pregunta, index) => {
-        const respuestaCorrecta = pregunta.dataset.respuesta;
-        const seleccionada = pregunta.querySelector(`input[name="p${index + 1}"]:checked`);
+    let indiceActual = 0;
+    let intentos = 0;
 
-        if (!seleccionada || seleccionada.value !== respuestaCorrecta) {
-          todasCorrectas = false;
-        }
-      });
+    function mostrarPregunta(indice) {
+      preguntas.forEach((p, i) => p.hidden = i !== indice);
+      textoProgreso.textContent = `Pregunta ${indice + 1} de ${preguntas.length}`;
+      barraProgreso.style.width = `${(indice / preguntas.length) * 100}%`;
+      mensajeError.hidden = true;
+      mensajePista.hidden = true;
+      intentos = 0;
+      btnSiguiente.textContent = indice === preguntas.length - 1 ? 'Finalizar' : 'Siguiente';
+    }
 
-      if (todasCorrectas) {
-        mensajeError.hidden = true;
-        cuestionario.hidden = true;
-        contenido.hidden = false;
-        localStorage.setItem('cuestionarioCompletado', 'true');
-      } else {
+    btnSiguiente.addEventListener('click', () => {
+      const preguntaActual = preguntas[indiceActual];
+      const nombreInput = preguntaActual.querySelector('input').name;
+      const seleccionada = preguntaActual.querySelector(`input[name="${nombreInput}"]:checked`);
+      const respuestaCorrecta = preguntaActual.dataset.respuesta;
+
+      if (!seleccionada) {
+        mensajeError.textContent = 'Selecciona una opción primero';
         mensajeError.hidden = false;
+        return;
+      }
+
+      if (seleccionada.value === respuestaCorrecta) {
+        indiceActual++;
+        if (indiceActual < preguntas.length) {
+          mostrarPregunta(indiceActual);
+        } else {
+          barraProgreso.style.width = '100%';
+          cuestionario.hidden = true;
+          contenido.hidden = false;
+          localStorage.setItem('cuestionarioCompletado', 'true');
+        }
+      } else {
+        intentos++;
+        mensajeError.textContent = 'Esa no es, ¡intenta de nuevo!';
+        mensajeError.hidden = false;
+        if (intentos >= 3) {
+          mensajePista.textContent = `💡 Pista: ${preguntaActual.dataset.pista}`;
+          mensajePista.hidden = false;
+        }
       }
     });
 

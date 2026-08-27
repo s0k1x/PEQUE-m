@@ -71,6 +71,7 @@
       margin: 0 auto 22px;
       border: 1px solid var(--linea);
       background: var(--hueso);
+      mix-blend-mode: screen;
       cursor: pointer;
       transition: transform 0.15s ease;
     }
@@ -255,17 +256,21 @@
       };
     }
 
-    function reproducirVideo(src) {
-      video.loop = false;
+    let temporizadorAccion = null;
+
+    function reproducirVideo(src, duracionMs) {
+      if (temporizadorAccion) clearTimeout(temporizadorAccion);
+
+      video.loop = true;
       video.src = src;
       video.muted = true;
       video.play().catch(() => {});
-      video.onended = () => {
-        video.loop = true;
-        video.muted = true;
+
+      temporizadorAccion = setTimeout(() => {
         video.src = 'Quieto.mp4';
         video.play().catch(() => {});
-      };
+        temporizadorAccion = null;
+      }, duracionMs);
     }
 
     function mostrarMensaje(texto) {
@@ -275,9 +280,9 @@
       }, 2500);
     }
 
-    async function realizarAccion(clave, cantidad, srcVideo, mensaje) {
+    async function realizarAccion(clave, cantidad, srcVideo, mensaje, duracionMs) {
       if (!referenciaDoc) return;
-      reproducirVideo(srcVideo);
+      reproducirVideo(srcVideo, duracionMs);
       mostrarMensaje(mensaje);
 
       const nuevoEstado = { ...estadoActual };
@@ -332,16 +337,16 @@
     });
 
     document.getElementById('btn-comer').addEventListener('click', () => {
-      realizarAccion('hambre', 30, 'Comer.mp4', '¡Qué rico! 🍽️');
+      realizarAccion('hambre', 30, 'Comer.mp4', '¡Qué rico! 🍽️', 4000);
     });
     document.getElementById('btn-dormir').addEventListener('click', () => {
-      realizarAccion('sueno', 30, 'Dormir.mp4', 'Zzz... 😴');
+      realizarAccion('sueno', 30, 'Dormir.mp4', 'Zzz... 😴', 15000);
     });
     document.getElementById('btn-jugar-mascota').addEventListener('click', () => {
-      realizarAccion('felicidad', 30, 'Jugar.mp4', '¡Qué divertido! 🎾');
+      realizarAccion('felicidad', 30, 'Jugar.mp4', '¡Qué divertido! 🎾', 5000);
     });
     document.getElementById('btn-saltar').addEventListener('click', () => {
-      realizarAccion('felicidad', 8, 'Saltar.mp4', '¡Wiii! 🦘');
+      realizarAccion('felicidad', 8, 'Saltar.mp4', '¡Wiii! 🦘', 2500);
     });
 
     if (db) {

@@ -69,6 +69,29 @@
       margin: 0 auto 22px;
       border: 1px solid var(--linea);
       background: var(--hueso);
+      mix-blend-mode: screen;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    #video-mascota.acariciando {
+      animation: rebote 0.35s ease;
+    }
+    @keyframes rebote {
+      0%, 100% { transform: scale(1); }
+      40% { transform: scale(1.05); }
+    }
+
+    .corazon-flotante {
+      position: fixed;
+      font-size: 22px;
+      pointer-events: none;
+      z-index: 500;
+      animation: corazonSubir 1s ease forwards;
+    }
+    @keyframes corazonSubir {
+      0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+      20% { transform: translate(-50%, -70%) scale(1.1); opacity: 1; }
+      100% { transform: translate(-50%, -160%) scale(0.9); opacity: 0; }
     }
 
     .necesidad {
@@ -268,6 +291,44 @@
         actualizado: firebase.firestore.FieldValue.serverTimestamp()
       });
     }
+
+    function crearCorazonFlotante(x, y) {
+      const corazon = document.createElement('div');
+      corazon.className = 'corazon-flotante';
+      corazon.textContent = ['🧡', '💛', '🥰'][Math.floor(Math.random() * 3)];
+      corazon.style.left = `${x + (Math.random() * 30 - 15)}px`;
+      corazon.style.top = `${y}px`;
+      document.body.appendChild(corazon);
+      setTimeout(() => corazon.remove(), 1000);
+    }
+
+    let ultimaCaricia = 0;
+    const ENFRIAMIENTO_CARICIA = 1200; // ms entre caricias que sí suman felicidad
+
+    video.addEventListener('click', (e) => {
+      const rect = video.getBoundingClientRect();
+      const x = e.clientX || (rect.left + rect.width / 2);
+      const y = e.clientY || (rect.top + rect.height / 2);
+      crearCorazonFlotante(x, y);
+
+      video.classList.remove('acariciando');
+      void video.offsetWidth;
+      video.classList.add('acariciando');
+
+      const ahora = Date.now();
+      if (ahora - ultimaCaricia < ENFRIAMIENTO_CARICIA) return;
+      ultimaCaricia = ahora;
+
+      if (!referenciaDoc) return;
+      estadoActual.felicidad = Math.min(MAX, estadoActual.felicidad + 4);
+      actualizarBarras(estadoActual);
+      mostrarMensaje('¡Le encanta que la acaricies! 🥰');
+
+      referenciaDoc.set({
+        felicidad: estadoActual.felicidad,
+        actualizado: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    });
 
     document.getElementById('btn-comer').addEventListener('click', () => {
       realizarAccion('hambre', 30, 'Comer.mp4', '¡Qué rico! 🍽️');

@@ -45,42 +45,6 @@
       display: block;
       margin-top: 6px;
     }
-    .carta {
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      overflow: hidden;
-    }
-    .carta-contenido {
-      padding: 12px;
-    }
-    #galeria-fotos img {
-      cursor: pointer;
-    }
-    #visor-foto {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-    #visor-foto img {
-      max-width: 90%;
-      max-height: 90%;
-    }
-    #cerrar-visor {
-      position: absolute;
-      top: 20px;
-      right: 25px;
-      color: white;
-      font-size: 30px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
@@ -162,28 +126,11 @@
           <input type="text" id="carta-titulo" placeholder="Título de la carta">
           <textarea id="carta-texto" placeholder="Escribe tu carta..."></textarea>
           <label>Color del texto: <input type="color" id="carta-color" value="#000000"></label>
-          <label>Color de fondo: <input type="color" id="carta-fondo" value="#ffffff"></label>
           <label>Tamaño de letra:
             <select id="carta-tamano">
               <option value="14px">Pequeño</option>
               <option value="18px" selected>Normal</option>
               <option value="24px">Grande</option>
-            </select>
-          </label>
-          <label>Tipo de letra:
-            <select id="carta-fuente">
-              <option value="Arial, sans-serif" selected>Normal</option>
-              <option value="Georgia, serif">Elegante</option>
-              <option value="'Courier New', monospace">Máquina de escribir</option>
-              <option value="'Brush Script MT', cursive">Manuscrita</option>
-              <option value="Verdana, sans-serif">Redondeada</option>
-            </select>
-          </label>
-          <label>Alineación:
-            <select id="carta-alineacion">
-              <option value="left" selected>Izquierda</option>
-              <option value="center">Centro</option>
-              <option value="right">Derecha</option>
             </select>
           </label>
           <label>Adjuntar fotos: <input type="file" id="carta-archivos" accept="image/*" multiple></label>
@@ -204,11 +151,6 @@
         <div id="galeria-fotos"></div>
 
         <button class="btn-volver">Volver</button>
-      </div>
-
-      <div id="visor-foto" hidden>
-        <span id="cerrar-visor">✕</span>
-        <img id="visor-foto-img" src="">
       </div>
 
       <div id="seccion-3" class="seccion" hidden>
@@ -250,13 +192,6 @@
 
     const cancionFondo = document.getElementById('cancion-fondo');
     cancionFondo.volume = 0.25;
-
-    // Identificador único de este dispositivo/navegador
-    let dispositivoId = localStorage.getItem('dispositivoId');
-    if (!dispositivoId) {
-      dispositivoId = 'dev-' + Date.now() + '-' + Math.random().toString(36).slice(2);
-      localStorage.setItem('dispositivoId', dispositivoId);
-    }
 
     // Si ya completó el cuestionario antes en este dispositivo, saltar directo al contenido
     if (localStorage.getItem('cuestionarioCompletado') === 'true') {
@@ -334,10 +269,7 @@
     const cartaTitulo = document.getElementById('carta-titulo');
     const cartaTexto = document.getElementById('carta-texto');
     const cartaColor = document.getElementById('carta-color');
-    const cartaFondo = document.getElementById('carta-fondo');
     const cartaTamano = document.getElementById('carta-tamano');
-    const cartaFuente = document.getElementById('carta-fuente');
-    const cartaAlineacion = document.getElementById('carta-alineacion');
     const cartaArchivos = document.getElementById('carta-archivos');
     const listaCartas = document.getElementById('lista-cartas');
 
@@ -347,10 +279,7 @@
       cartaTitulo.value = '';
       cartaTexto.value = '';
       cartaColor.value = '#000000';
-      cartaFondo.value = '#ffffff';
       cartaTamano.value = '18px';
-      cartaFuente.value = 'Arial, sans-serif';
-      cartaAlineacion.value = 'left';
       cartaArchivos.value = '';
       cartaEditandoId = null;
     }
@@ -387,10 +316,7 @@
               titulo: cartaTitulo.value || 'Sin título',
               texto: cartaTexto.value,
               color: cartaColor.value,
-              fondo: cartaFondo.value,
               tamano: cartaTamano.value,
-              fuente: cartaFuente.value,
-              alineacion: cartaAlineacion.value,
               imagenes: imagenesActuales.concat(imagenesNuevas)
             });
           }).then(() => {
@@ -403,12 +329,8 @@
             titulo: cartaTitulo.value || 'Sin título',
             texto: cartaTexto.value,
             color: cartaColor.value,
-            fondo: cartaFondo.value,
             tamano: cartaTamano.value,
-            fuente: cartaFuente.value,
-            alineacion: cartaAlineacion.value,
             imagenes: imagenesNuevas,
-            autor: dispositivoId,
             creado: firebase.firestore.FieldValue.serverTimestamp()
           }).then(() => {
             formCarta.hidden = true;
@@ -430,13 +352,9 @@
         btnAbrir.textContent = `💌 ${carta.titulo}`;
 
         const contenido = document.createElement('div');
-        contenido.className = 'carta-contenido';
         contenido.hidden = true;
         contenido.style.color = carta.color;
-        contenido.style.backgroundColor = carta.fondo || '#ffffff';
         contenido.style.fontSize = carta.tamano;
-        contenido.style.fontFamily = carta.fuente || 'Arial, sans-serif';
-        contenido.style.textAlign = carta.alineacion || 'left';
 
         const parrafo = document.createElement('p');
         parrafo.textContent = carta.texto;
@@ -449,31 +367,25 @@
           contenido.appendChild(img);
         });
 
-        // Solo el dispositivo que creó la carta puede editarla o eliminarla
-        if (carta.autor === dispositivoId) {
-          const btnEditar = document.createElement('button');
-          btnEditar.textContent = 'Editar';
-          btnEditar.addEventListener('click', () => {
-            cartaEditandoId = carta.id;
-            cartaTitulo.value = carta.titulo;
-            cartaTexto.value = carta.texto;
-            cartaColor.value = carta.color;
-            cartaFondo.value = carta.fondo || '#ffffff';
-            cartaTamano.value = carta.tamano;
-            cartaFuente.value = carta.fuente || 'Arial, sans-serif';
-            cartaAlineacion.value = carta.alineacion || 'left';
-            formCarta.hidden = false;
-          });
+        const btnEditar = document.createElement('button');
+        btnEditar.textContent = 'Editar';
+        btnEditar.addEventListener('click', () => {
+          cartaEditandoId = carta.id;
+          cartaTitulo.value = carta.titulo;
+          cartaTexto.value = carta.texto;
+          cartaColor.value = carta.color;
+          cartaTamano.value = carta.tamano;
+          formCarta.hidden = false;
+        });
 
-          const btnEliminar = document.createElement('button');
-          btnEliminar.textContent = 'Eliminar';
-          btnEliminar.addEventListener('click', () => {
-            db.collection('cartas').doc(carta.id).delete();
-          });
+        const btnEliminar = document.createElement('button');
+        btnEliminar.textContent = 'Eliminar';
+        btnEliminar.addEventListener('click', () => {
+          db.collection('cartas').doc(carta.id).delete();
+        });
 
-          contenido.appendChild(btnEditar);
-          contenido.appendChild(btnEliminar);
-        }
+        contenido.appendChild(btnEditar);
+        contenido.appendChild(btnEliminar);
 
         btnAbrir.addEventListener('click', () => {
           contenido.hidden = !contenido.hidden;
@@ -494,9 +406,6 @@
     const btnNuevaFoto = document.getElementById('btn-nueva-foto');
     const inputFotos = document.getElementById('input-fotos');
     const galeriaFotos = document.getElementById('galeria-fotos');
-    const visorFoto = document.getElementById('visor-foto');
-    const visorFotoImg = document.getElementById('visor-foto-img');
-    const cerrarVisor = document.getElementById('cerrar-visor');
 
     btnNuevaFoto.addEventListener('click', () => inputFotos.click());
 
@@ -505,7 +414,6 @@
         nuevasFotos.forEach(src => {
           db.collection('fotos').add({
             src,
-            autor: dispositivoId,
             creado: firebase.firestore.FieldValue.serverTimestamp()
           });
         });
@@ -522,34 +430,18 @@
 
         const img = document.createElement('img');
         img.src = foto.src;
-        img.addEventListener('click', () => {
-          visorFotoImg.src = foto.src;
-          visorFoto.hidden = false;
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.textContent = '✕';
+        btnEliminar.addEventListener('click', () => {
+          db.collection('fotos').doc(foto.id).delete();
         });
 
         item.appendChild(img);
-
-        // Solo el dispositivo que subió la foto puede eliminarla
-        if (foto.autor === dispositivoId) {
-          const btnEliminar = document.createElement('button');
-          btnEliminar.textContent = '✕';
-          btnEliminar.addEventListener('click', () => {
-            db.collection('fotos').doc(foto.id).delete();
-          });
-          item.appendChild(btnEliminar);
-        }
-
+        item.appendChild(btnEliminar);
         galeriaFotos.appendChild(item);
       });
     }
-
-    cerrarVisor.addEventListener('click', () => {
-      visorFoto.hidden = true;
-    });
-
-    visorFoto.addEventListener('click', (e) => {
-      if (e.target === visorFoto) visorFoto.hidden = true;
-    });
 
     db.collection('fotos').orderBy('creado').onSnapshot(snapshot => {
       const fotos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

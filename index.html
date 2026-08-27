@@ -9,6 +9,8 @@
 
   <div class="contenedor">
 
+    <audio id="cancion-fondo" src="MC%2520Bruninho%2520e%2520Vitinho%2520Ferrari%2520-%2520Sou%2520Favela%2520(GR6%2520Filmes)%2520DJ%2520DG%2520e%2520Batida%25CC%2583o%2520Stronda.mp3" loop></audio>
+
     <!-- Pantalla 1: mensaje inicial -->
     <section id="mensaje-inicial">
       <p>Holaa pequee, espero que te guste esto que hice para ti :) Pero antes... tienes que responder bien estas 5 preguntitas para poder abrirlo.</p>
@@ -58,9 +60,36 @@
 
     </section>
 
-    <!-- Pantalla 3: contenido desbloqueado (aquí seguimos añadiendo cosas después) -->
+    <!-- Pantalla 3: página principal con 4 opciones -->
     <section id="contenido" hidden>
-      <p>¡Lo lograste! Aquí va el resto de la sorpresa...</p>
+
+      <div id="menu-principal">
+        <button class="btn-opcion" data-target="seccion-1">Opción 1</button>
+        <button class="btn-opcion" data-target="seccion-2">Opción 2</button>
+        <button class="btn-opcion" data-target="seccion-3">Opción 3</button>
+        <button class="btn-opcion" data-target="seccion-4">Opción 4</button>
+      </div>
+
+      <div id="seccion-1" class="seccion" hidden>
+        <p>Contenido de la Opción 1</p>
+        <button class="btn-volver">Volver</button>
+      </div>
+
+      <div id="seccion-2" class="seccion" hidden>
+        <p>Contenido de la Opción 2</p>
+        <button class="btn-volver">Volver</button>
+      </div>
+
+      <div id="seccion-3" class="seccion" hidden>
+        <p>Contenido de la Opción 3</p>
+        <button class="btn-volver">Volver</button>
+      </div>
+
+      <div id="seccion-4" class="seccion" hidden>
+        <p>Contenido de la Opción 4</p>
+        <button class="btn-volver">Volver</button>
+      </div>
+
     </section>
 
   </div>
@@ -73,9 +102,12 @@
     const btnEnviar = document.getElementById('btn-enviar');
     const mensajeError = document.getElementById('mensaje-error');
 
+    const cancionFondo = document.getElementById('cancion-fondo');
+
     btnComenzar.addEventListener('click', () => {
       mensajeInicial.hidden = true;
       cuestionario.hidden = false;
+      cancionFondo.play();
     });
 
     btnEnviar.addEventListener('click', () => {
@@ -98,6 +130,26 @@
       } else {
         mensajeError.hidden = false;
       }
+    });
+
+    // Navegación del menú principal (4 opciones)
+    const menuPrincipal = document.getElementById('menu-principal');
+    const botonesOpcion = document.querySelectorAll('.btn-opcion');
+    const botonesVolver = document.querySelectorAll('.btn-volver');
+
+    botonesOpcion.forEach(boton => {
+      boton.addEventListener('click', () => {
+        const destino = document.getElementById(boton.dataset.target);
+        menuPrincipal.hidden = true;
+        destino.hidden = false;
+      });
+    });
+
+    botonesVolver.forEach(boton => {
+      boton.addEventListener('click', () => {
+        boton.closest('.seccion').hidden = true;
+        menuPrincipal.hidden = false;
+      });
     });
   </script>
 

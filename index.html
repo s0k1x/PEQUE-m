@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Nuestro Corazón</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -612,6 +612,106 @@
       color: var(--gris);
     }
 
+    /* Citas */
+    #form-cita {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--linea);
+    }
+    #form-cita[hidden] { display: none; }
+    #form-cita label {
+      display: block;
+      font-size: 10.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gris);
+    }
+    #form-cita input[type="text"],
+    #form-cita input[type="date"],
+    #form-cita textarea,
+    #form-cita input[type="file"] {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid var(--linea);
+      padding: 8px 0;
+      margin-top: 4px;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      background: transparent;
+      color: var(--tinta);
+    }
+    #form-cita textarea { min-height: 80px; resize: vertical; }
+
+    .cita {
+      border-bottom: 1px solid var(--linea);
+      padding: 15px 0;
+    }
+    .cita-titulo-btn {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--tinta);
+      padding: 0;
+      cursor: pointer;
+    }
+    .cita-fecha {
+      font-family: 'Work Sans', sans-serif;
+      font-style: normal;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      color: var(--naranja);
+      text-transform: uppercase;
+    }
+    .cita-flecha {
+      margin-left: auto;
+      color: var(--naranja);
+      font-size: 13px;
+      font-style: normal;
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+    .cita.abierta .cita-flecha { transform: rotate(90deg); }
+    .cita-contenido {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      line-height: 1.7;
+      color: #4a3f36;
+      transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.4s ease;
+    }
+    .cita.abierta .cita-contenido {
+      max-height: 3000px;
+      opacity: 1;
+      margin-top: 14px;
+    }
+    .cita-acciones { margin-top: 14px; }
+    .galeria-cita {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .galeria-cita img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border: 1px solid var(--linea);
+      cursor: pointer;
+    }
+
     /* Mascota */
     #mascota-widget {
       max-width: 420px;
@@ -769,6 +869,7 @@
         <button class="btn-opcion" data-target="seccion-2">Fotos y Videos</button>
         <button class="btn-opcion" data-target="seccion-3" id="btn-sorpresa">🎁 Sorpresa</button>
         <button class="btn-opcion" data-target="seccion-4">💫 Metas</button>
+        <button class="btn-opcion" data-target="seccion-5">💕 Citas</button>
       </div>
 
       <div id="seccion-1" class="seccion" hidden>
@@ -843,6 +944,30 @@
           <button id="btn-agregar-meta">➕ Añadir</button>
         </div>
         <ul id="lista-metas"></ul>
+        <button class="btn-volver">Volver</button>
+      </div>
+
+      <div id="seccion-5" class="seccion" hidden>
+        <h2>Citas 💕</h2>
+        <button id="btn-nueva-cita">➕ Añadir cita</button>
+
+        <div id="form-cita" hidden>
+          <label>Título
+            <input type="text" id="cita-titulo" placeholder="Título de la cita">
+          </label>
+          <label>Fecha
+            <input type="date" id="cita-fecha">
+          </label>
+          <label>¿Cómo fue?
+            <textarea id="cita-descripcion" placeholder="Cuéntame cómo fue esta cita..."></textarea>
+          </label>
+          <label>Fotos: <input type="file" id="cita-archivos" accept="image/*" multiple></label>
+          <button id="btn-guardar-cita">Guardar cita</button>
+          <button id="btn-cancelar-cita">Cancelar</button>
+        </div>
+
+        <div id="lista-citas"></div>
+
         <button class="btn-volver">Volver</button>
       </div>
 
@@ -1664,6 +1789,154 @@
       db.collection('metas').orderBy('creado').onSnapshot(snapshot => {
         const metas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderizarMetas(metas);
+      });
+    }
+
+    // ---------- Citas ----------
+    const btnNuevaCita = document.getElementById('btn-nueva-cita');
+    const formCita = document.getElementById('form-cita');
+    const btnGuardarCita = document.getElementById('btn-guardar-cita');
+    const btnCancelarCita = document.getElementById('btn-cancelar-cita');
+    const citaTitulo = document.getElementById('cita-titulo');
+    const citaFecha = document.getElementById('cita-fecha');
+    const citaDescripcion = document.getElementById('cita-descripcion');
+    const citaArchivos = document.getElementById('cita-archivos');
+    const listaCitas = document.getElementById('lista-citas');
+
+    let citaEditandoId = null;
+
+    function limpiarFormCita() {
+      citaTitulo.value = '';
+      citaFecha.value = '';
+      citaDescripcion.value = '';
+      citaArchivos.value = '';
+      citaEditandoId = null;
+    }
+
+    btnNuevaCita.addEventListener('click', () => {
+      limpiarFormCita();
+      formCita.hidden = false;
+    });
+
+    btnCancelarCita.addEventListener('click', () => {
+      formCita.hidden = true;
+      limpiarFormCita();
+    });
+
+    // Convierte "YYYY-MM-DD" en algo legible, ej: "11 abr 2026"
+    function formatearFechaCita(fechaStr) {
+      if (!fechaStr) return '';
+      const fecha = new Date(fechaStr + 'T00:00:00');
+      return fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    btnGuardarCita.addEventListener('click', () => {
+      if (!db) {
+        alert('No se pudo conectar con la base de datos. Revisa tu conexión e inténtalo de nuevo.');
+        return;
+      }
+      btnGuardarCita.disabled = true;
+      leerArchivosComoBase64(citaArchivos.files).then(imagenesNuevas => {
+        if (citaEditandoId) {
+          const ref = db.collection('citas').doc(citaEditandoId);
+          ref.get().then(doc => {
+            const imagenesActuales = doc.data().imagenes || [];
+            return ref.update({
+              titulo: citaTitulo.value || 'Sin título',
+              fecha: citaFecha.value,
+              descripcion: citaDescripcion.value,
+              imagenes: imagenesActuales.concat(imagenesNuevas)
+            });
+          }).then(() => {
+            formCita.hidden = true;
+            limpiarFormCita();
+            btnGuardarCita.disabled = false;
+          });
+        } else {
+          db.collection('citas').add({
+            titulo: citaTitulo.value || 'Sin título',
+            fecha: citaFecha.value,
+            descripcion: citaDescripcion.value,
+            imagenes: imagenesNuevas,
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          }).then(() => {
+            formCita.hidden = true;
+            limpiarFormCita();
+            btnGuardarCita.disabled = false;
+          });
+        }
+      });
+    });
+
+    function renderizarCitas(citas) {
+      listaCitas.innerHTML = '';
+
+      citas.forEach(cita => {
+        const contenedor = document.createElement('div');
+        contenedor.className = 'cita';
+
+        const btnAbrir = document.createElement('button');
+        btnAbrir.className = 'cita-titulo-btn';
+        btnAbrir.innerHTML = `<span>💕 ${cita.titulo}</span><span class="cita-fecha">${formatearFechaCita(cita.fecha)}</span><span class="cita-flecha">▸</span>`;
+
+        const contenido = document.createElement('div');
+        contenido.className = 'cita-contenido';
+
+        const parrafo = document.createElement('p');
+        parrafo.textContent = cita.descripcion;
+        contenido.appendChild(parrafo);
+
+        if ((cita.imagenes || []).length > 0) {
+          const galeria = document.createElement('div');
+          galeria.className = 'galeria-cita';
+          cita.imagenes.forEach(src => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.addEventListener('click', () => abrirVisorMedia(src, formatearFechaCita(cita.fecha)));
+            galeria.appendChild(img);
+          });
+          contenido.appendChild(galeria);
+        }
+
+        const acciones = document.createElement('div');
+        acciones.className = 'cita-acciones';
+
+        const btnEditar = document.createElement('button');
+        btnEditar.className = 'btn-mini';
+        btnEditar.textContent = 'Editar';
+        btnEditar.addEventListener('click', () => {
+          citaEditandoId = cita.id;
+          citaTitulo.value = cita.titulo;
+          citaFecha.value = cita.fecha;
+          citaDescripcion.value = cita.descripcion;
+          formCita.hidden = false;
+        });
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.className = 'btn-mini eliminar';
+        btnEliminar.textContent = 'Eliminar';
+        btnEliminar.addEventListener('click', () => {
+          db.collection('citas').doc(cita.id).delete();
+        });
+
+        acciones.appendChild(btnEditar);
+        acciones.appendChild(btnEliminar);
+        contenido.appendChild(acciones);
+
+        btnAbrir.addEventListener('click', () => {
+          contenedor.classList.toggle('abierta');
+        });
+
+        contenedor.appendChild(btnAbrir);
+        contenedor.appendChild(contenido);
+        listaCitas.appendChild(contenedor);
+      });
+    }
+
+    if (db) {
+      db.collection('citas').orderBy('fecha', 'desc').onSnapshot(snapshot => {
+        const citas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderizarCitas(citas);
       });
     }
 

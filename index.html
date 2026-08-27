@@ -616,35 +616,75 @@
     #mascota-widget {
       max-width: 420px;
       margin: 28px auto 0;
-      text-align: center;
       position: relative;
       z-index: 1;
     }
+    .mascota-fila {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
     #mascota-img {
-      width: 90px;
-      height: 90px;
+      width: 145px;
+      height: 145px;
       object-fit: contain;
+      flex-shrink: 0;
+    }
+    .mascota-derecha {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .bocadillo {
+      position: relative;
+      background: var(--blanco);
+      border: 1px solid var(--linea);
+      padding: 14px 16px;
+    }
+    .bocadillo::before {
+      content: '';
+      position: absolute;
+      left: -9px;
+      top: 18px;
+      width: 16px;
+      height: 16px;
+      background: var(--blanco);
+      border-left: 1px solid var(--linea);
+      border-bottom: 1px solid var(--linea);
+      transform: rotate(45deg);
     }
     #mascota-frase {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
-      font-size: 15px;
+      font-size: 14.5px;
       color: var(--tinta);
-      margin: 8px 0 14px;
+      margin: 0;
+      line-height: 1.4;
       min-height: 20px;
     }
     .btn-jugar {
       display: inline-block;
+      align-self: flex-start;
       background: var(--naranja);
       color: var(--blanco);
       text-decoration: none;
-      padding: 10px 26px;
+      padding: 8px 18px;
       font-family: 'Work Sans', sans-serif;
       font-weight: 500;
-      font-size: 12px;
-      letter-spacing: 2px;
+      font-size: 10.5px;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
     }
+    .btn-opcion.bloqueada { cursor: default; }
+    .btn-opcion.bloqueada:active { transform: none; }
+    @keyframes agitar {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+    .btn-opcion.agitando { animation: agitar 0.3s ease; }
   </style>
 </head>
 <body>
@@ -809,9 +849,15 @@
   </div>
 
   <div id="mascota-widget" hidden>
-    <img src="MENU.png" alt="mascota" id="mascota-img">
-    <p id="mascota-frase"></p>
-    <a href="pou.html" class="btn-jugar">Jugar</a>
+    <div class="mascota-fila">
+      <img src="MENU.png" alt="mascota" id="mascota-img">
+      <div class="mascota-derecha">
+        <div class="bocadillo">
+          <p id="mascota-frase"></p>
+        </div>
+        <a href="pou.html" class="btn-jugar">Jugar</a>
+      </div>
+    </div>
   </div>
 
   <!-- Firebase -->

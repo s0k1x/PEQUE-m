@@ -129,26 +129,44 @@
     .barra-relleno.baja { background: var(--rojo); }
 
     .acciones {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      display: flex;
+      justify-content: space-between;
       margin-top: 24px;
     }
     .btn-accion {
-      background: var(--hueso);
-      border: 1px solid var(--linea);
+      background: none;
+      border: none;
       color: var(--tinta);
-      padding: 12px 4px;
-      font-family: 'Work Sans', sans-serif;
-      font-weight: 500;
-      font-size: 10.5px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
       cursor: pointer;
       text-align: center;
+      padding: 0;
     }
-    .btn-accion:active { background: var(--naranja-suave); }
-    .btn-accion .icono { display: block; font-size: 18px; margin-bottom: 4px; }
+    .btn-accion .icono {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 1.5px solid var(--naranja);
+      background: var(--naranja-suave);
+      font-size: 22px;
+      margin: 0 auto 8px;
+      font-style: normal;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .btn-accion:active .icono {
+      transform: scale(0.94);
+    }
+    .btn-accion span.etiqueta-accion {
+      display: block;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gris);
+    }
 
     #mensaje-mascota {
       text-align: center;
@@ -183,10 +201,10 @@
     </div>
 
     <div class="acciones">
-      <button class="btn-accion" id="btn-comer"><span class="icono">🍽️</span>Comer</button>
-      <button class="btn-accion" id="btn-dormir"><span class="icono">😴</span>Dormir</button>
-      <button class="btn-accion" id="btn-jugar-mascota"><span class="icono">🎾</span>Jugar</button>
-      <button class="btn-accion" id="btn-saltar"><span class="icono">🦘</span>Saltar</button>
+      <button class="btn-accion" id="btn-comer"><span class="icono">🍽️</span><span class="etiqueta-accion">Comer</span></button>
+      <button class="btn-accion" id="btn-dormir"><span class="icono">😴</span><span class="etiqueta-accion">Dormir</span></button>
+      <button class="btn-accion" id="btn-jugar-mascota"><span class="icono">🎾</span><span class="etiqueta-accion">Jugar</span></button>
+      <button class="btn-accion" id="btn-saltar"><span class="icono">🦘</span><span class="etiqueta-accion">Saltar</span></button>
     </div>
 
     <p id="mensaje-mascota"></p>

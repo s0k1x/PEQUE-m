@@ -103,6 +103,7 @@
     const mensajeError = document.getElementById('mensaje-error');
 
     const cancionFondo = document.getElementById('cancion-fondo');
+    cancionFondo.volume = 0.25;
 
     // Si ya completó el cuestionario antes en este dispositivo, saltar directo al contenido
     if (localStorage.getItem('cuestionarioCompletado') === 'true') {

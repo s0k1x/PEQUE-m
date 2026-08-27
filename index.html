@@ -148,6 +148,14 @@
 
     </section>
 
+    <!-- Pantalla 2.5: contraseña para entrar al menú -->
+    <section id="pantalla-clave" hidden>
+      <p>Escribe la contraseña para entrar</p>
+      <input type="password" id="input-clave" placeholder="Contraseña">
+      <button id="btn-entrar-clave">Entrar</button>
+      <p id="mensaje-error-clave" hidden>Contraseña incorrecta, intenta de nuevo</p>
+    </section>
+
     <!-- Pantalla 3: página principal con 4 opciones -->
     <section id="contenido" hidden>
 
@@ -259,6 +267,24 @@
     const contenido = document.getElementById('contenido');
     const mensajeError = document.getElementById('mensaje-error');
 
+    // Pantalla de contraseña para entrar al menú (se pide siempre, cada vez)
+    const pantallaClave = document.getElementById('pantalla-clave');
+    const inputClave = document.getElementById('input-clave');
+    const btnEntrarClave = document.getElementById('btn-entrar-clave');
+    const mensajeErrorClave = document.getElementById('mensaje-error-clave');
+    const CONTRASENA_MENU = 'Peque2';
+
+    btnEntrarClave.addEventListener('click', () => {
+      if (inputClave.value === CONTRASENA_MENU) {
+        mensajeErrorClave.hidden = true;
+        inputClave.value = '';
+        pantallaClave.hidden = true;
+        contenido.hidden = false;
+      } else {
+        mensajeErrorClave.hidden = false;
+      }
+    });
+
     // Navegación del menú principal (4 opciones) — va primero para que funcione
     // siempre, incluso si algo falla más abajo con Firebase
     const menuPrincipal = document.getElementById('menu-principal');
@@ -311,11 +337,11 @@
     const cancionFondo = document.getElementById('cancion-fondo');
     cancionFondo.volume = 0.25;
 
-    // Si ya completó el cuestionario antes en este dispositivo, saltar directo al contenido
+    // Si ya completó el cuestionario antes en este dispositivo, saltar directo a la contraseña
     if (localStorage.getItem('cuestionarioCompletado') === 'true') {
       mensajeInicial.hidden = true;
       cuestionario.hidden = true;
-      contenido.hidden = false;
+      pantallaClave.hidden = false;
       cancionFondo.play();
     }
 
@@ -365,7 +391,7 @@
         } else {
           barraProgreso.style.width = '100%';
           cuestionario.hidden = true;
-          contenido.hidden = false;
+          pantallaClave.hidden = false;
           localStorage.setItem('cuestionarioCompletado', 'true');
         }
       } else {

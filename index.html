@@ -666,7 +666,7 @@
     }
     .btn-jugar {
       display: inline-block;
-      align-self: flex-start;
+      align-self: center;
       background: var(--naranja);
       color: var(--blanco);
       text-decoration: none;
@@ -850,7 +850,7 @@
 
   <div id="mascota-widget" hidden>
     <div class="mascota-fila">
-      <img src="MENU.png" alt="mascota" id="mascota-img">
+      <img src="MENU.PNG" alt="mascota" id="mascota-img">
       <div class="mascota-derecha">
         <div class="bocadillo">
           <p id="mascota-frase"></p>
@@ -916,6 +916,12 @@
 
     botonesOpcion.forEach(boton => {
       boton.addEventListener('click', () => {
+        if (boton.id === 'btn-sorpresa' && new Date() < fechaDesbloqueo) {
+          boton.classList.remove('agitando');
+          void boton.offsetWidth; // reinicia la animación si se toca varias veces seguidas
+          boton.classList.add('agitando');
+          return;
+        }
         const destino = document.getElementById(boton.dataset.target);
         menuPrincipal.hidden = true;
         destino.hidden = false;

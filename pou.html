@@ -52,6 +52,22 @@
       text-decoration: none;
       margin-bottom: 18px;
     }
+    #btn-notificaciones {
+      display: inline-block;
+      float: right;
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      font-size: 10.5px;
+      letter-spacing: 0.5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      margin-bottom: 18px;
+    }
+    #btn-notificaciones.activo {
+      border-color: var(--naranja);
+      color: var(--naranja);
+    }
     h1 {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
@@ -406,6 +422,7 @@
 
   <div class="contenedor">
     <a href="index.html" class="volver-link">‹ Volver</a>
+    <button id="btn-notificaciones" type="button">🔔 Activar avisos</button>
 
     <div id="nombre-fila">
       <h1 id="texto-nombre">Tu mascota</h1>
@@ -881,6 +898,58 @@
     document.getElementById('btn-saltar').addEventListener('click', () => {
       realizarAccion({ felicidad: 10, sueno: -3 }, 'Saltar.mp4?v=2', '¡Wiii! 🦘', 2500, 'saltar');
     });
+
+    // ---------- Notificaciones push ----------
+    const VAPID_PUBLIC_KEY = 'BOXRvDCyRFSZIvHdJk2z2auDIU75W7nrhx_SUgXu6OKrSpJXlMkHMokKsUfyEUgU-HAH9pn8C6jJYIJ16bkvQDc';
+    const btnNotificaciones = document.getElementById('btn-notificaciones');
+
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+      const rawData = atob(base64);
+      return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+    }
+
+    async function activarNotificaciones() {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        mostrarMensaje('Tu navegador no soporta notificaciones aquí.');
+        return;
+      }
+      try {
+        const permiso = await Notification.requestPermission();
+        if (permiso !== 'granted') {
+          mostrarMensaje('No diste permiso para las notificaciones.');
+          return;
+        }
+        const registro = await navigator.serviceWorker.register('sw.js');
+        const suscripcion = await registro.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        });
+
+        if (db) {
+          await db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({
+            suscripcion: suscripcion.toJSON(),
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+
+        btnNotificaciones.textContent = '🔔 Avisos activados';
+        btnNotificaciones.classList.add('activo');
+        mostrarMensaje('¡Listo! Ya te avisaremos si necesita algo 🔔');
+      } catch (err) {
+        console.error(err);
+        mostrarMensaje('No se pudo activar. Inténtalo de nuevo.');
+      }
+    }
+
+    btnNotificaciones.addEventListener('click', activarNotificaciones);
+
+    // Si el navegador ya tiene permiso concedido, refleja el botón como activo
+    if ('Notification' in window && Notification.permission === 'granted') {
+      btnNotificaciones.textContent = '🔔 Avisos activados';
+      btnNotificaciones.classList.add('activo');
+    }
 
     if (db) {
       referenciaDoc = db.collection('mascota').doc('estado');

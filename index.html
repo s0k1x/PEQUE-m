@@ -190,6 +190,27 @@
     const contenido = document.getElementById('contenido');
     const mensajeError = document.getElementById('mensaje-error');
 
+    // Navegación del menú principal (4 opciones) — va primero para que funcione
+    // siempre, incluso si algo falla más abajo con Firebase
+    const menuPrincipal = document.getElementById('menu-principal');
+    const botonesOpcion = document.querySelectorAll('.btn-opcion');
+    const botonesVolver = document.querySelectorAll('.btn-volver');
+
+    botonesOpcion.forEach(boton => {
+      boton.addEventListener('click', () => {
+        const destino = document.getElementById(boton.dataset.target);
+        menuPrincipal.hidden = true;
+        destino.hidden = false;
+      });
+    });
+
+    botonesVolver.forEach(boton => {
+      boton.addEventListener('click', () => {
+        boton.closest('.seccion').hidden = true;
+        menuPrincipal.hidden = false;
+      });
+    });
+
     const cancionFondo = document.getElementById('cancion-fondo');
     cancionFondo.volume = 0.25;
 
@@ -446,26 +467,6 @@
     db.collection('fotos').orderBy('creado').onSnapshot(snapshot => {
       const fotos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       renderizarFotos(fotos);
-    });
-
-    // Navegación del menú principal (4 opciones)
-    const menuPrincipal = document.getElementById('menu-principal');
-    const botonesOpcion = document.querySelectorAll('.btn-opcion');
-    const botonesVolver = document.querySelectorAll('.btn-volver');
-
-    botonesOpcion.forEach(boton => {
-      boton.addEventListener('click', () => {
-        const destino = document.getElementById(boton.dataset.target);
-        menuPrincipal.hidden = true;
-        destino.hidden = false;
-      });
-    });
-
-    botonesVolver.forEach(boton => {
-      boton.addEventListener('click', () => {
-        boton.closest('.seccion').hidden = true;
-        menuPrincipal.hidden = false;
-      });
     });
   </script>
 

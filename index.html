@@ -27,6 +27,40 @@
       color: var(--tinta);
       padding: 28px 16px 60px;
       min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .mancha-fondo {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .mancha-fondo.a {
+      width: 300px; height: 300px;
+      background: var(--naranja-suave);
+      top: -60px; right: -90px;
+      animation: flotarA 22s ease-in-out infinite;
+    }
+    .mancha-fondo.b {
+      width: 240px; height: 240px;
+      background: #ffe9d6;
+      bottom: 8%; left: -90px;
+      animation: flotarB 26s ease-in-out infinite;
+    }
+    @keyframes flotarA {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-25px, 35px) scale(1.08); }
+    }
+    @keyframes flotarB {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, -25px) scale(1.06); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mancha-fondo { animation: none; }
     }
 
     .contenedor {
@@ -36,6 +70,7 @@
       border: 1px solid var(--linea);
       padding: 38px 26px;
       position: relative;
+      z-index: 1;
       box-shadow: 0 1px 2px rgba(38,34,32,0.04);
     }
     .contenedor::before {
@@ -454,17 +489,22 @@
       gap: 12px;
       z-index: 999;
       padding: 24px;
-      opacity: 0;
-      animation: visorFade 0.25s ease forwards;
+      opacity: 1;
+      transition: opacity 0.25s ease;
     }
     #visor-media[hidden] { display: none; }
+    #visor-media.entrando { opacity: 0; }
     #visor-media img {
       max-width: 100%;
       max-height: 78vh;
       box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      transform: scale(1);
+      opacity: 1;
+      transition: transform 0.3s cubic-bezier(.2,.8,.2,1), opacity 0.3s ease;
+    }
+    #visor-media.entrando img {
       transform: scale(0.94);
       opacity: 0;
-      animation: visorZoom 0.3s cubic-bezier(.2,.8,.2,1) forwards;
     }
     #cerrar-visor-media {
       position: fixed;
@@ -483,8 +523,6 @@
       letter-spacing: 1px;
       text-transform: uppercase;
     }
-    @keyframes visorFade { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes visorZoom { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
     .sticker-doble-toque {
       position: fixed;
@@ -576,6 +614,9 @@
   </style>
 </head>
 <body>
+
+  <div class="mancha-fondo a"></div>
+  <div class="mancha-fondo b"></div>
 
   <div class="contenedor">
 
@@ -774,7 +815,6 @@
         inputClave.value = '';
         pantallaClave.hidden = true;
         contenido.hidden = false;
-        if (cancionFondo.paused) cancionFondo.play();
       } else {
         mensajeErrorClave.hidden = false;
       }
@@ -841,7 +881,6 @@
       mensajeInicial.hidden = true;
       cuestionario.hidden = true;
       pantallaClave.hidden = false;
-      cancionFondo.play();
     }
 
     btnComenzar.addEventListener('click', () => {
@@ -1360,7 +1399,11 @@
     function abrirVisorMedia(src, fecha) {
       visorMediaImg.src = src;
       visorMediaFecha.textContent = fecha;
+      visorMedia.classList.add('entrando');
       visorMedia.hidden = false;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => visorMedia.classList.remove('entrando'));
+      });
     }
 
     cerrarVisorMedia.addEventListener('click', () => { visorMedia.hidden = true; });

@@ -4,86 +4,473 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nuestro Corazón</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    #barra-progreso-contenedor {
+    :root {
+      --blanco: #ffffff;
+      --hueso: #fbf8f4;
+      --marfil: #f4ede3;
+      --tinta: #262220;
+      --gris: #948c82;
+      --naranja: #e8703a;
+      --naranja-suave: #f6ddc9;
+      --linea: #ece4d8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(ellipse at top, #fffdfb 0%, var(--hueso) 60%);
+      font-family: 'Work Sans', sans-serif;
+      color: var(--tinta);
+      padding: 28px 16px 60px;
+      min-height: 100vh;
+    }
+
+    .contenedor {
+      max-width: 420px;
+      margin: 0 auto;
+      background: var(--blanco);
+      border: 1px solid var(--linea);
+      padding: 38px 26px;
+      position: relative;
+      box-shadow: 0 1px 2px rgba(38,34,32,0.04);
+    }
+    .contenedor::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 26px; right: 26px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--naranja-suave), transparent);
+    }
+
+    section { animation: aparecer 0.5s ease; }
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 26px;
+      color: var(--tinta);
+      margin: 0 0 22px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--linea);
+    }
+    h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--naranja);
+      margin: 22px 0 12px;
+    }
+
+    #mensaje-inicial > p:first-of-type {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--tinta);
+      margin: 0 0 28px;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--gris);
+    }
+
+    /* Botones */
+    button {
+      font-family: 'Work Sans', sans-serif;
+      cursor: pointer;
+    }
+
+    #btn-comenzar, #btn-siguiente, #btn-entrar-clave,
+    #btn-guardar-carta, #btn-subir-multimedia, #btn-agregar-meta {
+      display: block;
       width: 100%;
-      height: 8px;
-      background: #eee;
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      padding: 15px 20px;
+      font-weight: 500;
+      font-size: 12.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+
+    #btn-cancelar-carta, #btn-cancelar-multimedia {
+      display: block;
+      width: 100%;
+      background: transparent;
+      color: var(--gris);
+      border: 1px solid var(--linea);
+      padding: 14px 20px;
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+
+    #btn-nueva-carta, #btn-nueva-foto {
+      display: inline-block;
+      background: none;
+      border: none;
+      color: var(--naranja);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--naranja);
+      padding: 0 0 3px;
+      margin-bottom: 22px;
+    }
+
+    .btn-volver {
+      display: block;
+      background: none;
+      border: none;
+      color: var(--gris);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 0;
+      margin-top: 24px;
+    }
+
+    .btn-mini {
+      background: none;
+      border: none;
+      font-size: 10.5px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gris);
+      padding: 0;
+      margin-right: 16px;
+    }
+    .btn-mini.eliminar { color: #c96a4e; }
+
+    .btn-x {
+      background: rgba(255,255,255,0.9);
+      border: none;
+      color: var(--tinta);
+      width: 22px; height: 22px;
+      font-size: 12px;
+      line-height: 1;
+      border-radius: 50%;
+    }
+
+    /* Cuestionario */
+    #barra-progreso-contenedor {
+      height: 1px;
+      background: var(--linea);
+      margin-bottom: 8px;
+      overflow: visible;
     }
     #barra-progreso {
-      height: 100%;
-      width: 0%;
-      background: gray;
+      height: 2px;
+      margin-top: -0.5px;
+      background: var(--naranja);
       transition: width 0.3s;
     }
-    #galeria-fotos {
+    #texto-progreso {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 14px;
+      color: var(--naranja);
+      font-weight: 600;
+      margin: 0 0 20px;
+    }
+
+    .pregunta p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--tinta);
+      margin: 0 0 18px;
+    }
+    .pregunta label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--linea);
+      font-size: 14px;
+    }
+    .pregunta input[type="radio"] {
+      accent-color: var(--naranja);
+      width: 15px; height: 15px;
+    }
+
+    #mensaje-error, #mensaje-error-clave {
+      color: #c96a4e;
+      font-size: 12.5px;
+      margin-top: 10px;
+    }
+    #mensaje-pista {
+      color: var(--naranja);
+      font-size: 12.5px;
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      margin-top: 8px;
+    }
+
+    /* Contraseña */
+    #pantalla-clave p:first-of-type {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--tinta);
+      margin-bottom: 20px;
+    }
+    #input-clave {
+      width: 100%;
+      border: none;
+      border-bottom: 1.5px solid var(--tinta);
+      background: transparent;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 16px;
+      letter-spacing: 6px;
+      padding: 8px 0;
+      margin-bottom: 20px;
+      color: var(--naranja);
+    }
+    #input-clave:focus { outline: none; }
+
+    /* Menú principal */
+    #menu-principal { counter-reset: opcion; }
+    .btn-opcion {
+      counter-increment: opcion;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      width: 100%;
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--linea);
+      padding: 18px 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--tinta);
+      text-align: left;
+    }
+    .btn-opcion:last-child { border-bottom: none; }
+    .btn-opcion::after {
+      content: '0' counter(opcion);
+      font-family: 'Work Sans', sans-serif;
+      font-size: 10.5px;
+      color: var(--naranja);
+      letter-spacing: 1.5px;
+      font-weight: 500;
+    }
+
+    /* Cartas */
+    .carta {
+      border-bottom: 1px solid var(--linea);
+      padding: 15px 0;
+    }
+    .carta-titulo-btn {
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--tinta);
+      padding: 0;
+    }
+    .carta-contenido {
+      margin-top: 14px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      line-height: 1.7;
+      color: #4a3f36;
+    }
+    .carta-acciones { margin-top: 14px; }
+    .adjunto-carta {
+      max-width: 150px;
+      display: block;
+      margin-top: 10px;
+      border: 1px solid var(--linea);
+    }
+
+    #form-carta, #form-multimedia {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--linea);
+    }
+    #form-carta input[type="text"],
+    #form-carta textarea,
+    #form-multimedia input[type="text"],
+    #form-multimedia input[type="file"] {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid var(--linea);
+      padding: 8px 0;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      background: transparent;
+      color: var(--tinta);
+    }
+    #form-carta textarea { min-height: 90px; resize: vertical; }
+    #form-carta label {
+      display: block;
+      font-size: 10.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gris);
+    }
+    #form-carta input[type="color"] {
+      border: 1px solid var(--linea);
+      width: 40px; height: 28px;
+      padding: 2px;
+      background: none;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+    #form-carta select {
+      border: none;
+      border-bottom: 1px solid var(--linea);
+      background: transparent;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 13px;
+      padding: 6px 0;
+      margin-left: 8px;
+    }
+
+    /* Fotos y videos */
+    #filtro-categorias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 8px;
+    }
+    #filtro-categorias button {
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      font-size: 11px;
+      padding: 6px 13px;
+    }
+    #filtro-categorias button.activa {
+      background: var(--tinta);
+      color: var(--blanco);
+      border-color: var(--tinta);
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    #galeria-fotos, #galeria-videos {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 6px;
     }
     #galeria-fotos img {
       width: 100%;
-      height: 150px;
+      height: 110px;
       object-fit: cover;
+      border: 1px solid var(--linea);
+    }
+    #galeria-videos {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    #galeria-videos video {
+      width: 100%;
+      max-height: 160px;
+      border: 1px solid var(--linea);
     }
     .foto-item {
       position: relative;
     }
-    .foto-item button {
+    .foto-item .btn-x {
       position: absolute;
-      top: 4px;
-      right: 4px;
+      top: 5px;
+      right: 5px;
     }
-    #form-carta {
+
+    /* Sorpresa */
+    #candado-sorpresa, #sorpresa-desbloqueada { text-align: center; padding: 20px 0; }
+    #candado-sorpresa p:first-child {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--tinta);
+      margin-bottom: 14px;
+    }
+    #cuenta-regresiva {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 600;
+      font-style: italic;
+      color: var(--naranja);
+    }
+    #sorpresa-desbloqueada p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--tinta);
+    }
+
+    /* Metas */
+    #form-meta {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-width: 400px;
+      gap: 10px;
+      align-items: center;
+      border-bottom: 1.5px solid var(--tinta);
+      padding-bottom: 10px;
+      margin-bottom: 22px;
     }
-    .adjunto-carta {
-      max-width: 150px;
-      display: block;
-      margin-top: 6px;
+    #meta-texto {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      color: var(--tinta);
+    }
+    #btn-agregar-meta {
+      width: auto;
+      display: inline-block;
+      margin: 0;
+      padding: 8px 16px;
+      font-size: 11px;
+      letter-spacing: 1.5px;
     }
     #lista-metas {
       list-style: none;
       padding: 0;
+      margin: 0;
     }
     #lista-metas li {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 0;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--linea);
+      font-size: 14px;
+    }
+    #lista-metas input[type="checkbox"] {
+      accent-color: var(--naranja);
+      width: 16px; height: 16px;
     }
     #lista-metas li.completada span {
       text-decoration: line-through;
-      color: gray;
-    }
-    #galeria-videos {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-    }
-    #galeria-videos video {
-      width: 100%;
-      max-height: 200px;
-    }
-    #filtro-categorias {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin: 10px 0;
-    }
-    #filtro-categorias button.activa {
-      font-weight: bold;
-      text-decoration: underline;
-    }
-    #form-multimedia {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-width: 400px;
-      margin-bottom: 10px;
+      color: var(--gris);
     }
   </style>
 </head>
@@ -535,9 +922,11 @@
         contenedor.className = 'carta';
 
         const btnAbrir = document.createElement('button');
+        btnAbrir.className = 'carta-titulo-btn';
         btnAbrir.textContent = `💌 ${carta.titulo}`;
 
         const contenido = document.createElement('div');
+        contenido.className = 'carta-contenido';
         contenido.hidden = true;
         contenido.style.color = carta.color;
         contenido.style.fontSize = carta.tamano;
@@ -553,7 +942,11 @@
           contenido.appendChild(img);
         });
 
+        const acciones = document.createElement('div');
+        acciones.className = 'carta-acciones';
+
         const btnEditar = document.createElement('button');
+        btnEditar.className = 'btn-mini';
         btnEditar.textContent = 'Editar';
         btnEditar.addEventListener('click', () => {
           cartaEditandoId = carta.id;
@@ -565,13 +958,15 @@
         });
 
         const btnEliminar = document.createElement('button');
+        btnEliminar.className = 'btn-mini eliminar';
         btnEliminar.textContent = 'Eliminar';
         btnEliminar.addEventListener('click', () => {
           db.collection('cartas').doc(carta.id).delete();
         });
 
-        contenido.appendChild(btnEditar);
-        contenido.appendChild(btnEliminar);
+        acciones.appendChild(btnEditar);
+        acciones.appendChild(btnEliminar);
+        contenido.appendChild(acciones);
 
         btnAbrir.addEventListener('click', () => {
           contenido.hidden = !contenido.hidden;
@@ -844,6 +1239,7 @@
       div.className = 'foto-item';
 
       const btnEliminar = document.createElement('button');
+      btnEliminar.className = 'btn-x';
       btnEliminar.textContent = '✕';
       btnEliminar.addEventListener('click', () => {
         eliminarItemMultimedia(item);
@@ -939,6 +1335,7 @@
         span.textContent = meta.texto;
 
         const btnEliminar = document.createElement('button');
+        btnEliminar.className = 'btn-x';
         btnEliminar.textContent = '✕';
         btnEliminar.addEventListener('click', () => {
           db.collection('metas').doc(meta.id).delete();

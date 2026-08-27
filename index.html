@@ -904,6 +904,7 @@
         pantallaClave.hidden = true;
         contenido.hidden = false;
         mascotaWidget.hidden = false;
+        sessionStorage.setItem('claveOk', 'true');
       } else {
         mensajeErrorClave.hidden = false;
       }
@@ -996,8 +997,16 @@
     const cancionFondo = document.getElementById('cancion-fondo');
     cancionFondo.volume = 0.25;
 
+    // Si ya se puso la contraseña en esta misma sesión (ej. al volver de pou.html), saltar directo al menú
+    if (sessionStorage.getItem('claveOk') === 'true') {
+      mensajeInicial.hidden = true;
+      cuestionario.hidden = true;
+      pantallaClave.hidden = true;
+      contenido.hidden = false;
+      mascotaWidget.hidden = false;
+    }
     // Si ya completó el cuestionario antes en este dispositivo, saltar directo a la contraseña
-    if (localStorage.getItem('cuestionarioCompletado') === 'true') {
+    else if (localStorage.getItem('cuestionarioCompletado') === 'true') {
       mensajeInicial.hidden = true;
       cuestionario.hidden = true;
       pantallaClave.hidden = false;

@@ -650,9 +650,9 @@
 
         video.onloadedmetadata = () => {
           const duracion = video.duration || 5;
-          const bytesObjetivo = 600000; // deja margen bajo el límite de 1MB de Firestore
+          const bytesObjetivo = 4000000; // ya no depende de caber en 1 solo documento
           let bitsPorSegundo = Math.floor((bytesObjetivo * 8) / duracion);
-          bitsPorSegundo = Math.max(150000, Math.min(bitsPorSegundo, 2500000));
+          bitsPorSegundo = Math.max(250000, Math.min(bitsPorSegundo, 4000000));
 
           let stream;
           try {
@@ -716,6 +716,63 @@
       return leerVideoComoBase64(archivo);
     }
 
+    // Un documento de Firestore aguanta ~1MB, así que un video se parte en
+    // trozos guardados como sub-documentos y se vuelven a unir al mostrarlo
+    const TAMANO_FRAGMENTO = 900000;
+
+    async function subirVideoConFragmentos(dataUrl, categoria) {
+      const docRef = db.collection('fotos').doc();
+
+      if (dataUrl.length <= TAMANO_FRAGMENTO) {
+        await docRef.set({
+          src: dataUrl,
+          tipo: 'video',
+          categoria,
+          fragmentado: false,
+          creado: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        return;
+      }
+
+      const fragmentos = [];
+      for (let i = 0; i < dataUrl.length; i += TAMANO_FRAGMENTO) {
+        fragmentos.push(dataUrl.slice(i, i + TAMANO_FRAGMENTO));
+      }
+
+      await docRef.set({
+        tipo: 'video',
+        categoria,
+        fragmentado: true,
+        totalFragmentos: fragmentos.length,
+        creado: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      await Promise.all(fragmentos.map((fragmento, i) =>
+        docRef.collection('fragmentos').doc(String(i)).set({ indice: i, data: fragmento })
+      ));
+    }
+
+    function cargarVideoFragmentado(id) {
+      return db.collection('fotos').doc(id).collection('fragmentos')
+        .orderBy('indice')
+        .get()
+        .then(snapshot => snapshot.docs.map(d => d.data().data).join(''));
+    }
+
+    function eliminarItemMultimedia(item) {
+      const ref = db.collection('fotos').doc(item.id);
+      if (item.fragmentado) {
+        ref.collection('fragmentos').get().then(snapshot => {
+          const batch = db.batch();
+          snapshot.docs.forEach(d => batch.delete(d.ref));
+          batch.delete(ref);
+          return batch.commit();
+        });
+      } else {
+        ref.delete();
+      }
+    }
+
     btnSubirMultimedia.addEventListener('click', async () => {
       if (!db) {
         alert('No se pudo conectar con la base de datos. Revisa tu conexión e inténtalo de nuevo.');
@@ -726,26 +783,33 @@
 
       const categoria = multimediaCategoria.value.trim() || 'Sin categoría';
       btnSubirMultimedia.disabled = true;
+      btnSubirMultimedia.textContent = 'Subiendo...';
 
       for (const archivo of archivos) {
         const esVideo = archivo.type.startsWith('video/');
-        const src = esVideo ? await procesarVideo(archivo) : await procesarImagen(archivo);
 
-        // Firestore no acepta documentos de más de 1MB; si un video no cabe, se avisa y se salta
-        if (src.length > 1000000) {
-          alert(`El video "${archivo.name}" es demasiado pesado y no se pudo subir (Firestore permite máximo ~1MB por archivo). Usa un video más corto.`);
-          continue;
+        if (esVideo) {
+          const src = await procesarVideo(archivo);
+          // Límite de seguridad: ~27MB (unos 30 fragmentos) para no disparar
+          // demasiadas escrituras con un video excesivamente largo
+          if (src.length > TAMANO_FRAGMENTO * 30) {
+            alert(`El video "${archivo.name}" sigue siendo muy pesado incluso comprimido. Prueba con un video más corto.`);
+            continue;
+          }
+          await subirVideoConFragmentos(src, categoria);
+        } else {
+          const src = await procesarImagen(archivo);
+          await db.collection('fotos').add({
+            src,
+            tipo: 'foto',
+            categoria,
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          });
         }
-
-        db.collection('fotos').add({
-          src,
-          tipo: esVideo ? 'video' : 'foto',
-          categoria,
-          creado: firebase.firestore.FieldValue.serverTimestamp()
-        });
       }
 
       btnSubirMultimedia.disabled = false;
+      btnSubirMultimedia.textContent = 'Subir';
       formMultimedia.hidden = true;
       inputFotos.value = '';
       multimediaCategoria.value = '';
@@ -779,17 +843,35 @@
       const div = document.createElement('div');
       div.className = 'foto-item';
 
-      const media = document.createElement(esVideo ? 'video' : 'img');
-      media.src = item.src;
-      if (esVideo) media.controls = true;
-
       const btnEliminar = document.createElement('button');
       btnEliminar.textContent = '✕';
       btnEliminar.addEventListener('click', () => {
-        db.collection('fotos').doc(item.id).delete();
+        eliminarItemMultimedia(item);
       });
 
-      div.appendChild(media);
+      if (esVideo) {
+        const video = document.createElement('video');
+        video.controls = true;
+
+        if (item.fragmentado) {
+          const cargando = document.createElement('p');
+          cargando.textContent = 'Cargando video...';
+          div.appendChild(cargando);
+          cargarVideoFragmentado(item.id).then(src => {
+            video.src = src;
+            cargando.remove();
+          });
+        } else {
+          video.src = item.src;
+        }
+
+        div.appendChild(video);
+      } else {
+        const img = document.createElement('img');
+        img.src = item.src;
+        div.appendChild(img);
+      }
+
       div.appendChild(btnEliminar);
       return div;
     }

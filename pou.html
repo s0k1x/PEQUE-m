@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Tu mascota</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -184,7 +184,7 @@
     <a href="index.html" class="volver-link">‹ Volver</a>
     <h1>Tu mascota</h1>
 
-    <video id="video-mascota" src="Quieto.mp4" autoplay muted loop playsinline preload="auto"></video>
+    <video id="video-mascota" src="Quieto.mp4?v=2" autoplay muted loop playsinline preload="auto"></video>
 
     <div class="necesidad">
       <div class="necesidad-fila">🍽️ Hambre <span class="valor" id="valor-hambre">--</span></div>
@@ -275,17 +275,26 @@
 
     let temporizadorAccion = null;
 
+    // Cambia el video con un fundido: se apaga, cambia de clip, y vuelve a aparecer
+    function cambiarVideo(src, loop) {
+      video.style.opacity = 0;
+      setTimeout(() => {
+        video.loop = loop;
+        video.muted = true;
+        video.src = src;
+        video.addEventListener('loadeddata', () => {
+          video.play().catch(() => {});
+          video.style.opacity = 1;
+        }, { once: true });
+      }, 300);
+    }
+
     function reproducirVideo(src, duracionMs) {
       if (temporizadorAccion) clearTimeout(temporizadorAccion);
-
-      video.loop = true;
-      video.src = src;
-      video.muted = true;
-      video.play().catch(() => {});
+      cambiarVideo(src, true);
 
       temporizadorAccion = setTimeout(() => {
-        video.src = 'Quieto.mp4';
-        video.play().catch(() => {});
+        cambiarVideo('Quieto.mp4?v=2', true);
         temporizadorAccion = null;
       }, duracionMs);
     }
@@ -354,16 +363,16 @@
     });
 
     document.getElementById('btn-comer').addEventListener('click', () => {
-      realizarAccion('hambre', 30, 'Comer.mp4', '¡Qué rico! 🍽️', 4000);
+      realizarAccion('hambre', 30, 'Comer.mp4?v=2', '¡Qué rico! 🍽️', 4000);
     });
     document.getElementById('btn-dormir').addEventListener('click', () => {
-      realizarAccion('sueno', 30, 'Dormir.mp4', 'Zzz... 😴', 15000);
+      realizarAccion('sueno', 30, 'Dormir.mp4?v=2', 'Zzz... 😴', 15000);
     });
     document.getElementById('btn-jugar-mascota').addEventListener('click', () => {
-      realizarAccion('felicidad', 30, 'Jugar.mp4', '¡Qué divertido! 🎾', 5000);
+      realizarAccion('felicidad', 30, 'Jugar.mp4?v=2', '¡Qué divertido! 🎾', 5000);
     });
     document.getElementById('btn-saltar').addEventListener('click', () => {
-      realizarAccion('felicidad', 8, 'Saltar.mp4', '¡Wiii! 🦘', 2500);
+      realizarAccion('felicidad', 8, 'Saltar.mp4?v=2', '¡Wiii! 🦘', 2500);
     });
 
     if (db) {

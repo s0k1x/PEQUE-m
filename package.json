@@ -1,0 +1,9 @@
+{
+  "name": "notificar-mascota",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "firebase-admin": "^12.0.0",
+    "web-push": "^3.6.7"
+  }
+}

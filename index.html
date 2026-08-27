@@ -342,6 +342,7 @@
       padding-bottom: 22px;
       border-bottom: 1px solid var(--linea);
     }
+    #form-carta[hidden], #form-multimedia[hidden] { display: none; }
     #form-carta input[type="text"],
     #form-carta textarea,
     #form-multimedia input[type="text"],
@@ -456,6 +457,7 @@
       opacity: 0;
       animation: visorFade 0.25s ease forwards;
     }
+    #visor-media[hidden] { display: none; }
     #visor-media img {
       max-width: 100%;
       max-height: 78vh;
@@ -772,6 +774,7 @@
         inputClave.value = '';
         pantallaClave.hidden = true;
         contenido.hidden = false;
+        if (cancionFondo.paused) cancionFondo.play();
       } else {
         mensajeErrorClave.hidden = false;
       }

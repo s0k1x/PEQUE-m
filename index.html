@@ -104,6 +104,14 @@
 
     const cancionFondo = document.getElementById('cancion-fondo');
 
+    // Si ya completó el cuestionario antes en este dispositivo, saltar directo al contenido
+    if (localStorage.getItem('cuestionarioCompletado') === 'true') {
+      mensajeInicial.hidden = true;
+      cuestionario.hidden = true;
+      contenido.hidden = false;
+      cancionFondo.play();
+    }
+
     btnComenzar.addEventListener('click', () => {
       mensajeInicial.hidden = true;
       cuestionario.hidden = false;
@@ -127,6 +135,7 @@
         mensajeError.hidden = true;
         cuestionario.hidden = true;
         contenido.hidden = false;
+        localStorage.setItem('cuestionarioCompletado', 'true');
       } else {
         mensajeError.hidden = false;
       }

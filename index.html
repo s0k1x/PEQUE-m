@@ -114,7 +114,7 @@
       <div id="menu-principal">
         <button class="btn-opcion" data-target="seccion-1">Cartas</button>
         <button class="btn-opcion" data-target="seccion-2">Fotos</button>
-        <button class="btn-opcion" data-target="seccion-3">Opción 3</button>
+        <button class="btn-opcion" data-target="seccion-3">🎁 Sorpresa</button>
         <button class="btn-opcion" data-target="seccion-4">Opción 4</button>
       </div>
 
@@ -154,7 +154,13 @@
       </div>
 
       <div id="seccion-3" class="seccion" hidden>
-        <p>Contenido de la Opción 3</p>
+        <div id="candado-sorpresa">
+          <p>🔒 Esto se desbloquea el 1 de enero</p>
+          <p id="cuenta-regresiva"></p>
+        </div>
+        <div id="sorpresa-desbloqueada" hidden>
+          <p>🎉 ¡Sorpresa! Aquí va el contenido especial.</p>
+        </div>
         <button class="btn-volver">Volver</button>
       </div>
 
@@ -179,8 +185,13 @@
       messagingSenderId: "422064272343",
       appId: "1:422064272343:web:3b1ff306ef45621e7a9192"
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    let db = null;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+    } catch (e) {
+      console.error('No se pudo iniciar Firebase:', e);
+    }
   </script>
 
   <script>
@@ -210,6 +221,34 @@
         menuPrincipal.hidden = false;
       });
     });
+
+    // Cuenta regresiva de la sección sorpresa (se desbloquea el 1 de enero de 2027)
+    const fechaDesbloqueo = new Date('2027-01-01T00:00:00');
+    const candadoSorpresa = document.getElementById('candado-sorpresa');
+    const sorpresaDesbloqueada = document.getElementById('sorpresa-desbloqueada');
+    const cuentaRegresiva = document.getElementById('cuenta-regresiva');
+
+    function actualizarCuentaRegresiva() {
+      const ahora = new Date();
+      const diferencia = fechaDesbloqueo - ahora;
+
+      if (diferencia <= 0) {
+        candadoSorpresa.hidden = true;
+        sorpresaDesbloqueada.hidden = false;
+        clearInterval(intervaloCuentaRegresiva);
+        return;
+      }
+
+      const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((diferencia / (1000 * 60 * 60)) % 24);
+      const minutos = Math.floor((diferencia / (1000 * 60)) % 60);
+      const segundos = Math.floor((diferencia / 1000) % 60);
+
+      cuentaRegresiva.textContent = `${dias}d ${horas}h ${minutos}m ${segundos}s`;
+    }
+
+    actualizarCuentaRegresiva();
+    const intervaloCuentaRegresiva = setInterval(actualizarCuentaRegresiva, 1000);
 
     const cancionFondo = document.getElementById('cancion-fondo');
     cancionFondo.volume = 0.25;
@@ -327,6 +366,10 @@
     }
 
     btnGuardarCarta.addEventListener('click', () => {
+      if (!db) {
+        alert('No se pudo conectar con la base de datos. Revisa tu conexión e inténtalo de nuevo.');
+        return;
+      }
       btnGuardarCarta.disabled = true;
       leerArchivosComoBase64(cartaArchivos.files).then(imagenesNuevas => {
         if (cartaEditandoId) {
@@ -418,10 +461,12 @@
       });
     }
 
-    db.collection('cartas').orderBy('creado').onSnapshot(snapshot => {
-      const cartas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      renderizarCartas(cartas);
-    });
+    if (db) {
+      db.collection('cartas').orderBy('creado').onSnapshot(snapshot => {
+        const cartas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderizarCartas(cartas);
+      });
+    }
 
     // ---------- Fotos ----------
     const btnNuevaFoto = document.getElementById('btn-nueva-foto');
@@ -431,6 +476,10 @@
     btnNuevaFoto.addEventListener('click', () => inputFotos.click());
 
     inputFotos.addEventListener('change', () => {
+      if (!db) {
+        alert('No se pudo conectar con la base de datos. Revisa tu conexión e inténtalo de nuevo.');
+        return;
+      }
       leerArchivosComoBase64(inputFotos.files).then(nuevasFotos => {
         nuevasFotos.forEach(src => {
           db.collection('fotos').add({
@@ -464,10 +513,12 @@
       });
     }
 
-    db.collection('fotos').orderBy('creado').onSnapshot(snapshot => {
-      const fotos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      renderizarFotos(fotos);
-    });
+    if (db) {
+      db.collection('fotos').orderBy('creado').onSnapshot(snapshot => {
+        const fotos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderizarFotos(fotos);
+      });
+    }
   </script>
 
 </body>

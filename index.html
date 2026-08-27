@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuestro Corazón</title>
+</head>
+<body>
+
+  <div class="contenedor">
+
+    <audio id="cancion-fondo" src="MC%2520Bruninho%2520e%2520Vitinho%2520Ferrari%2520-%2520Sou%2520Favela%2520(GR6%2520Filmes)%2520DJ%2520DG%2520e%2520Batida%25CC%2583o%2520Stronda.mp3" loop></audio>
+
+    <!-- Pantalla 1: mensaje inicial -->
+    <section id="mensaje-inicial">
+      <p>Holaa pequee, espero que te guste esto que hice para ti :) Pero antes... tienes que responder bien estas 5 preguntitas para poder abrirlo.</p>
+      <button id="btn-comenzar">Comenzar</button>
+    </section>
+
+    <!-- Pantalla 2: cuestionario -->
+    <section id="cuestionario" hidden>
+
+      <div class="pregunta" data-respuesta="b">
+        <p>1. ¿Cuándo es mi cumpleaños?</p>
+        <label><input type="radio" name="p1" value="a"> 4 de abril</label>
+        <label><input type="radio" name="p1" value="b"> 11 de abril</label>
+        <label><input type="radio" name="p1" value="c"> 11 de mayo</label>
+      </div>
+
+      <div class="pregunta" data-respuesta="a">
+        <p>2. ¿Cuál es mi color favorito?</p>
+        <label><input type="radio" name="p2" value="a"> Naranja</label>
+        <label><input type="radio" name="p2" value="b"> Azul</label>
+        <label><input type="radio" name="p2" value="c"> Rojo</label>
+      </div>
+
+      <div class="pregunta" data-respuesta="c">
+        <p>3. ¿Cuál es mi plan favorito?</p>
+        <label><input type="radio" name="p3" value="a"> Ir al cine</label>
+        <label><input type="radio" name="p3" value="b"> Salir a comer</label>
+        <label><input type="radio" name="p3" value="c"> Ir a ver el atardecer contigo</label>
+      </div>
+
+      <div class="pregunta" data-respuesta="b">
+        <p>4. ¿Piscina o playa?</p>
+        <label><input type="radio" name="p4" value="a"> Piscina</label>
+        <label><input type="radio" name="p4" value="b"> Playa</label>
+        <label><input type="radio" name="p4" value="c"> Ninguna de las dos</label>
+      </div>
+
+      <div class="pregunta" data-respuesta="a">
+        <p>5. ¿Cómo me gusta decirte de cariño?</p>
+        <label><input type="radio" name="p5" value="a"> Pequee</label>
+        <label><input type="radio" name="p5" value="b"> Amor</label>
+        <label><input type="radio" name="p5" value="c"> Bebé</label>
+      </div>
+
+      <button id="btn-enviar">Enviar respuestas</button>
+      <p id="mensaje-error" hidden>Alguna respuesta está mal, ¡intenta de nuevo!</p>
+
+    </section>
+
+    <!-- Pantalla 3: página principal con 4 opciones -->
+    <section id="contenido" hidden>
+
+      <div id="menu-principal">
+        <button class="btn-opcion" data-target="seccion-1">Opción 1</button>
+        <button class="btn-opcion" data-target="seccion-2">Opción 2</button>
+        <button class="btn-opcion" data-target="seccion-3">Opción 3</button>
+        <button class="btn-opcion" data-target="seccion-4">Opción 4</button>
+      </div>
+
+      <div id="seccion-1" class="seccion" hidden>
+        <p>Contenido de la Opción 1</p>
+        <button class="btn-volver">Volver</button>
+      </div>
+
+      <div id="seccion-2" class="seccion" hidden>
+        <p>Contenido de la Opción 2</p>
+        <button class="btn-volver">Volver</button>
+      </div>
+
+      <div id="seccion-3" class="seccion" hidden>
+        <p>Contenido de la Opción 3</p>
+        <button class="btn-volver">Volver</button>
+      </div>
+
+      <div id="seccion-4" class="seccion" hidden>
+        <p>Contenido de la Opción 4</p>
+        <button class="btn-volver">Volver</button>
+      </div>
+
+    </section>
+
+  </div>
+
+  <script>
+    const btnComenzar = document.getElementById('btn-comenzar');
+    const mensajeInicial = document.getElementById('mensaje-inicial');
+    const cuestionario = document.getElementById('cuestionario');
+    const contenido = document.getElementById('contenido');
+    const btnEnviar = document.getElementById('btn-enviar');
+    const mensajeError = document.getElementById('mensaje-error');
+
+    const cancionFondo = document.getElementById('cancion-fondo');
+
+    // Si ya completó el cuestionario antes en este dispositivo, saltar directo al contenido
+    if (localStorage.getItem('cuestionarioCompletado') === 'true') {
+      mensajeInicial.hidden = true;
+      cuestionario.hidden = true;
+      contenido.hidden = false;
+      cancionFondo.play();
+    }
+
+    btnComenzar.addEventListener('click', () => {
+      mensajeInicial.hidden = true;
+      cuestionario.hidden = false;
+      cancionFondo.play();
+    });
+
+    btnEnviar.addEventListener('click', () => {
+      const preguntas = document.querySelectorAll('.pregunta');
+      let todasCorrectas = true;
+
+      preguntas.forEach((pregunta, index) => {
+        const respuestaCorrecta = pregunta.dataset.respuesta;
+        const seleccionada = pregunta.querySelector(`input[name="p${index + 1}"]:checked`);
+
+        if (!seleccionada || seleccionada.value !== respuestaCorrecta) {
+          todasCorrectas = false;
+        }
+      });
+
+      if (todasCorrectas) {
+        mensajeError.hidden = true;
+        cuestionario.hidden = true;
+        contenido.hidden = false;
+        localStorage.setItem('cuestionarioCompletado', 'true');
+      } else {
+        mensajeError.hidden = false;
+      }
+    });
+
+    // Navegación del menú principal (4 opciones)
+    const menuPrincipal = document.getElementById('menu-principal');
+    const botonesOpcion = document.querySelectorAll('.btn-opcion');
+    const botonesVolver = document.querySelectorAll('.btn-volver');
+
+    botonesOpcion.forEach(boton => {
+      boton.addEventListener('click', () => {
+        const destino = document.getElementById(boton.dataset.target);
+        menuPrincipal.hidden = true;
+        destino.hidden = false;
+      });
+    });
+
+    botonesVolver.forEach(boton => {
+      boton.addEventListener('click', () => {
+        boton.closest('.seccion').hidden = true;
+        menuPrincipal.hidden = false;
+      });
+    });
+  </script>
+
+</body>
+</html>

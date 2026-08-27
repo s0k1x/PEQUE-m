@@ -597,6 +597,99 @@
       });
     }
 
+    function blobABase64(blob) {
+      return new Promise(resolve => {
+        const lector = new FileReader();
+        lector.onload = () => resolve(lector.result);
+        lector.readAsDataURL(blob);
+      });
+    }
+
+    // Intenta comprimir el video reduciendo el bitrate según su duración.
+    // Si el navegador no soporta esto (ej. algunas versiones de Safari),
+    // devuelve null y se sube el video sin comprimir.
+    function comprimirVideo(archivo) {
+      return new Promise(resolve => {
+        if (!('MediaRecorder' in window)) {
+          resolve(null);
+          return;
+        }
+
+        const videoURL = URL.createObjectURL(archivo);
+        const video = document.createElement('video');
+        video.src = videoURL;
+        video.muted = false;
+        video.playsInline = true;
+        video.preload = 'auto';
+
+        video.onloadedmetadata = () => {
+          const duracion = video.duration || 5;
+          const bytesObjetivo = 600000; // deja margen bajo el límite de 1MB de Firestore
+          let bitsPorSegundo = Math.floor((bytesObjetivo * 8) / duracion);
+          bitsPorSegundo = Math.max(150000, Math.min(bitsPorSegundo, 2500000));
+
+          let stream;
+          try {
+            stream = video.captureStream ? video.captureStream() : video.mozCaptureStream();
+          } catch (e) {
+            URL.revokeObjectURL(videoURL);
+            resolve(null);
+            return;
+          }
+          if (!stream) {
+            URL.revokeObjectURL(videoURL);
+            resolve(null);
+            return;
+          }
+
+          let mimeType = 'video/webm;codecs=vp8,opus';
+          if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
+          if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = '';
+
+          let mediaRecorder;
+          try {
+            mediaRecorder = mimeType
+              ? new MediaRecorder(stream, { mimeType, videoBitsPerSecond: bitsPorSegundo })
+              : new MediaRecorder(stream, { videoBitsPerSecond: bitsPorSegundo });
+          } catch (e) {
+            URL.revokeObjectURL(videoURL);
+            resolve(null);
+            return;
+          }
+
+          const chunks = [];
+          mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+          mediaRecorder.onstop = () => {
+            URL.revokeObjectURL(videoURL);
+            resolve(chunks.length ? new Blob(chunks, { type: mimeType || 'video/webm' }) : null);
+          };
+          mediaRecorder.onerror = () => {
+            URL.revokeObjectURL(videoURL);
+            resolve(null);
+          };
+
+          video.onended = () => {
+            try { mediaRecorder.stop(); } catch (e) {}
+          };
+
+          mediaRecorder.start();
+          video.play().catch(() => {
+            try { mediaRecorder.stop(); } catch (e) {}
+            URL.revokeObjectURL(videoURL);
+            resolve(null);
+          });
+        };
+
+        video.onerror = () => resolve(null);
+      });
+    }
+
+    async function procesarVideo(archivo) {
+      const blobComprimido = await comprimirVideo(archivo);
+      if (blobComprimido) return blobABase64(blobComprimido);
+      return leerVideoComoBase64(archivo);
+    }
+
     btnSubirMultimedia.addEventListener('click', async () => {
       if (!db) {
         alert('No se pudo conectar con la base de datos. Revisa tu conexión e inténtalo de nuevo.');
@@ -610,7 +703,7 @@
 
       for (const archivo of archivos) {
         const esVideo = archivo.type.startsWith('video/');
-        const src = esVideo ? await leerVideoComoBase64(archivo) : await procesarImagen(archivo);
+        const src = esVideo ? await procesarVideo(archivo) : await procesarImagen(archivo);
 
         // Firestore no acepta documentos de más de 1MB; si un video no cabe, se avisa y se salta
         if (src.length > 1000000) {

@@ -56,23 +56,103 @@
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
       font-size: 26px;
-      margin: 0 0 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--linea);
+      margin: 0;
       text-align: center;
     }
+    #nombre-fila {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    #btn-editar-nombre {
+      background: none;
+      border: none;
+      color: var(--gris);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0;
+    }
+    #form-nombre {
+      display: flex;
+      gap: 8px;
+      max-width: 260px;
+      margin: 0 auto 16px;
+    }
+    #form-nombre input {
+      flex: 1;
+      border: none;
+      border-bottom: 1px solid var(--linea);
+      padding: 6px 0;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 13px;
+      background: transparent;
+      color: var(--tinta);
+    }
+    #btn-guardar-nombre {
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      padding: 6px 14px;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    #btn-cancelar-nombre {
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      font-size: 11px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
 
+    #animo-mascota {
+      text-align: center;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--naranja);
+      font-weight: 500;
+      margin: 0;
+    }
+    #racha-mascota {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 13px;
+      color: var(--gris);
+      margin: 4px 0 18px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--linea);
+      min-height: 16px;
+    }
+
+    #video-envoltorio {
+      position: relative;
+      max-width: 260px;
+      margin: 0 auto 22px;
+    }
     #video-mascota {
       width: 100%;
-      max-width: 260px;
       min-height: 260px;
       object-fit: contain;
       display: block;
-      margin: 0 auto 22px;
       border: 1px solid var(--linea);
       background: var(--hueso);
       cursor: pointer;
       transition: transform 0.15s ease, opacity 0.35s ease;
+    }
+    #accesorio-mascota {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 26px;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15));
+      pointer-events: none;
     }
     #video-mascota.acariciando {
       animation: rebote 0.35s ease;
@@ -176,15 +256,180 @@
       min-height: 18px;
       margin-top: 16px;
     }
+
+    .personalizacion {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 26px;
+      padding-top: 20px;
+      border-top: 1px solid var(--linea);
+    }
+    .titulo-personalizar {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gris);
+      margin-bottom: 9px;
+    }
+    .swatches {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+    .swatch {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1.5px solid var(--linea);
+      cursor: pointer;
+      padding: 0;
+    }
+    .swatch.activo {
+      border-color: var(--naranja);
+      box-shadow: 0 0 0 2px var(--naranja-suave);
+    }
+    .swatch-emoji {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid var(--linea);
+      background: var(--hueso);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+    .swatch-emoji.activo {
+      border-color: var(--naranja);
+      background: var(--naranja-suave);
+    }
+
+    .contenedor.fondo-crema { background: #fbf8f4; }
+    .contenedor.fondo-menta { background: #eef6f1; }
+    .contenedor.fondo-cielo { background: #eef4fa; }
+    .contenedor.fondo-lavanda { background: #f4eefb; }
+    .contenedor.fondo-coral { background: #fcefe9; }
+    .contenedor.fondo-durazno { background: #fdf1e7; }
+    .contenedor.fondo-perla { background: #f1f1ef; }
+
+    .contenedor.critica {
+      border-color: var(--rojo);
+    }
+    .contenedor.critica::before {
+      background: linear-gradient(90deg, transparent, var(--rojo), transparent);
+    }
+
+    #nivel-vinculo {
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    #nivel-vinculo .emoji-nivel { font-size: 15px; margin-right: 4px; }
+    #nivel-vinculo .texto-nivel {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--tinta);
+    }
+    #barra-nivel-fondo {
+      height: 3px;
+      background: var(--linea);
+      max-width: 180px;
+      margin: 6px auto 0;
+      overflow: hidden;
+    }
+    #barra-nivel-relleno {
+      height: 100%;
+      background: var(--naranja);
+      transition: width 0.4s ease;
+    }
+    #texto-nivel-progreso {
+      display: block;
+      font-size: 10px;
+      color: var(--gris);
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .estadisticas {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+      text-align: center;
+    }
+    .estadistica .numero-estadistica {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 20px;
+      color: var(--naranja);
+    }
+    .estadistica .etiqueta-estadistica {
+      display: block;
+      font-size: 9px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--gris);
+      margin-top: 2px;
+    }
+
+    .logro-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%) translateY(10px);
+      background: var(--tinta);
+      color: var(--blanco);
+      padding: 12px 20px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 14px;
+      opacity: 0;
+      z-index: 600;
+      max-width: 88%;
+      text-align: center;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .logro-toast.mostrando {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
   </style>
 </head>
 <body>
 
   <div class="contenedor">
     <a href="index.html" class="volver-link">‹ Volver</a>
-    <h1>Tu mascota</h1>
 
-    <video id="video-mascota" src="Quieto.mp4?v=2" autoplay muted loop playsinline preload="auto"></video>
+    <div id="nombre-fila">
+      <h1 id="texto-nombre">Tu mascota</h1>
+      <button id="btn-editar-nombre" type="button" aria-label="Editar nombre">✎</button>
+    </div>
+    <div id="form-nombre" hidden>
+      <input type="text" id="input-nombre" maxlength="20" placeholder="Ponle un nombre...">
+      <button id="btn-guardar-nombre" type="button">Guardar</button>
+      <button id="btn-cancelar-nombre" type="button" aria-label="Cancelar">✕</button>
+    </div>
+
+    <div id="nivel-vinculo">
+      <span class="emoji-nivel" id="emoji-nivel"></span><span class="texto-nivel" id="texto-nivel"></span>
+      <div id="barra-nivel-fondo"><div id="barra-nivel-relleno"></div></div>
+      <span id="texto-nivel-progreso"></span>
+    </div>
+
+    <p id="animo-mascota"></p>
+    <p id="racha-mascota"></p>
+
+    <div id="video-envoltorio">
+      <video id="video-mascota" src="Quieto.mp4?v=2" autoplay muted loop playsinline preload="auto"></video>
+      <span id="accesorio-mascota"></span>
+    </div>
 
     <div class="necesidad">
       <div class="necesidad-fila">🍽️ Hambre <span class="valor" id="valor-hambre">--</span></div>
@@ -200,13 +445,50 @@
     </div>
 
     <div class="acciones">
-      <button class="btn-accion" id="btn-comer"><span class="icono">🍽️</span><span class="etiqueta-accion">Comer</span></button>
-      <button class="btn-accion" id="btn-dormir"><span class="icono">😴</span><span class="etiqueta-accion">Dormir</span></button>
-      <button class="btn-accion" id="btn-jugar-mascota"><span class="icono">🎾</span><span class="etiqueta-accion">Jugar</span></button>
-      <button class="btn-accion" id="btn-saltar"><span class="icono">🦘</span><span class="etiqueta-accion">Saltar</span></button>
+      <button class="btn-accion" type="button" id="btn-comer"><span class="icono">🍽️</span><span class="etiqueta-accion">Comer</span></button>
+      <button class="btn-accion" type="button" id="btn-dormir"><span class="icono">😴</span><span class="etiqueta-accion">Dormir</span></button>
+      <button class="btn-accion" type="button" id="btn-jugar-mascota"><span class="icono">🎾</span><span class="etiqueta-accion">Jugar</span></button>
+      <button class="btn-accion" type="button" id="btn-saltar"><span class="icono">🦘</span><span class="etiqueta-accion">Saltar</span></button>
     </div>
 
     <p id="mensaje-mascota"></p>
+
+    <div class="estadisticas">
+      <div class="estadistica"><span class="numero-estadistica" id="stat-comer">0</span><span class="etiqueta-estadistica">Comidas</span></div>
+      <div class="estadistica"><span class="numero-estadistica" id="stat-dormir">0</span><span class="etiqueta-estadistica">Siestas</span></div>
+      <div class="estadistica"><span class="numero-estadistica" id="stat-jugar">0</span><span class="etiqueta-estadistica">Juegos</span></div>
+      <div class="estadistica"><span class="numero-estadistica" id="stat-saltar">0</span><span class="etiqueta-estadistica">Saltos</span></div>
+      <div class="estadistica"><span class="numero-estadistica" id="stat-caricias">0</span><span class="etiqueta-estadistica">Caricias</span></div>
+      <div class="estadistica"><span class="numero-estadistica" id="stat-total">0</span><span class="etiqueta-estadistica">En total</span></div>
+    </div>
+
+    <div class="personalizacion">
+      <div class="grupo-personalizar">
+        <span class="titulo-personalizar">Fondo de la tarjeta</span>
+        <div class="swatches" id="swatches-fondo">
+          <button type="button" class="swatch" data-fondo="crema" title="Crema" aria-label="Fondo crema" style="background:#fbf8f4"></button>
+          <button type="button" class="swatch" data-fondo="menta" title="Menta" aria-label="Fondo menta" style="background:#e6f2ea"></button>
+          <button type="button" class="swatch" data-fondo="cielo" title="Cielo" aria-label="Fondo cielo" style="background:#e6eff8"></button>
+          <button type="button" class="swatch" data-fondo="lavanda" title="Lavanda" aria-label="Fondo lavanda" style="background:#f0e9f8"></button>
+          <button type="button" class="swatch" data-fondo="coral" title="Coral" aria-label="Fondo coral" style="background:#fbe8e0"></button>
+          <button type="button" class="swatch" data-fondo="durazno" title="Durazno" aria-label="Fondo durazno" style="background:#fdf1e7"></button>
+          <button type="button" class="swatch" data-fondo="perla" title="Perla" aria-label="Fondo perla" style="background:#f1f1ef"></button>
+        </div>
+      </div>
+      <div class="grupo-personalizar">
+        <span class="titulo-personalizar">Accesorio</span>
+        <div class="swatches" id="swatches-accesorio">
+          <button type="button" class="swatch-emoji" data-accesorio="" title="Sin accesorio" aria-label="Sin accesorio">🚫</button>
+          <button type="button" class="swatch-emoji" data-accesorio="🎀" title="Lazo" aria-label="Lazo">🎀</button>
+          <button type="button" class="swatch-emoji" data-accesorio="🧣" title="Bufanda" aria-label="Bufanda">🧣</button>
+          <button type="button" class="swatch-emoji" data-accesorio="👑" title="Corona" aria-label="Corona">👑</button>
+          <button type="button" class="swatch-emoji" data-accesorio="🕶️" title="Gafas de sol" aria-label="Gafas de sol">🕶️</button>
+          <button type="button" class="swatch-emoji" data-accesorio="🌸" title="Flor" aria-label="Flor">🌸</button>
+          <button type="button" class="swatch-emoji" data-accesorio="🎉" title="Gorro de fiesta" aria-label="Gorro de fiesta">🎉</button>
+          <button type="button" class="swatch-emoji" data-accesorio="💍" title="Anillo" aria-label="Anillo">💍</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Firebase -->
@@ -245,12 +527,72 @@
       felicidad: document.getElementById('valor-felicidad')
     };
 
-    // Puntos que baja cada necesidad por hora real transcurrida
-    const DECAIMIENTO_POR_HORA = 3;
+    // Cada necesidad baja a su propio ritmo por hora real transcurrida
+    const TASAS_DECAIMIENTO = { hambre: 4, sueno: 2, felicidad: 2.5 };
+    // Si el hambre o el sueño están muy bajos, la felicidad baja más rápido (mascota descuidada = triste)
+    const PENALIZACION_DESCUIDO = 2;
     const MAX = 100;
 
     let estadoActual = { hambre: MAX, sueno: MAX, felicidad: MAX };
     let referenciaDoc = null;
+
+    // Personalización y racha
+    let nombreMascota = '';
+    let fondoElegido = 'crema';
+    let accesorioElegido = '';
+    let racha = 0;
+    let rachaMaxima = 0;
+    let ultimoDiaCuidado = null;
+    let contadores = { comer: 0, dormir: 0, jugar: 0, saltar: 0, caricias: 0 };
+    let logrosDesbloqueados = [];
+
+    const contenedorEl = document.querySelector('.contenedor');
+    const FONDOS = ['crema', 'menta', 'cielo', 'lavanda', 'coral', 'durazno', 'perla'];
+    const textoNombre = document.getElementById('texto-nombre');
+    const btnEditarNombre = document.getElementById('btn-editar-nombre');
+    const formNombre = document.getElementById('form-nombre');
+    const inputNombre = document.getElementById('input-nombre');
+    const btnGuardarNombre = document.getElementById('btn-guardar-nombre');
+    const btnCancelarNombre = document.getElementById('btn-cancelar-nombre');
+    const rachaMascotaEl = document.getElementById('racha-mascota');
+    const accesorioEl = document.getElementById('accesorio-mascota');
+
+    const emojiNivel = document.getElementById('emoji-nivel');
+    const textoNivel = document.getElementById('texto-nivel');
+    const barraNivelRelleno = document.getElementById('barra-nivel-relleno');
+    const textoNivelProgreso = document.getElementById('texto-nivel-progreso');
+
+    const statsEl = {
+      comer: document.getElementById('stat-comer'),
+      dormir: document.getElementById('stat-dormir'),
+      jugar: document.getElementById('stat-jugar'),
+      saltar: document.getElementById('stat-saltar'),
+      caricias: document.getElementById('stat-caricias'),
+      total: document.getElementById('stat-total')
+    };
+
+    // Niveles de vínculo según el total de cuidados acumulados
+    const NIVELES = [
+      { min: 0, emoji: '🌱', nombre: 'Empezando' },
+      { min: 10, emoji: '💛', nombre: 'Enamorados' },
+      { min: 30, emoji: '🧡', nombre: 'Muy unidos' },
+      { min: 70, emoji: '💞', nombre: 'Alma gemela' }
+    ];
+    const HITOS_RACHA = [3, 7, 14, 30, 60, 100];
+
+    const animoMascota = document.getElementById('animo-mascota');
+
+    function actualizarAnimo(estado) {
+      const promedio = (estado.hambre + estado.sueno + estado.felicidad) / 3;
+      let texto;
+      if (estado.hambre < 20 && estado.sueno < 20) texto = '😩 Agotada y hambrienta';
+      else if (estado.hambre < 20) texto = '🍽️ Tiene mucha hambre';
+      else if (estado.sueno < 20) texto = '🥱 Está agotada';
+      else if (promedio >= 75) texto = '😊 Feliz y a gusto';
+      else if (promedio >= 45) texto = '🙂 Está bien';
+      else texto = '😢 Necesita cariño';
+      animoMascota.textContent = texto;
+    }
 
     function actualizarBarras(estado) {
       Object.keys(barras).forEach(clave => {
@@ -259,18 +601,25 @@
         barras[clave].classList.toggle('baja', valor <= 25);
         valores[clave].textContent = valor;
       });
+      actualizarAnimo(estado);
+      actualizarEstadoCritico(estado);
     }
 
     function calcularDecaimiento(estado, ultimaFecha) {
       if (!ultimaFecha) return estado;
       const horasPasadas = (Date.now() - ultimaFecha.getTime()) / (1000 * 60 * 60);
       if (horasPasadas <= 0) return estado;
-      const resta = horasPasadas * DECAIMIENTO_POR_HORA;
-      return {
-        hambre: Math.max(0, estado.hambre - resta),
-        sueno: Math.max(0, estado.sueno - resta),
-        felicidad: Math.max(0, estado.felicidad - resta)
-      };
+
+      const nuevoHambre = Math.max(0, estado.hambre - horasPasadas * TASAS_DECAIMIENTO.hambre);
+      const nuevoSueno = Math.max(0, estado.sueno - horasPasadas * TASAS_DECAIMIENTO.sueno);
+
+      let restaFelicidad = horasPasadas * TASAS_DECAIMIENTO.felicidad;
+      if (nuevoHambre < 30 || nuevoSueno < 30) {
+        restaFelicidad += horasPasadas * PENALIZACION_DESCUIDO;
+      }
+      const nuevaFelicidad = Math.max(0, estado.felicidad - restaFelicidad);
+
+      return { hambre: nuevoHambre, sueno: nuevoSueno, felicidad: nuevaFelicidad };
     }
 
     let temporizadorAccion = null;
@@ -306,23 +655,178 @@
       }, 2500);
     }
 
-    async function realizarAccion(clave, cantidad, srcVideo, mensaje, duracionMs) {
+    function fechaAString(fecha) {
+      return fecha.getFullYear() + '-' + String(fecha.getMonth() + 1).padStart(2, '0') + '-' + String(fecha.getDate()).padStart(2, '0');
+    }
+
+    function actualizarRachaUI() {
+      rachaMascotaEl.textContent = racha > 0
+        ? `🔥 ${racha} día${racha === 1 ? '' : 's'} seguido${racha === 1 ? '' : 's'} de cuidado · récord ${rachaMaxima}`
+        : '';
+    }
+
+    // Cuenta el día de hoy como "cuidado". Si ayer también se cuidó, suma la racha; si no, la reinicia.
+    function registrarCuidadoHoy() {
+      const hoy = fechaAString(new Date());
+      if (ultimoDiaCuidado === hoy) return;
+
+      const ayer = new Date();
+      ayer.setDate(ayer.getDate() - 1);
+      const ayerStr = fechaAString(ayer);
+
+      racha = (ultimoDiaCuidado === ayerStr) ? racha + 1 : 1;
+      ultimoDiaCuidado = hoy;
+      rachaMaxima = Math.max(rachaMaxima, racha);
+      actualizarRachaUI();
+      revisarLogroRacha();
+    }
+
+    function mostrarLogro(texto) {
+      const toast = document.createElement('div');
+      toast.className = 'logro-toast';
+      toast.textContent = texto;
+      document.body.appendChild(toast);
+      requestAnimationFrame(() => toast.classList.add('mostrando'));
+      setTimeout(() => {
+        toast.classList.remove('mostrando');
+        setTimeout(() => toast.remove(), 350);
+      }, 3200);
+    }
+
+    function revisarLogroRacha() {
+      if (HITOS_RACHA.includes(racha) && !logrosDesbloqueados.includes(racha)) {
+        logrosDesbloqueados.push(racha);
+        mostrarLogro(`🏆 ¡${racha} días seguidos cuidándola!`);
+      }
+    }
+
+    function calcularNivel(total) {
+      let actual = NIVELES[0];
+      for (const n of NIVELES) if (total >= n.min) actual = n;
+      return actual;
+    }
+
+    function actualizarNivelUI() {
+      const total = contadores.comer + contadores.dormir + contadores.jugar + contadores.saltar + contadores.caricias;
+      const nivel = calcularNivel(total);
+      const indiceActual = NIVELES.indexOf(nivel);
+      const siguiente = NIVELES[indiceActual + 1];
+
+      emojiNivel.textContent = nivel.emoji;
+      textoNivel.textContent = nivel.nombre;
+
+      if (siguiente) {
+        const progreso = ((total - nivel.min) / (siguiente.min - nivel.min)) * 100;
+        barraNivelRelleno.style.width = Math.min(100, progreso) + '%';
+        textoNivelProgreso.textContent = `${total} cuidados · faltan ${siguiente.min - total} para "${siguiente.nombre}"`;
+      } else {
+        barraNivelRelleno.style.width = '100%';
+        textoNivelProgreso.textContent = `${total} cuidados · nivel máximo alcanzado`;
+      }
+    }
+
+    function actualizarEstadisticasUI() {
+      statsEl.comer.textContent = contadores.comer;
+      statsEl.dormir.textContent = contadores.dormir;
+      statsEl.jugar.textContent = contadores.jugar;
+      statsEl.saltar.textContent = contadores.saltar;
+      statsEl.caricias.textContent = contadores.caricias;
+      statsEl.total.textContent = contadores.comer + contadores.dormir + contadores.jugar + contadores.saltar + contadores.caricias;
+      actualizarNivelUI();
+    }
+
+    function actualizarEstadoCritico(estado) {
+      const promedio = (estado.hambre + estado.sueno + estado.felicidad) / 3;
+      contenedorEl.classList.toggle('critica', promedio < 20);
+    }
+
+    function aplicarFondo(clave) {
+      FONDOS.forEach(f => contenedorEl.classList.remove('fondo-' + f));
+      contenedorEl.classList.add('fondo-' + clave);
+      document.querySelectorAll('#swatches-fondo .swatch').forEach(boton => {
+        boton.classList.toggle('activo', boton.dataset.fondo === clave);
+      });
+    }
+
+    function aplicarAccesorio(emoji) {
+      accesorioEl.textContent = emoji || '';
+      document.querySelectorAll('#swatches-accesorio .swatch-emoji').forEach(boton => {
+        boton.classList.toggle('activo', boton.dataset.accesorio === emoji);
+      });
+    }
+
+    function guardarEstado() {
+      if (!referenciaDoc) return;
+      referenciaDoc.set({
+        hambre: estadoActual.hambre,
+        sueno: estadoActual.sueno,
+        felicidad: estadoActual.felicidad,
+        nombre: nombreMascota,
+        fondo: fondoElegido,
+        accesorio: accesorioElegido,
+        racha: racha,
+        rachaMaxima: rachaMaxima,
+        ultimoDiaCuidado: ultimoDiaCuidado,
+        contadores: contadores,
+        logrosDesbloqueados: logrosDesbloqueados,
+        actualizado: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    }
+
+    // cambios es un objeto con lo que sube o baja cada necesidad, ej: {hambre: -5, felicidad: 35}
+    // claveContador identifica qué estadística sumar (comer, dormir, jugar, saltar, caricias)
+    function realizarAccion(cambios, srcVideo, mensaje, duracionMs, claveContador) {
       if (!referenciaDoc) return;
       reproducirVideo(srcVideo, duracionMs);
       mostrarMensaje(mensaje);
 
       const nuevoEstado = { ...estadoActual };
-      nuevoEstado[clave] = Math.min(MAX, nuevoEstado[clave] + cantidad);
+      Object.keys(cambios).forEach(clave => {
+        nuevoEstado[clave] = Math.max(0, Math.min(MAX, nuevoEstado[clave] + cambios[clave]));
+      });
       estadoActual = nuevoEstado;
       actualizarBarras(estadoActual);
 
-      await referenciaDoc.set({
-        hambre: estadoActual.hambre,
-        sueno: estadoActual.sueno,
-        felicidad: estadoActual.felicidad,
-        actualizado: firebase.firestore.FieldValue.serverTimestamp()
-      });
+      if (claveContador) contadores[claveContador] = (contadores[claveContador] || 0) + 1;
+      actualizarEstadisticasUI();
+      registrarCuidadoHoy();
+      guardarEstado();
     }
+
+    btnEditarNombre.addEventListener('click', () => {
+      inputNombre.value = nombreMascota;
+      formNombre.hidden = false;
+      inputNombre.focus();
+    });
+    btnCancelarNombre.addEventListener('click', () => {
+      formNombre.hidden = true;
+    });
+    inputNombre.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') btnGuardarNombre.click();
+      if (e.key === 'Escape') btnCancelarNombre.click();
+    });
+    btnGuardarNombre.addEventListener('click', () => {
+      nombreMascota = inputNombre.value.trim();
+      textoNombre.textContent = nombreMascota || 'Tu mascota';
+      formNombre.hidden = true;
+      guardarEstado();
+    });
+
+    document.querySelectorAll('#swatches-fondo .swatch').forEach(boton => {
+      boton.addEventListener('click', () => {
+        fondoElegido = boton.dataset.fondo;
+        aplicarFondo(fondoElegido);
+        guardarEstado();
+      });
+    });
+
+    document.querySelectorAll('#swatches-accesorio .swatch-emoji').forEach(boton => {
+      boton.addEventListener('click', () => {
+        accesorioElegido = boton.dataset.accesorio;
+        aplicarAccesorio(accesorioElegido);
+        guardarEstado();
+      });
+    });
 
     function crearCorazonFlotante(x, y) {
       const corazon = document.createElement('div');
@@ -355,24 +859,27 @@
       estadoActual.felicidad = Math.min(MAX, estadoActual.felicidad + 4);
       actualizarBarras(estadoActual);
       mostrarMensaje('¡Le encanta que la acaricies! 🥰');
-
-      referenciaDoc.set({
-        felicidad: estadoActual.felicidad,
-        actualizado: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true });
+      contadores.caricias = (contadores.caricias || 0) + 1;
+      actualizarEstadisticasUI();
+      registrarCuidadoHoy();
+      guardarEstado();
     });
 
+    // Comer: sacia el hambre
     document.getElementById('btn-comer').addEventListener('click', () => {
-      realizarAccion('hambre', 30, 'Comer.mp4?v=2', '¡Qué rico! 🍽️', 4000);
+      realizarAccion({ hambre: 40 }, 'Comer.mp4?v=2', '¡Qué rico! 🍽️', 4000, 'comer');
     });
+    // Dormir: descansa del todo, por eso es la acción más larga
     document.getElementById('btn-dormir').addEventListener('click', () => {
-      realizarAccion('sueno', 30, 'Dormir.mp4?v=2', 'Zzz... 😴', 15000);
+      realizarAccion({ sueno: 100 }, 'Dormir.mp4?v=2', 'Zzz... 😴', 15000, 'dormir');
     });
+    // Jugar: sube mucho la felicidad, pero cansa y da hambre (como en la vida real)
     document.getElementById('btn-jugar-mascota').addEventListener('click', () => {
-      realizarAccion('felicidad', 30, 'Jugar.mp4?v=2', '¡Qué divertido! 🎾', 5000);
+      realizarAccion({ felicidad: 35, sueno: -8, hambre: -5 }, 'Jugar.mp4?v=2', '¡Qué divertido! 🎾', 5000, 'jugar');
     });
+    // Saltar: gesto rápido y divertido, cuesta un poquito de energía
     document.getElementById('btn-saltar').addEventListener('click', () => {
-      realizarAccion('felicidad', 8, 'Saltar.mp4?v=2', '¡Wiii! 🦘', 2500);
+      realizarAccion({ felicidad: 10, sueno: -3 }, 'Saltar.mp4?v=2', '¡Wiii! 🦘', 2500, 'saltar');
     });
 
     if (db) {
@@ -384,6 +891,14 @@
             hambre: MAX,
             sueno: MAX,
             felicidad: MAX,
+            nombre: '',
+            fondo: 'crema',
+            accesorio: '',
+            racha: 0,
+            rachaMaxima: 0,
+            ultimoDiaCuidado: null,
+            contadores: { comer: 0, dormir: 0, jugar: 0, saltar: 0, caricias: 0 },
+            logrosDesbloqueados: [],
             actualizado: firebase.firestore.FieldValue.serverTimestamp()
           });
         }
@@ -399,19 +914,29 @@
             felicidad: datos.felicidad
           }, ultimaFecha);
           actualizarBarras(estadoActual);
+
+          nombreMascota = datos.nombre || '';
+          textoNombre.textContent = nombreMascota || 'Tu mascota';
+
+          fondoElegido = datos.fondo || 'crema';
+          aplicarFondo(fondoElegido);
+
+          accesorioElegido = datos.accesorio || '';
+          aplicarAccesorio(accesorioElegido);
+
+          racha = datos.racha || 0;
+          rachaMaxima = datos.rachaMaxima || 0;
+          ultimoDiaCuidado = datos.ultimoDiaCuidado || null;
+          actualizarRachaUI();
+
+          contadores = datos.contadores || { comer: 0, dormir: 0, jugar: 0, saltar: 0, caricias: 0 };
+          logrosDesbloqueados = datos.logrosDesbloqueados || [];
+          actualizarEstadisticasUI();
         });
       });
 
       // Cada minuto, vuelve a calcular el decaimiento y lo guarda (así avanza aunque no toques nada)
-      setInterval(() => {
-        if (!referenciaDoc) return;
-        referenciaDoc.set({
-          hambre: estadoActual.hambre,
-          sueno: estadoActual.sueno,
-          felicidad: estadoActual.felicidad,
-          actualizado: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-      }, 60000);
+      setInterval(guardarEstado, 60000);
     } else {
       mostrarMensaje('No se pudo conectar. Revisa tu conexión.');
     }

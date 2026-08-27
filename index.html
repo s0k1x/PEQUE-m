@@ -59,6 +59,32 @@
       text-decoration: line-through;
       color: gray;
     }
+    #galeria-videos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    #galeria-videos video {
+      width: 100%;
+      max-height: 200px;
+    }
+    #filtro-categorias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0;
+    }
+    #filtro-categorias button.activa {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    #form-multimedia {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 400px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -127,7 +153,7 @@
 
       <div id="menu-principal">
         <button class="btn-opcion" data-target="seccion-1">Cartas</button>
-        <button class="btn-opcion" data-target="seccion-2">Fotos</button>
+        <button class="btn-opcion" data-target="seccion-2">Fotos y Videos</button>
         <button class="btn-opcion" data-target="seccion-3">🎁 Sorpresa</button>
         <button class="btn-opcion" data-target="seccion-4">💫 Metas</button>
       </div>
@@ -158,11 +184,24 @@
       </div>
 
       <div id="seccion-2" class="seccion" hidden>
-        <h2>Fotos</h2>
-        <button id="btn-nueva-foto">➕ Añadir fotos</button>
-        <input type="file" id="input-fotos" accept="image/*" multiple hidden>
+        <h2>Fotos y Videos</h2>
+        <button id="btn-nueva-foto">➕ Añadir fotos o videos</button>
 
+        <div id="form-multimedia" hidden>
+          <input type="file" id="input-fotos" accept="image/*,video/*" multiple>
+          <input type="text" id="multimedia-categoria" placeholder="Categoría (ej: Vacaciones)" list="lista-categorias">
+          <datalist id="lista-categorias"></datalist>
+          <button id="btn-subir-multimedia">Subir</button>
+          <button id="btn-cancelar-multimedia">Cancelar</button>
+        </div>
+
+        <div id="filtro-categorias"></div>
+
+        <h3>📷 Fotos</h3>
         <div id="galeria-fotos"></div>
+
+        <h3>🎥 Videos</h3>
+        <div id="galeria-videos"></div>
 
         <button class="btn-volver">Volver</button>
       </div>
@@ -525,55 +564,138 @@
       });
     }
 
-    // ---------- Fotos ----------
+    // ---------- Fotos y Videos ----------
     const btnNuevaFoto = document.getElementById('btn-nueva-foto');
+    const formMultimedia = document.getElementById('form-multimedia');
     const inputFotos = document.getElementById('input-fotos');
+    const multimediaCategoria = document.getElementById('multimedia-categoria');
+    const listaCategorias = document.getElementById('lista-categorias');
+    const btnSubirMultimedia = document.getElementById('btn-subir-multimedia');
+    const btnCancelarMultimedia = document.getElementById('btn-cancelar-multimedia');
+    const filtroCategorias = document.getElementById('filtro-categorias');
     const galeriaFotos = document.getElementById('galeria-fotos');
+    const galeriaVideos = document.getElementById('galeria-videos');
 
-    btnNuevaFoto.addEventListener('click', () => inputFotos.click());
+    let categoriaActiva = 'Todas';
+    let ultimosItems = [];
 
-    inputFotos.addEventListener('change', () => {
+    btnNuevaFoto.addEventListener('click', () => {
+      formMultimedia.hidden = false;
+    });
+
+    btnCancelarMultimedia.addEventListener('click', () => {
+      formMultimedia.hidden = true;
+      inputFotos.value = '';
+      multimediaCategoria.value = '';
+    });
+
+    function leerVideoComoBase64(archivo) {
+      return new Promise(resolve => {
+        const lector = new FileReader();
+        lector.onload = () => resolve(lector.result);
+        lector.readAsDataURL(archivo);
+      });
+    }
+
+    btnSubirMultimedia.addEventListener('click', async () => {
       if (!db) {
         alert('No se pudo conectar con la base de datos. Revisa tu conexión e inténtalo de nuevo.');
         return;
       }
-      leerArchivosComoBase64(inputFotos.files).then(nuevasFotos => {
-        nuevasFotos.forEach(src => {
-          db.collection('fotos').add({
-            src,
-            creado: firebase.firestore.FieldValue.serverTimestamp()
-          });
+      const archivos = Array.from(inputFotos.files);
+      if (archivos.length === 0) return;
+
+      const categoria = multimediaCategoria.value.trim() || 'Sin categoría';
+      btnSubirMultimedia.disabled = true;
+
+      for (const archivo of archivos) {
+        const esVideo = archivo.type.startsWith('video/');
+        const src = esVideo ? await leerVideoComoBase64(archivo) : await procesarImagen(archivo);
+
+        // Firestore no acepta documentos de más de 1MB; si un video no cabe, se avisa y se salta
+        if (src.length > 1000000) {
+          alert(`El video "${archivo.name}" es demasiado pesado y no se pudo subir (Firestore permite máximo ~1MB por archivo). Usa un video más corto.`);
+          continue;
+        }
+
+        db.collection('fotos').add({
+          src,
+          tipo: esVideo ? 'video' : 'foto',
+          categoria,
+          creado: firebase.firestore.FieldValue.serverTimestamp()
         });
-        inputFotos.value = '';
-      });
+      }
+
+      btnSubirMultimedia.disabled = false;
+      formMultimedia.hidden = true;
+      inputFotos.value = '';
+      multimediaCategoria.value = '';
     });
 
-    function renderizarFotos(fotos) {
-      galeriaFotos.innerHTML = '';
+    function renderizarFiltroCategorias(items) {
+      const categorias = ['Todas', ...new Set(items.map(i => i.categoria || 'Sin categoría'))];
+      filtroCategorias.innerHTML = '';
 
-      fotos.forEach(foto => {
-        const item = document.createElement('div');
-        item.className = 'foto-item';
-
-        const img = document.createElement('img');
-        img.src = foto.src;
-
-        const btnEliminar = document.createElement('button');
-        btnEliminar.textContent = '✕';
-        btnEliminar.addEventListener('click', () => {
-          db.collection('fotos').doc(foto.id).delete();
+      categorias.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.textContent = cat;
+        if (cat === categoriaActiva) btn.classList.add('activa');
+        btn.addEventListener('click', () => {
+          categoriaActiva = cat;
+          renderizarTodo(ultimosItems);
         });
+        filtroCategorias.appendChild(btn);
+      });
 
-        item.appendChild(img);
-        item.appendChild(btnEliminar);
-        galeriaFotos.appendChild(item);
+      // Autocompletar categorías al escribir una nueva
+      listaCategorias.innerHTML = '';
+      [...new Set(items.map(i => i.categoria || 'Sin categoría'))].forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        listaCategorias.appendChild(option);
+      });
+    }
+
+    function crearItemMultimedia(item, esVideo) {
+      const div = document.createElement('div');
+      div.className = 'foto-item';
+
+      const media = document.createElement(esVideo ? 'video' : 'img');
+      media.src = item.src;
+      if (esVideo) media.controls = true;
+
+      const btnEliminar = document.createElement('button');
+      btnEliminar.textContent = '✕';
+      btnEliminar.addEventListener('click', () => {
+        db.collection('fotos').doc(item.id).delete();
+      });
+
+      div.appendChild(media);
+      div.appendChild(btnEliminar);
+      return div;
+    }
+
+    function renderizarTodo(items) {
+      renderizarFiltroCategorias(items);
+
+      const filtrados = categoriaActiva === 'Todas'
+        ? items
+        : items.filter(i => (i.categoria || 'Sin categoría') === categoriaActiva);
+
+      galeriaFotos.innerHTML = '';
+      galeriaVideos.innerHTML = '';
+
+      filtrados.forEach(item => {
+        const esVideo = item.tipo === 'video';
+        const elemento = crearItemMultimedia(item, esVideo);
+        (esVideo ? galeriaVideos : galeriaFotos).appendChild(elemento);
       });
     }
 
     if (db) {
       db.collection('fotos').orderBy('creado').onSnapshot(snapshot => {
-        const fotos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        renderizarFotos(fotos);
+        ultimosItems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderizarTodo(ultimosItems);
       });
     }
 

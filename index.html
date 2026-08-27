@@ -611,6 +611,40 @@
       text-decoration: line-through;
       color: var(--gris);
     }
+
+    /* Mascota */
+    #mascota-widget {
+      max-width: 420px;
+      margin: 28px auto 0;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    #mascota-img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+    }
+    #mascota-frase {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 15px;
+      color: var(--tinta);
+      margin: 8px 0 14px;
+      min-height: 20px;
+    }
+    .btn-jugar {
+      display: inline-block;
+      background: var(--naranja);
+      color: var(--blanco);
+      text-decoration: none;
+      padding: 10px 26px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
   </style>
 </head>
 <body>
@@ -774,6 +808,12 @@
 
   </div>
 
+  <div id="mascota-widget" hidden>
+    <img src="MENU.png" alt="mascota" id="mascota-img">
+    <p id="mascota-frase"></p>
+    <a href="pou.html" class="btn-jugar">Jugar</a>
+  </div>
+
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -815,6 +855,7 @@
         inputClave.value = '';
         pantallaClave.hidden = true;
         contenido.hidden = false;
+        mascotaWidget.hidden = false;
       } else {
         mensajeErrorClave.hidden = false;
       }
@@ -825,12 +866,14 @@
     const menuPrincipal = document.getElementById('menu-principal');
     const botonesOpcion = document.querySelectorAll('.btn-opcion');
     const botonesVolver = document.querySelectorAll('.btn-volver');
+    const mascotaWidget = document.getElementById('mascota-widget');
 
     botonesOpcion.forEach(boton => {
       boton.addEventListener('click', () => {
         const destino = document.getElementById(boton.dataset.target);
         menuPrincipal.hidden = true;
         destino.hidden = false;
+        mascotaWidget.hidden = true;
       });
     });
 
@@ -838,8 +881,23 @@
       boton.addEventListener('click', () => {
         boton.closest('.seccion').hidden = true;
         menuPrincipal.hidden = false;
+        mascotaWidget.hidden = false;
       });
     });
+
+    // Mascota: frase aleatoria en cada carga de página
+    const frasesMascota = [
+      '¡Hola! ¿Ya viste las cartas de hoy? 💌',
+      'Psst... tienes metas pendientes 💫',
+      '¿Ya viste el atardecer hoy? 🧡',
+      'Te extraño cuando no entras por aquí',
+      '¿Jugamos un rato?',
+      '¿Sabías que eres mi persona favorita?'
+    ];
+    const mascotaFrase = document.getElementById('mascota-frase');
+    if (mascotaFrase) {
+      mascotaFrase.textContent = frasesMascota[Math.floor(Math.random() * frasesMascota.length)];
+    }
 
     // Cuenta regresiva de la sección sorpresa (se desbloquea el 1 de enero de 2027)
     const fechaDesbloqueo = new Date('2027-01-01T00:00:00');

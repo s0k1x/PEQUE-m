@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Nuestro Corazón</title>
-  <meta name="apple-mobile-web-app-title" content="Pequee">
+  <meta name="apple-mobile-web-app-title" content="Peque">
   <link rel="apple-touch-icon" href="MENU.PNG">
   <link rel="icon" type="image/png" href="MENU.PNG">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -285,6 +285,21 @@
 
     /* Menú principal */
     #menu-principal { counter-reset: opcion; }
+    #btn-notificaciones {
+      display: block;
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      font-size: 10.5px;
+      letter-spacing: 0.5px;
+      padding: 6px 12px;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+    #btn-notificaciones.activo {
+      border-color: var(--naranja);
+      color: var(--naranja);
+    }
     .btn-opcion {
       counter-increment: opcion;
       display: flex;
@@ -715,6 +730,114 @@
       cursor: pointer;
     }
 
+    /* Configuración */
+    .config-grupo {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--linea);
+    }
+    .config-titulo {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 17px;
+      color: var(--tinta);
+      margin-bottom: 6px;
+    }
+    .config-descripcion {
+      font-size: 12.5px;
+      margin-bottom: 12px;
+    }
+    .config-grupo #btn-notificaciones {
+      display: inline-block;
+      width: auto;
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      padding: 10px 18px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .config-grupo #btn-notificaciones.activo {
+      background: none;
+      border: 1px solid var(--naranja);
+      color: var(--naranja);
+    }
+    .config-btn-secundario {
+      display: inline-block;
+      width: auto;
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      padding: 10px 18px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    #control-volumen {
+      width: 100%;
+      accent-color: var(--naranja);
+    }
+    .config-creditos {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 13px;
+      color: var(--gris);
+      margin: 20px 0 0;
+    }
+
+    #btn-ajustes-flotante {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--hueso);
+      border: 1px solid var(--linea);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .config-fila-nombre {
+      display: flex;
+      gap: 8px;
+    }
+    .config-fila-nombre input {
+      flex: 1;
+      border: none;
+      border-bottom: 1px solid var(--linea);
+      padding: 8px 0;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      background: transparent;
+      color: var(--tinta);
+    }
+    .config-fila-nombre button {
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      padding: 8px 16px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      font-size: 10.5px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
     /* Mascota */
     #mascota-widget {
       max-width: 420px;
@@ -866,6 +989,8 @@
     <!-- Pantalla 3: página principal con 4 opciones -->
     <section id="contenido" hidden>
 
+      <button id="btn-ajustes-flotante" type="button" aria-label="Configuración">⚙️</button>
+
       <div id="menu-principal">
         <h2>Selecciona una opción</h2>
         <button class="btn-opcion" data-target="seccion-1">Cartas</button>
@@ -974,6 +1099,46 @@
         <button class="btn-volver">Volver</button>
       </div>
 
+      <div id="seccion-6" class="seccion" hidden>
+        <h2>Configuración ⚙️</h2>
+
+        <div class="config-grupo">
+          <span class="config-titulo">🙋 Tu nombre</span>
+          <p class="config-descripcion">Así sabremos quién hizo qué (por ejemplo, en los avisos: "Mario añadió una carta").</p>
+          <div class="config-fila-nombre">
+            <input type="text" id="input-nombre-usuario" maxlength="20" placeholder="Tu nombre">
+            <button id="btn-guardar-nombre-usuario" type="button">Guardar</button>
+          </div>
+        </div>
+
+        <div class="config-grupo">
+          <span class="config-titulo">🔔 Notificaciones</span>
+          <p class="config-descripcion">Te avisa si añaden algo nuevo, o si la mascota necesita algo.</p>
+          <button id="btn-notificaciones" type="button">Activar avisos</button>
+        </div>
+
+        <div class="config-grupo">
+          <span class="config-titulo">🔊 Volumen de la música</span>
+          <input type="range" id="control-volumen" min="0" max="100" value="25">
+        </div>
+
+        <div class="config-grupo">
+          <span class="config-titulo">🚪 Sesión</span>
+          <p class="config-descripcion">Cierra la sesión en este dispositivo — la próxima vez pedirá la contraseña otra vez.</p>
+          <button id="btn-cerrar-sesion" type="button" class="config-btn-secundario">Cerrar sesión</button>
+        </div>
+
+        <div class="config-grupo">
+          <span class="config-titulo">🔄 Cuestionario</span>
+          <p class="config-descripcion">Vuelve a pedir las 5 preguntas la próxima vez que se entre desde este dispositivo.</p>
+          <button id="btn-reiniciar-cuestionario" type="button" class="config-btn-secundario">Reiniciar cuestionario</button>
+        </div>
+
+        <p class="config-creditos">Hecho con 🧡 para ti</p>
+
+        <button class="btn-volver">Volver</button>
+      </div>
+
     </section>
 
   </div>
@@ -1066,6 +1231,16 @@
         menuPrincipal.hidden = false;
         mascotaWidget.hidden = false;
       });
+    });
+
+    // Ícono flotante de ajustes (esquina superior derecha) — funciona desde
+    // cualquier sección, no solo desde el menú principal
+    const btnAjustesFlotante = document.getElementById('btn-ajustes-flotante');
+    btnAjustesFlotante.addEventListener('click', () => {
+      document.querySelectorAll('.seccion').forEach(s => s.hidden = true);
+      menuPrincipal.hidden = true;
+      document.getElementById('seccion-6').hidden = false;
+      mascotaWidget.hidden = true;
     });
 
     // Mascota: frase aleatoria en cada carga de página
@@ -1318,6 +1493,7 @@
             color: cartaColor.value,
             tamano: cartaTamano.value,
             imagenes: imagenesNuevas,
+            autor: obtenerNombreUsuario(),
             creado: firebase.firestore.FieldValue.serverTimestamp()
           }).then(() => {
             formCarta.hidden = true;
@@ -1530,6 +1706,7 @@
 
     async function subirVideoConFragmentos(dataUrl, categoria) {
       const docRef = db.collection('fotos').doc();
+      const autor = obtenerNombreUsuario();
 
       if (dataUrl.length <= TAMANO_FRAGMENTO) {
         await docRef.set({
@@ -1537,6 +1714,7 @@
           tipo: 'video',
           categoria,
           fragmentado: false,
+          autor,
           creado: firebase.firestore.FieldValue.serverTimestamp()
         });
         return;
@@ -1552,6 +1730,7 @@
         categoria,
         fragmentado: true,
         totalFragmentos: fragmentos.length,
+        autor,
         creado: firebase.firestore.FieldValue.serverTimestamp()
       });
 
@@ -1611,6 +1790,7 @@
             src,
             tipo: 'foto',
             categoria,
+            autor: obtenerNombreUsuario(),
             creado: firebase.firestore.FieldValue.serverTimestamp()
           });
         }
@@ -1752,6 +1932,7 @@
       db.collection('metas').add({
         texto,
         hecho: false,
+        autor: obtenerNombreUsuario(),
         creado: firebase.firestore.FieldValue.serverTimestamp()
       });
       metaTexto.value = '';
@@ -1861,6 +2042,7 @@
             fecha: citaFecha.value,
             descripcion: citaDescripcion.value,
             imagenes: imagenesNuevas,
+            autor: obtenerNombreUsuario(),
             creado: firebase.firestore.FieldValue.serverTimestamp()
           }).then(() => {
             formCita.hidden = true;
@@ -1942,6 +2124,105 @@
         renderizarCitas(citas);
       });
     }
+
+    // ---------- Notificaciones push ----------
+    const VAPID_PUBLIC_KEY = 'BOXRvDCyRFSZIvHdJk2z2auDIU75W7nrhx_SUgXu6OKrSpJXlMkHMokKsUfyEUgU-HAH9pn8C6jJYIJ16bkvQDc';
+    const btnNotificaciones = document.getElementById('btn-notificaciones');
+
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+      const rawData = atob(base64);
+      return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+    }
+
+    async function activarNotificaciones() {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        alert('Tu navegador no soporta notificaciones aquí.');
+        return;
+      }
+      try {
+        const permiso = await Notification.requestPermission();
+        if (permiso !== 'granted') {
+          alert('No diste permiso para las notificaciones.');
+          return;
+        }
+        const registro = await navigator.serviceWorker.register('sw.js');
+        const suscripcion = await registro.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        });
+
+        if (db) {
+          await db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({
+            suscripcion: suscripcion.toJSON(),
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+
+        btnNotificaciones.textContent = '🔔 Avisos activados';
+        btnNotificaciones.classList.add('activo');
+      } catch (err) {
+        console.error(err);
+        alert('No se pudo activar. Inténtalo de nuevo.');
+      }
+    }
+
+    btnNotificaciones.addEventListener('click', activarNotificaciones);
+
+    if ('Notification' in window && Notification.permission === 'granted') {
+      btnNotificaciones.textContent = '🔔 Avisos activados';
+      btnNotificaciones.classList.add('activo');
+    }
+
+    // ---------- Configuración: nombre de usuario ----------
+    const inputNombreUsuario = document.getElementById('input-nombre-usuario');
+    const btnGuardarNombreUsuario = document.getElementById('btn-guardar-nombre-usuario');
+
+    inputNombreUsuario.value = localStorage.getItem('nombreUsuario') || '';
+
+    btnGuardarNombreUsuario.addEventListener('click', () => {
+      const nombre = inputNombreUsuario.value.trim();
+      if (nombre) {
+        localStorage.setItem('nombreUsuario', nombre);
+      } else {
+        localStorage.removeItem('nombreUsuario');
+      }
+      inputNombreUsuario.blur();
+    });
+
+    // Devuelve el nombre guardado, o null si no se ha puesto ninguno
+    function obtenerNombreUsuario() {
+      return localStorage.getItem('nombreUsuario') || null;
+    }
+
+    // ---------- Configuración: volumen de la música ----------
+    const controlVolumen = document.getElementById('control-volumen');
+    const volumenGuardado = localStorage.getItem('volumenMusica');
+
+    if (volumenGuardado !== null) {
+      cancionFondo.volume = Number(volumenGuardado);
+      controlVolumen.value = Math.round(Number(volumenGuardado) * 100);
+    }
+
+    controlVolumen.addEventListener('input', () => {
+      const nuevoVolumen = controlVolumen.value / 100;
+      cancionFondo.volume = nuevoVolumen;
+      localStorage.setItem('volumenMusica', nuevoVolumen);
+    });
+
+    // ---------- Configuración: cerrar sesión ----------
+    document.getElementById('btn-cerrar-sesion').addEventListener('click', () => {
+      sessionStorage.removeItem('claveOk');
+      location.reload();
+    });
+
+    // ---------- Configuración: reiniciar cuestionario ----------
+    document.getElementById('btn-reiniciar-cuestionario').addEventListener('click', () => {
+      localStorage.removeItem('cuestionarioCompletado');
+      sessionStorage.removeItem('claveOk');
+      location.reload();
+    });
 
     // ---------- Easter egg: doble toque con dos dedos ----------
     let ultimoToqueDosDedos = 0;

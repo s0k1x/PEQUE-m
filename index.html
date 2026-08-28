@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>¿Quién te va a dar el regalo?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --noche: #0b0908;
+      --tela: #201510;
+      --tela-sombra: #140d09;
+      --tela-luz: #2c1e16;
+      --ambar: #eea866;
+      --ambar-brillante: #ffcf94;
+      --hueso: #f6efe4;
+      --bronce: #a8783f;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+    }
+
+    body {
+      min-height: 100dvh;
+      background: radial-gradient(ellipse 60% 50% at 50% 38%, #14100d 0%, var(--noche) 70%);
+      color: var(--hueso);
+      font-family: 'Work Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      touch-action: manipulation;
+    }
+
+    /* Grano de película sutil, para que no se sienta plano/digital */
+    .grano {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      opacity: 0.05;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    }
+
+    /* ---------- Pantalla de mensaje (se ve antes que todo lo demás) ---------- */
+    #pantalla-mensaje {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      background: radial-gradient(ellipse 60% 50% at 50% 35%, #14100d 0%, var(--noche) 75%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    #pantalla-mensaje[hidden] { display: none; }
+
+    .tarjeta-mensaje {
+      width: 100%;
+      max-width: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: apareceMensaje 0.6s ease;
+    }
+    @keyframes apareceMensaje {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mensaje-icono {
+      font-size: 26px;
+      margin-bottom: 14px;
+      filter: drop-shadow(0 0 10px rgba(238,168,102,0.4));
+    }
+
+    .mensaje-texto {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 19px;
+      color: var(--hueso);
+      margin: 0 0 26px;
+      line-height: 1.4;
+    }
+
+    .btn-ok-imagen {
+      background: #ffffff;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      width: 84px;
+      height: 84px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 0 2px rgba(238,168,102,0.4), 0 0 26px rgba(238,168,102,0.35);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .btn-ok-imagen:active { transform: scale(0.93); }
+    .btn-ok-imagen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ---------- Cortinas: paneles sólidos con sombreado suave de pliegue, no rayas ---------- */
+    .cortina {
+      position: fixed;
+      top: 0; bottom: 0;
+      width: 64px;
+      z-index: 4;
+      background:
+        linear-gradient(90deg,
+          var(--tela-sombra) 0%, var(--tela-luz) 22%, var(--tela) 46%,
+          var(--tela-sombra) 68%, var(--tela-luz) 88%, var(--tela) 100%
+        );
+      box-shadow: 0 0 70px rgba(0,0,0,0.7) inset;
+      transition: transform 1.3s cubic-bezier(.65,0,.2,1);
+    }
+    .cortina.izquierda { left: 0; }
+    .cortina.derecha { right: 0; transform: scaleX(-1); }
+    body.telon-abierto .cortina.izquierda { transform: translateX(-100%); }
+    body.telon-abierto .cortina.derecha { transform: scaleX(-1) translateX(-100%); }
+
+    @media (min-width: 460px) {
+      .cortina { width: 90px; }
+    }
+
+    /* ---------- Luz de escenario: suave, sin bordes duros ---------- */
+    .luz {
+      position: fixed;
+      top: -12%;
+      left: 50%;
+      width: 460px;
+      height: 620px;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse 50% 55% at 50% 0%, rgba(238,168,102,0.30) 0%, rgba(238,168,102,0.12) 45%, transparent 75%);
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.4s ease 0.4s;
+      animation: respirar 5s ease-in-out infinite;
+    }
+    body.telon-abierto .luz { opacity: 1; }
+    @keyframes respirar {
+      0%, 100% { opacity: 0.9; }
+      50% { opacity: 1; }
+    }
+
+    /* ---------- Contenedor principal, ancho fijo, siempre bien encuadrado ---------- */
+    .escenario {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 340px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--bronce);
+      margin: 0 0 18px;
+      opacity: 0;
+      transition: opacity 0.9s ease 0.5s;
+    }
+    body.telon-abierto .eyebrow { opacity: 1; }
+
+    .pregunta {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 500;
+      font-size: 21px;
+      line-height: 1.35;
+      color: var(--hueso);
+      margin: 0 0 34px;
+      opacity: 0;
+      transition: opacity 0.9s ease 0.65s;
+    }
+    body.telon-abierto .pregunta { opacity: 1; }
+
+    /* ---------- Fila con flechas a los lados del marco ---------- */
+    .fila-personaje {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 1s ease 0.8s, transform 1s ease 0.8s;
+    }
+    body.telon-abierto .fila-personaje { opacity: 1; transform: translateY(0); }
+
+    .btn-flecha {
+      background: rgba(246,239,228,0.04);
+      border: 1px solid rgba(238,168,102,0.35);
+      color: var(--ambar-brillante);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .btn-flecha:active { transform: scale(0.9); background: rgba(238,168,102,0.16); }
+
+    /* ---------- El personaje: sin caja ni ventana, se funde con el fondo ---------- */
+    .marco-personaje { width: 230px; flex-shrink: 0; }
+
+    .marco-arco {
+      position: relative;
+      width: 230px;
+      height: 320px;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    /* Sombra tenue en el "suelo", para que el personaje se sienta apoyado en el escenario */
+    .sombra-suelo {
+      width: 150px;
+      height: 20px;
+      margin: 6px auto 0;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, transparent 75%);
+      transition: opacity 0.3s ease;
+    }
+    .sombra-suelo.cambiando { opacity: 0.3; }
+
+    .marco-arco img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 14px 26px rgba(0,0,0,0.55));
+      -webkit-mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
+      mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
+    }
+    .marco-arco .silueta {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      opacity: 0.45;
+      filter: drop-shadow(0 0 16px rgba(238,168,102,0.4));
+    }
+    .marco-arco.cambiando { opacity: 0; transform: translateY(4px); }
+
+    .nombre-personaje {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 26px;
+      color: var(--hueso);
+      margin: 20px 0 2px;
+      text-shadow: 0 1px 12px rgba(238,168,102,0.35);
+      transition: opacity 0.3s ease;
+    }
+    .nombre-personaje.cambiando { opacity: 0; }
+
+    .titulo-personaje {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--bronce);
+      margin: 0;
+      transition: opacity 0.3s ease;
+    }
+    .titulo-personaje.cambiando { opacity: 0; }
+
+    .indicadores {
+      display: flex;
+      gap: 7px;
+      margin-top: 18px;
+      opacity: 0;
+      transition: opacity 1s ease 1s;
+    }
+    body.telon-abierto .indicadores { opacity: 1; }
+    .punto {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(246,239,228,0.2);
+      transition: background 0.25s ease, transform 0.25s ease;
+    }
+    .punto.activo {
+      background: var(--ambar);
+      transform: scale(1.25);
+    }
+
+    .divisor {
+      width: 90px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--bronce), transparent);
+      margin: 26px 0;
+      opacity: 0;
+      transition: opacity 1s ease 1.05s;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    body.telon-abierto .divisor { opacity: 1; }
+    .divisor-diamante {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: var(--ambar);
+      transform: rotate(45deg);
+      box-shadow: 0 0 8px rgba(238,168,102,0.6);
+    }
+
+    .btn-elegir {
+      background: linear-gradient(180deg, var(--ambar-brillante), var(--bronce));
+      color: #1c1108;
+      border: none;
+      padding: 14px 40px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-radius: 3px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(238,168,102,0.3);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 1s ease 1.15s, transform 1s ease 1.15s, box-shadow 0.2s ease;
+    }
+    body.telon-abierto .btn-elegir { opacity: 1; transform: translateY(0); }
+    .btn-elegir:active { transform: scale(0.96); }
+
+    /* ---------- Pantalla de revelación (tras elegir) ---------- */
+    .revelacion {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      background: radial-gradient(ellipse 60% 50% at 50% 32%, #14100d 0%, var(--noche) 72%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 28px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .revelacion.visible { opacity: 1; }
+    .revelacion[hidden] { display: none; }
+
+    .revelacion-imagen {
+      max-width: 280px;
+      width: 78%;
+      max-height: 58vh;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 34px rgba(0,0,0,0.6));
+      -webkit-mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
+      mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.9s ease 0.15s, transform 0.9s ease 0.15s;
+    }
+    .revelacion.visible .revelacion-imagen { opacity: 1; transform: scale(1); }
+
+    .revelacion-nombre {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 28px;
+      color: var(--hueso);
+      text-shadow: 0 1px 12px rgba(238,168,102,0.35);
+      margin: 22px 0 30px;
+      opacity: 0;
+      transition: opacity 0.9s ease 0.4s;
+    }
+    .revelacion.visible .revelacion-nombre { opacity: 1; }
+
+    .revelacion .btn-elegir {
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.9s ease 0.6s, transform 0.9s ease 0.6s;
+    }
+    .revelacion.visible .btn-elegir { opacity: 1; transform: translateY(0); }
+
+    /* ---------- Pantalla de abrir el regalo ---------- */
+    .pantalla-regalo {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      background: radial-gradient(ellipse 60% 50% at 50% 32%, #14100d 0%, var(--noche) 72%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 28px;
+      opacity: 0;
+      animation: apareceMensaje 0.7s ease forwards;
+    }
+    .pantalla-regalo[hidden] { display: none; }
+
+    .regalo-instruccion {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 19px;
+      color: var(--hueso);
+      margin: 0 0 38px;
+      text-align: center;
+      transition: opacity 0.4s ease;
+    }
+    .regalo-instruccion.oculto { opacity: 0; }
+
+    /* Contenedor de referencia: aquí se centran tanto la caja como la
+       imagen del regalo, para que no se descuadren entre sí */
+    .regalo-escenario {
+      position: relative;
+      width: 100%;
+      max-width: 300px;
+      height: 300px;
+    }
+
+    /* La caja, construida solo con CSS */
+    .caja-regalo {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 150px;
+      height: 150px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .caja-regalo:active .caja-cuerpo { transform: scale(0.97); }
+
+    .caja-cuerpo {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 100px;
+      border-radius: 6px;
+      background: linear-gradient(160deg, #d68c4a, #a8632a);
+      box-shadow: 0 16px 34px rgba(0,0,0,0.55), 0 0 30px rgba(238,168,102,0.25);
+      overflow: hidden;
+      transition: transform 0.15s ease;
+    }
+    .caja-cinta-v {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 50%;
+      width: 20px;
+      margin-left: -10px;
+      background: var(--ambar-brillante);
+    }
+    .caja-cinta-h {
+      position: absolute;
+      left: 0; right: 0;
+      top: 0;
+      height: 20px;
+      background: var(--ambar-brillante);
+    }
+
+    .caja-tapa {
+      position: absolute;
+      left: -4px; right: -4px;
+      top: 34px;
+      height: 26px;
+      border-radius: 6px 6px 3px 3px;
+      background: linear-gradient(160deg, #e29d5c, #b6702f);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+      transform-origin: 50% 100%;
+      transition: transform 0.55s cubic-bezier(.4,-0.2,.6,1.3), opacity 0.5s ease 0.15s;
+    }
+
+    .caja-lazo {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      width: 34px;
+      height: 22px;
+      margin-left: -17px;
+      transition: transform 0.5s ease, opacity 0.4s ease 0.1s;
+    }
+    .caja-lazo::before, .caja-lazo::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 17px;
+      height: 20px;
+      background: var(--ambar-brillante);
+      border-radius: 50% 50% 50% 0;
+      box-shadow: inset 0 0 0 2px rgba(168,99,42,0.4);
+    }
+    .caja-lazo::before { left: 0; transform: rotate(-25deg); }
+    .caja-lazo::after { right: 0; transform: rotate(25deg) scaleX(-1); }
+
+    /* Estado: caja abriéndose */
+    .caja-regalo.abriendo .caja-tapa {
+      transform: translateY(-70px) rotate(-50deg);
+      opacity: 0;
+    }
+    .caja-regalo.abriendo .caja-lazo {
+      transform: translateY(-70px) scale(0.7);
+      opacity: 0;
+    }
+    .caja-regalo.abriendo .caja-cuerpo {
+      animation: temblarCaja 0.35s ease;
+    }
+    @keyframes temblarCaja {
+      0%, 100% { transform: translateX(0) rotate(0); }
+      25% { transform: translateX(-3px) rotate(-2deg); }
+      75% { transform: translateX(3px) rotate(2deg); }
+    }
+    .caja-regalo.escondida {
+      opacity: 0;
+      transform: scale(0.8) translateY(10px);
+      pointer-events: none;
+    }
+
+    /* Ráfaga de partículas al abrir */
+    .particulas-regalo {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .particula-regalo {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--ambar-brillante);
+      box-shadow: 0 0 8px 1px rgba(255,207,148,0.8);
+      opacity: 0;
+    }
+    .particula-regalo.disparada {
+      animation: dispararParticula 0.9s cubic-bezier(.2,.7,.4,1) forwards;
+    }
+    @keyframes dispararParticula {
+      0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0.4); }
+    }
+
+    /* La imagen del regalo, se revela igual que las de personaje: sin caja, fundida */
+    .regalo-imagen {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      max-width: 280px;
+      width: 78%;
+      max-height: 56vh;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 34px rgba(0,0,0,0.6));
+      -webkit-mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
+      mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
+      opacity: 0;
+      transform: scale(0.85);
+      transition: opacity 1s ease, transform 1s cubic-bezier(.2,.8,.3,1.15);
+      pointer-events: none;
+    }
+    .regalo-imagen.visible { opacity: 1; transform: scale(1); }
+
+    .regalo-btn-continuar {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+      margin-top: 26px;
+    }
+    .regalo-btn-continuar.visible { opacity: 1; pointer-events: auto; }
+
+    @media (max-height: 680px) {
+      .pregunta { margin-bottom: 22px; }
+      .marco-arco { width: 190px; height: 260px; }
+      .marco-personaje { width: 190px; }
+      .divisor { margin: 18px 0; }
+    }
+  </style>
+</head>
+<body class="telon-cerrado">
+
+  <div id="pantalla-mensaje">
+    <div class="tarjeta-mensaje">
+      <span class="mensaje-icono">🎁</span>
+      <p class="mensaje-texto">Mario te ha enviado un regalo</p>
+      <button id="btn-ok-mensaje" class="btn-ok-imagen" aria-label="Vale">
+        <img src="IMG_6447.png" alt="Vale">
+      </button>
+    </div>
+  </div>
+
+  <div class="grano"></div>
+  <div class="luz"></div>
+  <div class="cortina izquierda"></div>
+  <div class="cortina derecha"></div>
+
+  <div class="escenario">
+    <p class="eyebrow">Esta noche, el regalo lo entrega</p>
+    <p class="pregunta">Elige quién te lo va a dar</p>
+
+    <div class="fila-personaje">
+      <button class="btn-flecha" id="btn-anterior" aria-label="Personaje anterior">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M8 1L1.5 7.5L8 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <div class="marco-personaje">
+        <div class="marco-arco" id="marco-arco">
+          <span class="silueta">🎭</span>
+          <!-- Cuando tenga la imagen real: <img src="personaje1.png" alt=""> -->
+        </div>
+        <div class="sombra-suelo" id="sombra-suelo"></div>
+        <p class="nombre-personaje" id="nombre-personaje">Personaje 1</p>
+        <p class="titulo-personaje" id="titulo-personaje">Aquí va su título</p>
+      </div>
+
+      <button class="btn-flecha" id="btn-siguiente" aria-label="Siguiente personaje">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M1 1L7.5 7.5L1 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <div class="indicadores" id="indicadores"></div>
+    <div class="divisor"><span class="divisor-diamante"></span></div>
+
+    <button class="btn-elegir" id="btn-elegir">Elegir</button>
+  </div>
+
+  <div class="revelacion" id="revelacion" hidden>
+    <img class="revelacion-imagen" id="revelacion-imagen" src="" alt="">
+    <p class="revelacion-nombre" id="revelacion-nombre"></p>
+    <button class="btn-elegir" id="btn-continuar">Continuar</button>
+  </div>
+
+  <div class="pantalla-regalo" id="pantalla-regalo" hidden>
+    <p class="regalo-instruccion" id="regalo-instruccion">Toca la caja para abrir tu regalo</p>
+
+    <div class="regalo-escenario">
+      <div class="particulas-regalo" id="particulas-regalo"></div>
+
+      <button class="caja-regalo" id="caja-regalo" aria-label="Abrir regalo">
+        <span class="caja-tapa"></span>
+        <span class="caja-cuerpo">
+          <span class="caja-cinta-v"></span>
+          <span class="caja-cinta-h"></span>
+        </span>
+        <span class="caja-lazo"></span>
+      </button>
+
+      <img class="regalo-imagen" id="regalo-imagen" src="Regalo/IMG_6540.png" alt="Tu regalo">
+    </div>
+
+    <button class="btn-elegir regalo-btn-continuar" id="btn-continuar-final">Continuar</button>
+  </div>
+
+  <script>
+    // ---------- Datos de los personajes ----------
+    // "sonido" es opcional — si está puesto, suena en cuanto ese personaje
+    // queda seleccionado (al entrar en la pantalla o al pasar a él con las flechas).
+    // "imagenRevelacion" es la foto grande que se muestra tras darle a "Elegir".
+    const PERSONAJES = [
+      { nombre: 'Maeb', titulo: '', imagen: 'Regalo/C3A0F823-027C-4F4D-A49D-F81CCFFB03A7.png', sonido: 'Regalo/Maebaudio.mp3', imagenRevelacion: 'Regalo/DE5075A8-A7ED-4203-89F4-28719BF3D7BE.png' },
+      { nombre: 'Alberto24', titulo: '', imagen: 'Regalo/D95094BA-5E05-4A38-8A18-BE5F43C42527.png', sonido: 'Regalo/Albertoaudio.mp3', imagenRevelacion: 'Regalo/IMG_6555.png' },
+      { nombre: 'Ruth', titulo: 'La empodera', imagen: 'Regalo/D98E3D40-6C92-456C-92E9-9DAA6CB8FB64.png', sonido: 'Regalo/Ruthaudio.mp3', imagenRevelacion: 'Regalo/971C6748-B242-4BDC-8C63-2B2C7A278C45.png' }
+    ];
+
+    let indiceActual = 0;
+
+    const marcoArco = document.getElementById('marco-arco');
+    const nombreEl = document.getElementById('nombre-personaje');
+    const tituloEl = document.getElementById('titulo-personaje');
+    const indicadoresEl = document.getElementById('indicadores');
+    const sombraSuelo = document.getElementById('sombra-suelo');
+
+    // Un solo <audio> que se reutiliza y cambia de fuente según el personaje
+    const audioPersonaje = new Audio();
+    audioPersonaje.volume = 0.7;
+
+    function reproducirSonidoPersonaje(p) {
+      audioPersonaje.pause();
+      if (!p.sonido) return;
+      audioPersonaje.src = p.sonido;
+      audioPersonaje.currentTime = 0;
+      audioPersonaje.play().catch(() => {}); // si el navegador bloquea el autoplay, no pasa nada grave
+    }
+
+    function crearIndicadores() {
+      indicadoresEl.innerHTML = '';
+      PERSONAJES.forEach((_, i) => {
+        const punto = document.createElement('div');
+        punto.className = 'punto' + (i === indiceActual ? ' activo' : '');
+        indicadoresEl.appendChild(punto);
+      });
+    }
+
+    function renderizarPersonaje() {
+      const p = PERSONAJES[indiceActual];
+      marcoArco.innerHTML = p.imagen
+        ? `<img src="${p.imagen}" alt="${p.nombre}">`
+        : `<span class="silueta">🎭</span>`;
+      nombreEl.textContent = p.nombre;
+      tituloEl.textContent = p.titulo;
+      tituloEl.style.display = p.titulo ? '' : 'none';
+
+      document.querySelectorAll('.indicadores .punto').forEach((punto, i) => {
+        punto.classList.toggle('activo', i === indiceActual);
+      });
+
+      reproducirSonidoPersonaje(p);
+    }
+
+    function cambiarPersonaje(direccion) {
+      [marcoArco, nombreEl, tituloEl, sombraSuelo].forEach(el => el.classList.add('cambiando'));
+
+      setTimeout(() => {
+        indiceActual = (indiceActual + direccion + PERSONAJES.length) % PERSONAJES.length;
+        renderizarPersonaje();
+        [marcoArco, nombreEl, tituloEl, sombraSuelo].forEach(el => el.classList.remove('cambiando'));
+      }, 200);
+    }
+
+    document.getElementById('btn-anterior').addEventListener('click', () => cambiarPersonaje(-1));
+    document.getElementById('btn-siguiente').addEventListener('click', () => cambiarPersonaje(1));
+
+    const revelacion = document.getElementById('revelacion');
+    const revelacionImagen = document.getElementById('revelacion-imagen');
+    const revelacionNombre = document.getElementById('revelacion-nombre');
+
+    document.getElementById('btn-elegir').addEventListener('click', () => {
+      const p = PERSONAJES[indiceActual];
+      localStorage.setItem('personajeElegido', p.nombre);
+
+      revelacionImagen.src = p.imagenRevelacion || p.imagen;
+      revelacionImagen.alt = p.nombre;
+      revelacionNombre.textContent = p.nombre;
+
+      revelacion.hidden = false;
+      requestAnimationFrame(() => revelacion.classList.add('visible'));
+
+      reproducirSonidoPersonaje(p); // vuelve a sonar desde el principio en la pantalla de revelación
+    });
+
+    document.getElementById('btn-continuar').addEventListener('click', () => {
+      document.getElementById('pantalla-regalo').hidden = false;
+    });
+
+    // ---------- Abrir la caja de regalo ----------
+    const cajaRegalo = document.getElementById('caja-regalo');
+    const regaloInstruccion = document.getElementById('regalo-instruccion');
+    const regaloImagen = document.getElementById('regalo-imagen');
+    const particulasRegalo = document.getElementById('particulas-regalo');
+    const btnContinuarFinal = document.getElementById('btn-continuar-final');
+    let regaloAbierto = false;
+
+    function dispararParticulasRegalo() {
+      const cantidad = 18;
+      for (let i = 0; i < cantidad; i++) {
+        const p = document.createElement('div');
+        p.className = 'particula-regalo';
+        const angulo = (Math.PI * 2 * i) / cantidad + Math.random() * 0.3;
+        const distancia = 70 + Math.random() * 50;
+        p.style.setProperty('--px', Math.cos(angulo) * distancia + 'px');
+        p.style.setProperty('--py', Math.sin(angulo) * distancia + 'px');
+        particulasRegalo.appendChild(p);
+        requestAnimationFrame(() => p.classList.add('disparada'));
+        setTimeout(() => p.remove(), 1000);
+      }
+    }
+
+    cajaRegalo.addEventListener('click', () => {
+      if (regaloAbierto) return;
+      regaloAbierto = true;
+
+      cajaRegalo.classList.add('abriendo');
+      regaloInstruccion.classList.add('oculto');
+      dispararParticulasRegalo();
+
+      setTimeout(() => {
+        cajaRegalo.classList.add('escondida');
+        regaloImagen.classList.add('visible');
+        btnContinuarFinal.classList.add('visible');
+      }, 500);
+    });
+
+    btnContinuarFinal.addEventListener('click', () => {
+      location.href = 'Regalo/Index.html';
+    });
+
+    crearIndicadores();
+
+    // La selección de personaje (con su sonido y el telón abriéndose) no
+    // empieza hasta que se toca "Vale" en la pantalla del mensaje
+    document.getElementById('btn-ok-mensaje').addEventListener('click', () => {
+      document.getElementById('pantalla-mensaje').hidden = true;
+      renderizarPersonaje();
+      setTimeout(() => {
+        document.body.classList.remove('telon-cerrado');
+        document.body.classList.add('telon-abierto');
+      }, 350);
+    });
+
+    // Red de seguridad: si el navegador bloqueó el sonido inicial (por no
+    // venir de un toque directo), se intenta de nuevo en cuanto la persona
+    // toque la pantalla por primera vez
+    document.addEventListener('click', function primerToque() {
+      if (audioPersonaje.paused && audioPersonaje.src) {
+        audioPersonaje.play().catch(() => {});
+      }
+      document.removeEventListener('click', primerToque);
+    }, { once: true });
+  </script>
+
+</body>
+</html>

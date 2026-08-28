@@ -47,6 +47,7 @@
       min-height: 100vh;
       position: relative;
       overflow-x: hidden;
+      touch-action: manipulation;
     }
 
     .mancha-fondo {
@@ -2329,7 +2330,7 @@
         btnNotificaciones.classList.add('activo');
       } catch (err) {
         console.error(err);
-        alert('No se pudo activar. Inténtalo de nuevo.');
+        alert('No se pudo activar:\n' + (err.name || '') + '\n' + (err.message || err));
       }
     }
 

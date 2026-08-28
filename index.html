@@ -1746,6 +1746,42 @@
       mascotaFrase.textContent = frasesMascota[Math.floor(Math.random() * frasesMascota.length)];
     }
 
+    // Si la mascota tiene alguna necesidad baja de verdad, el bocadillo lo pide
+    // directamente en vez de mostrar una frase al azar (mismas tasas que pou.html)
+    const TASAS_DECAIMIENTO_MASCOTA = { hambre: 6, sueno: 3, felicidad: 3.75 };
+    const UMBRAL_PETICION_MASCOTA = 20;
+    const PETICIONES_MASCOTA = {
+      hambre: ['🍽️ Tengo muchísima hambre... ¿me das de comer?', '🥺 Mi barriguita está vacía'],
+      sueno: ['😴 Estoy agotada, ¿me dejas dormir?', '🥱 Necesito una siesta ya mismo'],
+      felicidad: ['🎾 ¿Jugamos? Te extraño', '💛 Me vendría genial un poco de cariño ahora']
+    };
+
+    if (mascotaFrase && db) {
+      db.collection('mascota').doc('estado').get().then(doc => {
+        if (!doc.exists) return;
+        const datos = doc.data();
+        const ultimaFecha = datos.actualizado && datos.actualizado.toDate ? datos.actualizado.toDate() : new Date();
+        const horas = Math.max(0, (Date.now() - ultimaFecha.getTime()) / (1000 * 60 * 60));
+
+        const estado = {
+          hambre: Math.max(0, (datos.hambre ?? 100) - horas * TASAS_DECAIMIENTO_MASCOTA.hambre),
+          sueno: Math.max(0, (datos.sueno ?? 100) - horas * TASAS_DECAIMIENTO_MASCOTA.sueno),
+          felicidad: Math.max(0, (datos.felicidad ?? 100) - horas * TASAS_DECAIMIENTO_MASCOTA.felicidad)
+        };
+
+        // Prioridad: hambre > sueño > felicidad, la más urgente primero
+        let clave = null;
+        if (estado.hambre < UMBRAL_PETICION_MASCOTA) clave = 'hambre';
+        else if (estado.sueno < UMBRAL_PETICION_MASCOTA) clave = 'sueno';
+        else if (estado.felicidad < UMBRAL_PETICION_MASCOTA) clave = 'felicidad';
+
+        if (clave) {
+          const opciones = PETICIONES_MASCOTA[clave];
+          mascotaFrase.textContent = opciones[Math.floor(Math.random() * opciones.length)];
+        }
+      }).catch(() => {});
+    }
+
     // Cuenta regresiva de la sección sorpresa (se desbloquea el 1 de enero de 2027)
     const fechaDesbloqueo = new Date('2027-01-01T00:00:00');
     const candadoSorpresa = document.getElementById('candado-sorpresa');

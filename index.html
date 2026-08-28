@@ -945,6 +945,97 @@
       cursor: pointer;
     }
 
+    /* Panel secreto */
+    #panel-secreto {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,10,12,0.88);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #panel-secreto[hidden] { display: none; }
+    #panel-secreto-contenido {
+      background: #17181c;
+      color: #d8d8dc;
+      width: 100%;
+      max-width: 380px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 18px;
+      font-family: 'Work Sans', sans-serif;
+      border: 1px solid #2c2d33;
+    }
+    .panel-secreto-cabecera {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 19px;
+      color: #f3c98a;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #2c2d33;
+    }
+    #cerrar-panel-secreto {
+      background: none;
+      border: none;
+      color: #d8d8dc;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .panel-secreto-grupo {
+      margin-bottom: 18px;
+    }
+    .panel-secreto-titulo {
+      display: block;
+      font-size: 10.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #8a8a92;
+      margin-bottom: 8px;
+    }
+    .panel-secreto-btn {
+      display: block;
+      width: 100%;
+      background: #232429;
+      color: #d8d8dc;
+      border: 1px solid #2c2d33;
+      padding: 11px 12px;
+      font-size: 12.5px;
+      text-align: left;
+      margin-bottom: 7px;
+      cursor: pointer;
+      font-family: 'Work Sans', sans-serif;
+    }
+    .panel-secreto-btn:active { background: #2c2d33; }
+    #panel-secreto-info {
+      background: #0e0e11;
+      border: 1px solid #2c2d33;
+      padding: 10px;
+      font-size: 10.5px;
+      line-height: 1.6;
+      color: #9fd9a8;
+      white-space: pre-wrap;
+      font-family: 'SF Mono', 'Courier New', monospace;
+      margin: 0;
+    }
+
+    .particula-lluvia {
+      position: fixed;
+      top: -40px;
+      font-size: 24px;
+      pointer-events: none;
+      z-index: 2100;
+      animation: caerParticula linear forwards;
+    }
+    @keyframes caerParticula {
+      to { transform: translateY(110vh) rotate(45deg); }
+    }
+
     /* Mascota */
     #mascota-widget {
       max-width: 420px;
@@ -1313,6 +1404,83 @@
           <p id="mascota-frase"></p>
         </div>
         <a href="pou.html" class="btn-jugar">Jugar</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-secreto" hidden>
+    <div id="panel-secreto-contenido">
+      <div class="panel-secreto-cabecera">
+        <span>⚡ Panel secreto</span>
+        <button type="button" id="cerrar-panel-secreto" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div class="panel-secreto-grupo">
+        <span class="panel-secreto-titulo">🔔 Notificaciones</span>
+        <button type="button" class="panel-secreto-btn" data-accion="notificacionPrueba">Notificación de prueba (a este dispositivo)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="notificacionPersonalizada">Notificación de prueba con mensaje propio</button>
+        <button type="button" class="panel-secreto-btn" data-accion="borrarSuscripcion">Borrar mi suscripción</button>
+        <button type="button" class="panel-secreto-btn" data-accion="contarSuscripciones">Contar cuántos dispositivos están suscritos</button>
+        <button type="button" class="panel-secreto-btn" data-accion="listarNombresSuscritos">Ver nombres de quienes están suscritos</button>
+      </div>
+
+      <div class="panel-secreto-grupo">
+        <span class="panel-secreto-titulo">🐾 Mascota</span>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaMaximo">Rellenar todo al máximo</button>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaVaciar">Vaciar todo (forzar aviso)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaResetearRacha">Resetear racha a 0</button>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaFijarRacha">Fijar la racha a un número</button>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaResetearStats">Resetear estadísticas a 0</button>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaCambiarNombre">Cambiar el nombre de la mascota</button>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaVerJSON">Ver estado crudo (JSON)</button>
+      </div>
+
+      <div class="panel-secreto-grupo">
+        <span class="panel-secreto-titulo">📋 Contenido</span>
+        <button type="button" class="panel-secreto-btn" data-accion="contarCartas">Contar cartas</button>
+        <button type="button" class="panel-secreto-btn" data-accion="contarFotos">Contar fotos y videos</button>
+        <button type="button" class="panel-secreto-btn" data-accion="contarMetas">Contar metas (total / hechas)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="contarCitas">Contar citas</button>
+        <button type="button" class="panel-secreto-btn" data-accion="exportarCartas">Exportar todas las cartas (.txt)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="ultimaCarta">Ver la última carta añadida</button>
+      </div>
+
+      <div class="panel-secreto-grupo">
+        <span class="panel-secreto-titulo">🎨 Personalización</span>
+        <button type="button" class="panel-secreto-btn" data-accion="resetPersonalizacion">Restablecer toda mi personalización</button>
+        <button type="button" class="panel-secreto-btn" data-accion="copiarAjustes">Copiar mis ajustes (JSON) al portapapeles</button>
+        <button type="button" class="panel-secreto-btn" data-accion="temaAleatorio">Tema de color aleatorio</button>
+        <button type="button" class="panel-secreto-btn" data-accion="alternarTextoGrande">Alternar texto grande / normal</button>
+        <button type="button" class="panel-secreto-btn" data-accion="alternarMovimiento">Alternar reducir movimiento</button>
+      </div>
+
+      <div class="panel-secreto-grupo">
+        <span class="panel-secreto-titulo">🛠️ Dispositivo</span>
+        <button type="button" class="panel-secreto-btn" data-accion="infoDispositivo">Ver info del dispositivo</button>
+        <button type="button" class="panel-secreto-btn" data-accion="esPWA">¿Es app guardada (PWA) o Safari normal?</button>
+        <button type="button" class="panel-secreto-btn" data-accion="tamanoAlmacenamiento">Ver tamaño de mis datos guardados</button>
+        <button type="button" class="panel-secreto-btn" data-accion="vaciarCacheSW">Vaciar caché y forzar actualización</button>
+        <button type="button" class="panel-secreto-btn" data-accion="estadoConexion">Ver estado de conexión (online/offline)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="copiarInfoPanel">Copiar toda la info del panel</button>
+      </div>
+
+      <div class="panel-secreto-grupo">
+        <span class="panel-secreto-titulo">🔒 Diagnóstico del sitio</span>
+        <button type="button" class="panel-secreto-btn" data-accion="verHTTPS">¿La conexión es segura (HTTPS)?</button>
+        <button type="button" class="panel-secreto-btn" data-accion="verReglasFirestore">Ver estado de las reglas de la base de datos</button>
+        <button type="button" class="panel-secreto-btn" data-accion="medirVelocidad">Medir velocidad de lectura de datos</button>
+      </div>
+
+      <div class="panel-secreto-grupo">
+        <span class="panel-secreto-titulo">🎉 Diversión</span>
+        <button type="button" class="panel-secreto-btn" data-accion="lluviaCorazones">Lluvia de corazones</button>
+        <button type="button" class="panel-secreto-btn" data-accion="modoConfeti">Modo confeti</button>
+        <button type="button" class="panel-secreto-btn" data-accion="fraseMascotaAhora">Nueva frase de la mascota ahora</button>
+      </div>
+
+      <div class="panel-secreto-grupo">
+        <span class="panel-secreto-titulo">📋 Info de depuración</span>
+        <pre id="panel-secreto-info">Cargando...</pre>
       </div>
     </div>
   </div>
@@ -2298,7 +2466,31 @@
       return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
     }
 
+    async function desactivarNotificaciones() {
+      try {
+        if ('serviceWorker' in navigator) {
+          const registro = await navigator.serviceWorker.getRegistration();
+          if (registro) {
+            const suscripcion = await registro.pushManager.getSubscription();
+            if (suscripcion) {
+              if (db) await db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).delete();
+              await suscripcion.unsubscribe();
+            }
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+      btnNotificaciones.textContent = 'Activar avisos';
+      btnNotificaciones.classList.remove('activo');
+    }
+
     async function activarNotificaciones() {
+      if (btnNotificaciones.classList.contains('activo')) {
+        await desactivarNotificaciones();
+        return;
+      }
+
       if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
         alert('Tu navegador no soporta notificaciones aquí.');
         return;
@@ -2319,6 +2511,7 @@
         if (db) {
           await db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({
             suscripcion: suscripcion.toJSON(),
+            nombre: obtenerNombreUsuario(),
             prefAvisosContenido: checkAvisosContenido.checked,
             prefAvisosMascota: checkAvisosMascota.checked,
             creado: firebase.firestore.FieldValue.serverTimestamp()
@@ -2523,6 +2716,309 @@
       document.body.appendChild(img);
       setTimeout(() => img.remove(), 1200);
     }
+
+    // ---------- Panel secreto: 5 toques con 3 dedos ----------
+    let contadorToques3Dedos = 0;
+    let temporizadorToques3Dedos = null;
+
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 3) {
+        contadorToques3Dedos++;
+        clearTimeout(temporizadorToques3Dedos);
+        temporizadorToques3Dedos = setTimeout(() => { contadorToques3Dedos = 0; }, 3000);
+
+        if (contadorToques3Dedos >= 5) {
+          contadorToques3Dedos = 0;
+          abrirPanelSecreto();
+        }
+      }
+    });
+
+    const panelSecreto = document.getElementById('panel-secreto');
+    const panelSecretoInfo = document.getElementById('panel-secreto-info');
+
+    function abrirPanelSecreto() {
+      panelSecreto.hidden = false;
+      actualizarInfoPanelSecreto();
+    }
+    document.getElementById('cerrar-panel-secreto').addEventListener('click', () => {
+      panelSecreto.hidden = true;
+    });
+
+    async function actualizarInfoPanelSecreto() {
+      let suscrito = 'No';
+      let endpointCorto = '—';
+      if ('serviceWorker' in navigator) {
+        const registro = await navigator.serviceWorker.getRegistration();
+        if (registro) {
+          const suscripcion = await registro.pushManager.getSubscription();
+          if (suscripcion) {
+            suscrito = 'Sí';
+            endpointCorto = '...' + suscripcion.endpoint.slice(-16);
+          }
+        }
+      }
+      panelSecretoInfo.textContent =
+`nombre: ${localStorage.getItem('nombreUsuario') || '(sin poner)'}
+suscrito a avisos: ${suscrito}
+endpoint: ${endpointCorto}
+avisos contenido: ${localStorage.getItem('avisosContenido') !== 'false'}
+avisos mascota: ${localStorage.getItem('avisosMascota') !== 'false'}
+color acento: ${localStorage.getItem('colorAcento') || 'naranja'}
+tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
+    }
+
+    // ---------- Las 35 herramientas del panel ----------
+    const accionesPanelSecreto = {
+
+      // 🔔 Notificaciones
+      async notificacionPrueba() {
+        if (!('serviceWorker' in navigator)) return;
+        const registro = await navigator.serviceWorker.getRegistration();
+        if (!registro) { alert('Primero activa las notificaciones desde Configuración.'); return; }
+        registro.showNotification('Notificación de prueba 🧪', {
+          body: 'Si ves esto, las notificaciones locales funcionan en tu dispositivo.',
+          icon: 'MENU.PNG'
+        });
+      },
+      async notificacionPersonalizada() {
+        if (!('serviceWorker' in navigator)) return;
+        const registro = await navigator.serviceWorker.getRegistration();
+        if (!registro) { alert('Primero activa las notificaciones desde Configuración.'); return; }
+        const texto = prompt('¿Qué mensaje quieres que salga?', '¡Hola! 🧡');
+        if (!texto) return;
+        registro.showNotification('Mensaje de prueba', { body: texto, icon: 'MENU.PNG' });
+      },
+      async borrarSuscripcion() {
+        if (!confirm('¿Borrar tu suscripción a notificaciones?')) return;
+        await desactivarNotificaciones();
+        actualizarInfoPanelSecreto();
+      },
+      async contarSuscripciones() {
+        if (!db) return;
+        const snap = await db.collection('suscripciones').get();
+        alert(`Hay ${snap.size} dispositivo(s) suscrito(s) a los avisos.`);
+      },
+      async listarNombresSuscritos() {
+        if (!db) return;
+        const snap = await db.collection('suscripciones').get();
+        const nombres = snap.docs.map(d => d.data().nombre || '(sin nombre)');
+        alert(nombres.length ? nombres.join('\n') : 'Nadie está suscrito todavía.');
+      },
+
+      // 🐾 Mascota
+      mascotaMaximo() {
+        if (!db) return;
+        db.collection('mascota').doc('estado').set({ hambre: 100, sueno: 100, felicidad: 100 }, { merge: true });
+        alert('Mascota rellenada al máximo.');
+      },
+      mascotaVaciar() {
+        if (!db) return;
+        if (!confirm('Esto vacía las barras de la mascota (para probar los avisos). ¿Seguro?')) return;
+        db.collection('mascota').doc('estado').set({ hambre: 5, sueno: 5, felicidad: 5 }, { merge: true });
+        alert('Mascota vaciada. El próximo aviso de mascota debería saltar.');
+      },
+      mascotaResetearRacha() {
+        if (!db) return;
+        if (!confirm('¿Resetear la racha de la mascota a 0?')) return;
+        db.collection('mascota').doc('estado').set({ racha: 0, ultimoDiaCuidado: null }, { merge: true });
+        alert('Racha reseteada.');
+      },
+      mascotaFijarRacha() {
+        if (!db) return;
+        const numero = prompt('¿A qué número quieres fijar la racha?', '10');
+        if (numero === null || isNaN(Number(numero))) return;
+        db.collection('mascota').doc('estado').set({ racha: Number(numero), rachaMaxima: Number(numero) }, { merge: true });
+        alert('Racha fijada a ' + numero + '.');
+      },
+      mascotaResetearStats() {
+        if (!db) return;
+        if (!confirm('¿Resetear las estadísticas (comidas, siestas, juegos...) a 0?')) return;
+        db.collection('mascota').doc('estado').set({
+          contadores: { comer: 0, dormir: 0, jugar: 0, saltar: 0, caricias: 0 }
+        }, { merge: true });
+        alert('Estadísticas reseteadas.');
+      },
+      mascotaCambiarNombre() {
+        if (!db) return;
+        const nombre = prompt('Nuevo nombre para la mascota:');
+        if (!nombre) return;
+        db.collection('mascota').doc('estado').set({ nombre }, { merge: true });
+        alert('Nombre actualizado a "' + nombre + '".');
+      },
+      async mascotaVerJSON() {
+        if (!db) return;
+        const doc = await db.collection('mascota').doc('estado').get();
+        alert(doc.exists ? JSON.stringify(doc.data(), null, 2) : 'No hay mascota creada todavía.');
+      },
+
+      // 📋 Contenido
+      async contarCartas() {
+        if (!db) return;
+        const snap = await db.collection('cartas').get();
+        alert(`Hay ${snap.size} carta(s).`);
+      },
+      async contarFotos() {
+        if (!db) return;
+        const snap = await db.collection('fotos').get();
+        const fotos = snap.docs.filter(d => d.data().tipo !== 'video').length;
+        const videos = snap.docs.filter(d => d.data().tipo === 'video').length;
+        alert(`${fotos} foto(s) y ${videos} video(s).`);
+      },
+      async contarMetas() {
+        if (!db) return;
+        const snap = await db.collection('metas').get();
+        const hechas = snap.docs.filter(d => d.data().hecho).length;
+        alert(`${snap.size} meta(s) en total, ${hechas} completada(s).`);
+      },
+      async contarCitas() {
+        if (!db) return;
+        const snap = await db.collection('citas').get();
+        alert(`Hay ${snap.size} cita(s).`);
+      },
+      async exportarCartas() {
+        if (!db) return;
+        const snap = await db.collection('cartas').orderBy('creado').get();
+        if (snap.empty) { alert('No hay cartas todavía.'); return; }
+        let texto = '';
+        snap.docs.forEach(d => {
+          const c = d.data();
+          texto += `— ${c.titulo || 'Sin título'} —\n${c.texto || ''}\n\n`;
+        });
+        const blob = new Blob([texto], { type: 'text/plain' });
+        const enlace = document.createElement('a');
+        enlace.href = URL.createObjectURL(blob);
+        enlace.download = 'cartas.txt';
+        enlace.click();
+      },
+      async ultimaCarta() {
+        if (!db) return;
+        const snap = await db.collection('cartas').orderBy('creado', 'desc').limit(1).get();
+        if (snap.empty) { alert('No hay cartas todavía.'); return; }
+        const c = snap.docs[0].data();
+        alert(`"${c.titulo}"\n\n${c.texto}`);
+      },
+
+      // 🎨 Personalización
+      resetPersonalizacion() {
+        if (!confirm('Esto borra tu nombre, colores, tamaño de texto y demás ajustes personales de este dispositivo. ¿Seguro?')) return;
+        ['nombreUsuario', 'colorAcento', 'tamanoTexto', 'musicaSilenciada', 'volumenMusica', 'reducirMovimiento', 'avisosContenido', 'avisosMascota'].forEach(clave => localStorage.removeItem(clave));
+        location.reload();
+      },
+      copiarAjustes() {
+        const ajustes = {
+          nombreUsuario: localStorage.getItem('nombreUsuario'),
+          colorAcento: localStorage.getItem('colorAcento'),
+          tamanoTexto: localStorage.getItem('tamanoTexto'),
+          musicaSilenciada: localStorage.getItem('musicaSilenciada'),
+          volumenMusica: localStorage.getItem('volumenMusica'),
+          reducirMovimiento: localStorage.getItem('reducirMovimiento')
+        };
+        navigator.clipboard.writeText(JSON.stringify(ajustes, null, 2))
+          .then(() => alert('Ajustes copiados al portapapeles.'))
+          .catch(() => alert('No se pudo copiar.'));
+      },
+      temaAleatorio() {
+        const colores = ['naranja', 'rosa', 'lavanda', 'verde', 'azul'];
+        const elegido = colores[Math.floor(Math.random() * colores.length)];
+        localStorage.setItem('colorAcento', elegido);
+        aplicarColorAcento(elegido);
+        alert('Color cambiado a: ' + elegido);
+      },
+      alternarTextoGrande() {
+        const actual = localStorage.getItem('tamanoTexto') || 'normal';
+        const nuevo = actual === 'normal' ? 'grande' : 'normal';
+        localStorage.setItem('tamanoTexto', nuevo);
+        aplicarTamanoTexto(nuevo);
+      },
+      alternarMovimiento() {
+        const actual = document.body.classList.toggle('reducir-movimiento');
+        localStorage.setItem('reducirMovimiento', actual);
+      },
+
+      // 🛠️ Dispositivo
+      infoDispositivo() {
+        alert(`Navegador: ${navigator.userAgent}\n\nPantalla: ${screen.width}x${screen.height}\nZona horaria: ${Intl.DateTimeFormat().resolvedOptions().timeZone}\nIdioma: ${navigator.language}`);
+      },
+      esPWA() {
+        const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+        alert(standalone ? 'Estás usando la app guardada en pantalla de inicio 📱' : 'Estás en Safari/navegador normal 🌐');
+      },
+      tamanoAlmacenamiento() {
+        let total = 0;
+        for (const clave in localStorage) {
+          if (localStorage.hasOwnProperty(clave)) total += (localStorage[clave].length + clave.length);
+        }
+        alert(`Estás usando aproximadamente ${(total / 1024).toFixed(2)} KB de almacenamiento local.`);
+      },
+      async vaciarCacheSW() {
+        if (!confirm('Esto borra el service worker y las cachés, y recarga la página. ¿Seguro?')) return;
+        if ('serviceWorker' in navigator) {
+          const registros = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registros.map(r => r.unregister()));
+        }
+        if ('caches' in window) {
+          const nombres = await caches.keys();
+          await Promise.all(nombres.map(n => caches.delete(n)));
+        }
+        location.reload(true);
+      },
+      estadoConexion() {
+        alert(navigator.onLine ? 'Conectado a internet ✅' : 'Sin conexión ❌');
+      },
+      copiarInfoPanel() {
+        navigator.clipboard.writeText(panelSecretoInfo.textContent)
+          .then(() => alert('Info copiada al portapapeles.'))
+          .catch(() => alert('No se pudo copiar.'));
+      },
+
+      // 🔒 Diagnóstico del sitio
+      verHTTPS() {
+        alert(location.protocol === 'https:' ? 'Sí, la conexión es segura (HTTPS) 🔒' : 'No, esto no es HTTPS ⚠️');
+      },
+      verReglasFirestore() {
+        alert('Las reglas de la base de datos están configuradas como abiertas (allow read, write: if true), a propósito, porque esta web no usa cuentas de usuario — la protección real es la contraseña de la página.');
+      },
+      async medirVelocidad() {
+        if (!db) return;
+        const inicio = performance.now();
+        await db.collection('metas').limit(1).get();
+        const fin = performance.now();
+        alert(`La base de datos respondió en ${(fin - inicio).toFixed(0)} ms.`);
+      },
+
+      // 🎉 Diversión
+      lluviaCorazones() {
+        crearLluvia(['🧡', '💛', '🥰', '💕']);
+      },
+      modoConfeti() {
+        crearLluvia(['🎉', '✨', '🎊', '⭐']);
+      },
+      fraseMascotaAhora() {
+        if (mascotaFrase) mascotaFrase.textContent = frasesMascota[Math.floor(Math.random() * frasesMascota.length)];
+      }
+    };
+
+    function crearLluvia(emojis) {
+      for (let i = 0; i < 30; i++) {
+        setTimeout(() => {
+          const particula = document.createElement('div');
+          particula.className = 'particula-lluvia';
+          particula.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+          particula.style.left = Math.random() * 100 + 'vw';
+          particula.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+          document.body.appendChild(particula);
+          setTimeout(() => particula.remove(), 3600);
+        }, i * 60);
+      }
+    }
+
+    panelSecreto.addEventListener('click', (e) => {
+      const boton = e.target.closest('[data-accion]');
+      if (!boton) return;
+      const accion = accionesPanelSecreto[boton.dataset.accion];
+      if (accion) accion();
+    });
   </script>
 
 </body>

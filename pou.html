@@ -25,6 +25,7 @@
       font-family: 'Work Sans', sans-serif;
       color: var(--tinta);
       padding: 28px 16px 60px;
+      touch-action: manipulation;
     }
     .contenedor {
       max-width: 380px;
@@ -821,7 +822,7 @@
     };
 
     // Cada necesidad baja a su propio ritmo por hora real transcurrida
-    const TASAS_DECAIMIENTO = { hambre: 4, sueno: 2, felicidad: 2.5 };
+    const TASAS_DECAIMIENTO = { hambre: 6, sueno: 3, felicidad: 3.75 };
     // Si el hambre o el sueño están muy bajos, la felicidad baja más rápido (mascota descuidada = triste)
     const PENALIZACION_DESCUIDO = 2;
     const MAX = 100;
@@ -875,12 +876,13 @@
     function actualizarAnimo(estado) {
       const promedio = (estado.hambre + estado.sueno + estado.felicidad) / 3;
       let texto;
-      if (estado.hambre < 20 && estado.sueno < 20) texto = '😩 Agotada y hambrienta';
-      else if (estado.hambre < 20) texto = '🍽️ Tiene mucha hambre';
-      else if (estado.sueno < 20) texto = '🥱 Está agotada';
+      if (estado.hambre < 20 && estado.sueno < 20) texto = '😩 Tengo hambre y sueño... ¿me cuidas?';
+      else if (estado.hambre < 20) texto = '🍽️ Tengo muchísima hambre, ¿me das de comer?';
+      else if (estado.sueno < 20) texto = '🥱 Estoy agotada, ¿me dejas dormir?';
+      else if (estado.felicidad < 20) texto = '🎾 Te extraño, ¿jugamos un rato?';
       else if (promedio >= 75) texto = '😊 Feliz y a gusto';
       else if (promedio >= 45) texto = '🙂 Está bien';
-      else texto = '😢 Necesita cariño';
+      else texto = '😢 Necesito un poco de cariño';
       animoMascota.textContent = texto;
     }
 
@@ -955,18 +957,49 @@
         : '';
     }
 
-    // Cuenta el día de hoy como "cuidado". Si ayer también se cuidó, suma la racha; si no, la reinicia.
-    function registrarCuidadoHoy() {
+    // Cuenta el día de hoy como "cuidado". Usa una transacción para leer y escribir
+    // el valor REAL que hay en el servidor en ese mismo instante — así no importa
+    // si el teléfono llevaba un rato abierto sin refrescar, siempre se compara
+    // contra el dato de verdad, no contra lo que el teléfono cree que es.
+    async function registrarCuidadoHoy() {
+      if (!referenciaDoc || !db) return;
       const hoy = fechaAString(new Date());
-      if (ultimoDiaCuidado === hoy) return;
-
       const ayer = new Date();
       ayer.setDate(ayer.getDate() - 1);
       const ayerStr = fechaAString(ayer);
 
-      racha = (ultimoDiaCuidado === ayerStr) ? racha + 1 : 1;
-      ultimoDiaCuidado = hoy;
-      rachaMaxima = Math.max(rachaMaxima, racha);
+      try {
+        await db.runTransaction(async (transaccion) => {
+          const doc = await transaccion.get(referenciaDoc);
+          const datos = doc.exists ? doc.data() : {};
+          const ultimoGuardado = datos.ultimoDiaCuidado || null;
+
+          if (ultimoGuardado === hoy) {
+            // Ya se había contado hoy (quizá desde otro dispositivo) — no hay nada que cambiar
+            racha = datos.racha || racha;
+            rachaMaxima = datos.rachaMaxima || rachaMaxima;
+            ultimoDiaCuidado = ultimoGuardado;
+            return;
+          }
+
+          const nuevaRacha = (ultimoGuardado === ayerStr) ? (datos.racha || 0) + 1 : 1;
+          const nuevaMaxima = Math.max(datos.rachaMaxima || 0, nuevaRacha);
+
+          transaccion.set(referenciaDoc, {
+            racha: nuevaRacha,
+            rachaMaxima: nuevaMaxima,
+            ultimoDiaCuidado: hoy
+          }, { merge: true });
+
+          racha = nuevaRacha;
+          rachaMaxima = nuevaMaxima;
+          ultimoDiaCuidado = hoy;
+        });
+      } catch (err) {
+        console.error('No se pudo actualizar la racha:', err);
+        return;
+      }
+
       actualizarRachaUI();
       revisarLogroRacha();
     }
@@ -1065,7 +1098,7 @@
 
     // cambios es un objeto con lo que sube o baja cada necesidad, ej: {hambre: -5, felicidad: 35}
     // claveContador identifica qué estadística sumar (comer, dormir, jugar, saltar, caricias)
-    function realizarAccion(cambios, srcVideo, mensaje, duracionMs, claveContador) {
+    async function realizarAccion(cambios, srcVideo, mensaje, duracionMs, claveContador) {
       if (!referenciaDoc) return;
       reproducirVideo(srcVideo, duracionMs);
       mostrarMensaje(mensaje);
@@ -1079,7 +1112,7 @@
 
       if (claveContador) contadores[claveContador] = (contadores[claveContador] || 0) + 1;
       actualizarEstadisticasUI();
-      registrarCuidadoHoy();
+      await registrarCuidadoHoy();
       guardarEstado();
     }
 
@@ -1130,7 +1163,7 @@
     let ultimaCaricia = 0;
     const ENFRIAMIENTO_CARICIA = 1200; // ms entre caricias que sí suman felicidad
 
-    video.addEventListener('click', (e) => {
+    video.addEventListener('click', async (e) => {
       const rect = video.getBoundingClientRect();
       const x = e.clientX || (rect.left + rect.width / 2);
       const y = e.clientY || (rect.top + rect.height / 2);
@@ -1154,7 +1187,7 @@
       mostrarMensaje('¡Le encanta que la acaricies! 🥰');
       contadores.caricias = (contadores.caricias || 0) + 1;
       actualizarEstadisticasUI();
-      registrarCuidadoHoy();
+      await registrarCuidadoHoy();
       guardarEstado();
     });
 
@@ -1186,7 +1219,31 @@
       return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
     }
 
+    async function desactivarNotificaciones() {
+      try {
+        if ('serviceWorker' in navigator) {
+          const registro = await navigator.serviceWorker.getRegistration();
+          if (registro) {
+            const suscripcion = await registro.pushManager.getSubscription();
+            if (suscripcion) {
+              if (db) await db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).delete();
+              await suscripcion.unsubscribe();
+            }
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+      btnNotificaciones.textContent = 'Activar avisos';
+      btnNotificaciones.classList.remove('activo');
+    }
+
     async function activarNotificaciones() {
+      if (btnNotificaciones.classList.contains('activo')) {
+        await desactivarNotificaciones();
+        return;
+      }
+
       if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
         mostrarMensaje('Tu navegador no soporta notificaciones aquí.');
         return;
@@ -1207,6 +1264,7 @@
         if (db) {
           await db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({
             suscripcion: suscripcion.toJSON(),
+            nombre: localStorage.getItem('nombreUsuario') || null,
             prefAvisosContenido: checkAvisosContenido.checked,
             prefAvisosMascota: checkAvisosMascota.checked,
             creado: firebase.firestore.FieldValue.serverTimestamp()

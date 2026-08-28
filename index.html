@@ -1298,8 +1298,6 @@
           </div>
         </div>
 
-        <p class="config-creditos">Hecho con 🧡 para ti</p>
-
         <button class="btn-volver">Volver</button>
       </div>
 
@@ -2312,6 +2310,7 @@
           return;
         }
         const registro = await navigator.serviceWorker.register('sw.js');
+        await navigator.serviceWorker.ready; // espera a que el service worker esté realmente activo
         const suscripcion = await registro.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
@@ -2528,4 +2527,3 @@
 
 </body>
 </html>
- 

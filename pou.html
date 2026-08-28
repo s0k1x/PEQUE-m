@@ -800,6 +800,15 @@
     const video = document.getElementById('video-mascota');
     const mensajeMascota = document.getElementById('mensaje-mascota');
 
+    // Respaldo por si el navegador (sobre todo en apps guardadas en pantalla
+    // de inicio) ignora el autoplay del HTML: la arrancamos a mano
+    video.play().catch(() => {});
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && video.paused) {
+        video.play().catch(() => {});
+      }
+    });
+
     const barras = {
       hambre: document.getElementById('barra-hambre'),
       sueno: document.getElementById('barra-sueno'),

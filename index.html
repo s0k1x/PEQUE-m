@@ -161,29 +161,21 @@
     }
     .btn-flecha:active { transform: scale(0.9); background: rgba(238,168,102,0.16); }
 
-    /* ---------- Marco tipo proscenio: arco arriba, recto abajo ---------- */
-    .marco-personaje { width: 176px; flex-shrink: 0; }
+    /* ---------- El personaje: sin caja ni ventana, se funde con el fondo ---------- */
+    .marco-personaje { width: 230px; flex-shrink: 0; }
 
     .marco-arco {
       position: relative;
-      width: 176px;
-      height: 220px;
-      border-radius: 88px 88px 6px 6px;
-      background: linear-gradient(160deg, #302013, #16100b);
-      border: 1.5px solid var(--ambar);
-      box-shadow:
-        0 0 0 6px rgba(238,168,102,0.06),
-        0 0 46px rgba(238,168,102,0.35),
-        0 18px 34px rgba(0,0,0,0.55);
-      overflow: hidden;
+      width: 230px;
+      height: 320px;
       transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
-    /* Sombra tenue en el "suelo", para que el marco se sienta apoyado en el escenario */
+    /* Sombra tenue en el "suelo", para que el personaje se sienta apoyado en el escenario */
     .sombra-suelo {
-      width: 130px;
-      height: 18px;
-      margin: 10px auto 0;
+      width: 150px;
+      height: 20px;
+      margin: 6px auto 0;
       border-radius: 50%;
       background: radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, transparent 75%);
       transition: opacity 0.3s ease;
@@ -193,8 +185,11 @@
     .marco-arco img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       display: block;
+      filter: drop-shadow(0 14px 26px rgba(0,0,0,0.55));
+      -webkit-mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
+      mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
     }
     .marco-arco .silueta {
       position: absolute;
@@ -202,19 +197,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 40px;
+      font-size: 48px;
       opacity: 0.45;
+      filter: drop-shadow(0 0 16px rgba(238,168,102,0.4));
     }
     .marco-arco.cambiando { opacity: 0; transform: translateY(4px); }
-
-    .marco-arco::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 55%;
-      background: linear-gradient(to bottom, rgba(255,207,148,0.16), transparent);
-      pointer-events: none;
-    }
 
     .nombre-personaje {
       font-family: 'Cormorant Garamond', serif;
@@ -347,12 +334,12 @@
 
   <script>
     // ---------- Datos de los personajes ----------
-    // Placeholders por ahora — cuando tenga las imágenes reales, solo hay que
-    // rellenar "imagen" con el nombre del archivo (ej: "personaje1.png").
+    // "sonido" es opcional — si está puesto, suena en cuanto ese personaje
+    // queda seleccionado (al entrar en la pantalla o al pasar a él con las flechas).
     const PERSONAJES = [
-      { nombre: 'Maeb', titulo: '', imagen: 'Regalo/C3A0F823-027C-4F4D-A49D-F81CCFFB03A7.png' },
-      { nombre: 'Alberto24', titulo: '', imagen: 'Regalo/D95094BA-5E05-4A38-8A18-BE5F43C42527.png' },
-      { nombre: 'Ruth', titulo: 'La empodera', imagen: 'Regalo/D98E3D40-6C92-456C-92E9-9DAA6CB8FB64.png' }
+      { nombre: 'Maeb', titulo: '', imagen: 'Regalo/C3A0F823-027C-4F4D-A49D-F81CCFFB03A7.png', sonido: 'Regalo/Maebaudio.mp3' },
+      { nombre: 'Alberto24', titulo: '', imagen: 'Regalo/D95094BA-5E05-4A38-8A18-BE5F43C42527.png', sonido: 'Regalo/Albertoaudio.mp3' },
+      { nombre: 'Ruth', titulo: 'La empodera', imagen: 'Regalo/D98E3D40-6C92-456C-92E9-9DAA6CB8FB64.png', sonido: 'Regalo/Ruthaudio.mp3' }
     ];
 
     let indiceActual = 0;
@@ -362,6 +349,18 @@
     const tituloEl = document.getElementById('titulo-personaje');
     const indicadoresEl = document.getElementById('indicadores');
     const sombraSuelo = document.getElementById('sombra-suelo');
+
+    // Un solo <audio> que se reutiliza y cambia de fuente según el personaje
+    const audioPersonaje = new Audio();
+    audioPersonaje.volume = 0.7;
+
+    function reproducirSonidoPersonaje(p) {
+      audioPersonaje.pause();
+      if (!p.sonido) return;
+      audioPersonaje.src = p.sonido;
+      audioPersonaje.currentTime = 0;
+      audioPersonaje.play().catch(() => {}); // si el navegador bloquea el autoplay, no pasa nada grave
+    }
 
     function crearIndicadores() {
       indicadoresEl.innerHTML = '';
@@ -384,6 +383,8 @@
       document.querySelectorAll('.indicadores .punto').forEach((punto, i) => {
         punto.classList.toggle('activo', i === indiceActual);
       });
+
+      reproducirSonidoPersonaje(p);
     }
 
     function cambiarPersonaje(direccion) {
@@ -412,6 +413,16 @@
       document.body.classList.remove('telon-cerrado');
       document.body.classList.add('telon-abierto');
     }, 350);
+
+    // Red de seguridad: si el navegador bloqueó el sonido inicial (por no
+    // venir de un toque directo), se intenta de nuevo en cuanto la persona
+    // toque la pantalla por primera vez
+    document.addEventListener('click', function primerToque() {
+      if (audioPersonaje.paused && audioPersonaje.src) {
+        audioPersonaje.play().catch(() => {});
+      }
+      document.removeEventListener('click', primerToque);
+    }, { once: true });
   </script>
 
 </body>

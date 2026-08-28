@@ -544,6 +544,8 @@
 
       revelacion.hidden = false;
       requestAnimationFrame(() => revelacion.classList.add('visible'));
+
+      reproducirSonidoPersonaje(p); // vuelve a sonar desde el principio en la pantalla de revelación
     });
 
     document.getElementById('btn-continuar').addEventListener('click', () => {

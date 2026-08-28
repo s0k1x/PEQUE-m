@@ -350,9 +350,9 @@
     // Placeholders por ahora — cuando tenga las imágenes reales, solo hay que
     // rellenar "imagen" con el nombre del archivo (ej: "personaje1.png").
     const PERSONAJES = [
-      { nombre: 'Personaje 1', titulo: 'Título 1', imagen: null },
-      { nombre: 'Personaje 2', titulo: 'Título 2', imagen: null },
-      { nombre: 'Personaje 3', titulo: 'Título 3', imagen: null }
+      { nombre: 'Maeb', titulo: '', imagen: 'Regalo/C3A0F823-027C-4F4D-A49D-F81CCFFB03A7.png' },
+      { nombre: 'Alberto24', titulo: '', imagen: 'Regalo/D95094BA-5E05-4A38-8A18-BE5F43C42527.png' },
+      { nombre: 'Ruth', titulo: 'La empodera', imagen: 'Regalo/D98E3D40-6C92-456C-92E9-9DAA6CB8FB64.png' }
     ];
 
     let indiceActual = 0;
@@ -379,6 +379,7 @@
         : `<span class="silueta">🎭</span>`;
       nombreEl.textContent = p.nombre;
       tituloEl.textContent = p.titulo;
+      tituloEl.style.display = p.titulo ? '' : 'none';
 
       document.querySelectorAll('.indicadores .punto').forEach((punto, i) => {
         punto.classList.toggle('activo', i === indiceActual);

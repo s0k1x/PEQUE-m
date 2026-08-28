@@ -23,6 +23,21 @@
 
     * { box-sizing: border-box; }
 
+    /* Feedback táctil sutil y consistente en todos los botones */
+    button {
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+    button:active {
+      transform: scale(0.97);
+      opacity: 0.85;
+    }
+
+    /* Foco de teclado accesible, con el color de acento en vez del azul por defecto */
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 2px solid var(--naranja);
+      outline-offset: 2px;
+    }
+
     body {
       margin: 0;
       background: radial-gradient(ellipse at top, #fffdfb 0%, var(--hueso) 60%);
@@ -315,8 +330,13 @@
       font-weight: 600;
       color: var(--tinta);
       text-align: left;
+      transition: padding-left 0.2s ease, color 0.2s ease;
     }
     .btn-opcion:last-child { border-bottom: none; }
+    .btn-opcion:hover, .btn-opcion:active {
+      padding-left: 6px;
+      color: var(--naranja);
+    }
     .btn-opcion::after {
       content: '0' counter(opcion);
       font-family: 'Work Sans', sans-serif;
@@ -815,6 +835,7 @@
       border-color: var(--tinta);
     }
     .config-categoria-contenido[hidden] { display: none; }
+    .config-categoria-contenido { animation: aparecer 0.35s ease; }
 
     .swatches {
       display: flex;
@@ -829,10 +850,12 @@
       border: 1.5px solid var(--linea);
       cursor: pointer;
       padding: 0;
+      transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), border-color 0.2s ease, box-shadow 0.2s ease;
     }
     .swatch.activo {
       border-color: var(--tinta);
       box-shadow: 0 0 0 2px var(--linea);
+      transform: scale(1.12);
     }
 
     .config-opciones-radio {
@@ -887,6 +910,11 @@
       align-items: center;
       justify-content: center;
       z-index: 2;
+      transition: transform 0.35s ease, border-color 0.2s ease;
+    }
+    #btn-ajustes-flotante:hover {
+      transform: rotate(45deg);
+      border-color: var(--naranja);
     }
 
     .config-fila-nombre {
@@ -2326,6 +2354,10 @@
         localStorage.removeItem('nombreUsuario');
       }
       inputNombreUsuario.blur();
+
+      const textoOriginal = btnGuardarNombreUsuario.textContent;
+      btnGuardarNombreUsuario.textContent = '✓ Guardado';
+      setTimeout(() => { btnGuardarNombreUsuario.textContent = textoOriginal; }, 1500);
     });
 
     // Devuelve el nombre guardado, o null si no se ha puesto ninguno

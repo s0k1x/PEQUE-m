@@ -25,6 +25,7 @@
       font-family: 'Work Sans', sans-serif;
       color: var(--tinta);
       padding: 28px 16px 60px;
+      touch-action: manipulation;
     }
     .contenedor {
       max-width: 380px;
@@ -661,28 +662,15 @@
       <h1 style="margin-bottom:20px">Configuración ⚙️</h1>
 
       <div class="config-categorias" id="config-categorias">
-        <button type="button" class="config-cat-btn activa" data-cat="perfil">👤 Perfil</button>
-        <button type="button" class="config-cat-btn" data-cat="mascota">🐾 Mascota</button>
+        <button type="button" class="config-cat-btn activa" data-cat="mascota">🐾 Mascota</button>
         <button type="button" class="config-cat-btn" data-cat="apariencia">🎨 Apariencia</button>
         <button type="button" class="config-cat-btn" data-cat="avisos">🔔 Avisos</button>
         <button type="button" class="config-cat-btn" data-cat="accesibilidad">♿ Accesibilidad</button>
         <button type="button" class="config-cat-btn" data-cat="sesion">🚪 Sesión</button>
       </div>
 
-      <!-- Perfil -->
-      <div class="config-categoria-contenido" data-cat-contenido="perfil">
-        <div class="config-grupo">
-          <span class="config-titulo">🙋 Tu nombre</span>
-          <p class="config-descripcion">Así sabremos quién hizo qué.</p>
-          <div class="config-fila-nombre">
-            <input type="text" id="input-nombre-usuario" maxlength="20" placeholder="Tu nombre">
-            <button id="btn-guardar-nombre-usuario" type="button">Guardar</button>
-          </div>
-        </div>
-      </div>
-
       <!-- Mascota -->
-      <div class="config-categoria-contenido" data-cat-contenido="mascota" hidden>
+      <div class="config-categoria-contenido" data-cat-contenido="mascota">
         <div class="config-grupo">
           <span class="config-titulo">🐾 Nombre de la mascota</span>
           <div class="config-fila-nombre">
@@ -1221,7 +1209,7 @@
         mostrarMensaje('¡Listo! Ya te avisaremos si necesita algo 🔔');
       } catch (err) {
         console.error(err);
-        mostrarMensaje('No se pudo activar. Inténtalo de nuevo.');
+        alert('No se pudo activar:\n' + (err.name || '') + '\n' + (err.message || err));
       }
     }
 
@@ -1257,22 +1245,6 @@
           div.hidden = div.dataset.catContenido !== boton.dataset.cat;
         });
       });
-    });
-
-    // ---------- Configuración: tu nombre (perfil) ----------
-    const inputNombreUsuario = document.getElementById('input-nombre-usuario');
-    const btnGuardarNombreUsuario = document.getElementById('btn-guardar-nombre-usuario');
-    inputNombreUsuario.value = localStorage.getItem('nombreUsuario') || '';
-
-    btnGuardarNombreUsuario.addEventListener('click', () => {
-      const nombre = inputNombreUsuario.value.trim();
-      if (nombre) localStorage.setItem('nombreUsuario', nombre);
-      else localStorage.removeItem('nombreUsuario');
-      inputNombreUsuario.blur();
-
-      const textoOriginal = btnGuardarNombreUsuario.textContent;
-      btnGuardarNombreUsuario.textContent = '✓ Guardado';
-      setTimeout(() => { btnGuardarNombreUsuario.textContent = textoOriginal; }, 1500);
     });
 
     // ---------- Configuración: color de acento ----------

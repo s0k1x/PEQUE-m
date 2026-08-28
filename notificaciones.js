@@ -25,15 +25,22 @@ webpush.setVapidDetails(
 );
 
 // ---------- Envío compartido ----------
-async function enviarATodos(titulo, cuerpo, url) {
+// tipo es 'contenido' o 'mascota' — cada suscripción puede tener desactivado uno de los dos
+async function enviarATodos(tipo, titulo, cuerpo, url) {
   const suscripciones = await db.collection('suscripciones').get();
   if (suscripciones.empty) return;
 
+  const campoPreferencia = tipo === 'mascota' ? 'prefAvisosMascota' : 'prefAvisosContenido';
   const payload = JSON.stringify({ title: titulo, body: cuerpo, url });
 
   await Promise.all(suscripciones.docs.map(async (doc) => {
+    const datos = doc.data();
+    // Si el campo no existe (suscripciones antiguas), se asume que sí quiere el aviso
+    const quiereEsteAviso = datos[campoPreferencia] !== false;
+    if (!quiereEsteAviso) return;
+
     try {
-      await webpush.sendNotification(doc.data().suscripcion, payload);
+      await webpush.sendNotification(datos.suscripcion, payload);
     } catch (err) {
       if (err.statusCode === 404 || err.statusCode === 410) {
         console.log('Suscripción caducada, se elimina:', doc.id);
@@ -119,7 +126,7 @@ async function revisarMascota() {
     return;
   }
 
-  await enviarATodos('Tu mascota 🦙', mensaje, 'pou.html');
+  await enviarATodos('mascota', 'Tu mascota 🦙', mensaje, 'pou.html');
   await refMascota.set({ ultimoAviso: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
   console.log('Aviso de mascota enviado:', mensaje);
 }
@@ -173,7 +180,7 @@ async function revisarContenido() {
       const item = doc.data();
       const mensaje = construirMensajeContenido(coleccion, item);
       if (mensaje) {
-        await enviarATodos(mensaje.titulo, mensaje.cuerpo, mensaje.url);
+        await enviarATodos('contenido', mensaje.titulo, mensaje.cuerpo, mensaje.url);
         console.log(`Aviso de ${coleccion} enviado:`, mensaje.cuerpo);
       }
       nuevosCursores[coleccion] = item.creado;

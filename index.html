@@ -69,11 +69,6 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      padding: 34px 26px;
-      background: rgba(246,239,228,0.03);
-      border: 1px solid rgba(238,168,102,0.25);
-      border-radius: 10px;
-      box-shadow: 0 0 40px rgba(238,168,102,0.12);
       animation: apareceMensaje 0.6s ease;
     }
     @keyframes apareceMensaje {
@@ -97,13 +92,13 @@
     }
 
     .btn-ok-imagen {
-      background: none;
+      background: #ffffff;
       border: none;
       padding: 0;
       cursor: pointer;
       width: 84px;
       height: 84px;
-      border-radius: 50%;
+      border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 0 0 2px rgba(238,168,102,0.4), 0 0 26px rgba(238,168,102,0.35);
       transition: transform 0.15s ease, box-shadow 0.2s ease;
@@ -417,8 +412,8 @@
 
   <div id="pantalla-mensaje">
     <div class="tarjeta-mensaje">
-      <span class="mensaje-icono">💬</span>
-      <p class="mensaje-texto">Mario te ha enviado un mensaje</p>
+      <span class="mensaje-icono">🎁</span>
+      <p class="mensaje-texto">Mario te ha enviado un regalo</p>
       <button id="btn-ok-mensaje" class="btn-ok-imagen" aria-label="Vale">
         <img src="IMG_6447.png" alt="Vale">
       </button>

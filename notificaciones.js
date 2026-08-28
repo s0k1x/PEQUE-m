@@ -128,15 +128,17 @@ async function revisarMascota() {
 const COLECCIONES_CONTENIDO = ['cartas', 'fotos', 'citas', 'metas'];
 
 function construirMensajeContenido(coleccion, item) {
-  if (coleccion === 'cartas') return { titulo: 'Nueva carta 💌', cuerpo: `"${item.titulo || 'Sin título'}"`, url: 'index.html' };
-  if (coleccion === 'citas') return { titulo: 'Nueva cita 💕', cuerpo: `"${item.titulo || 'Sin título'}"`, url: 'index.html' };
-  if (coleccion === 'metas') return { titulo: 'Nueva meta 💫', cuerpo: item.texto || '', url: 'index.html' };
+  const quien = item.autor ? `${item.autor} ha añadido` : 'Se añadió';
+
+  if (coleccion === 'cartas') return { titulo: 'Nueva carta 💌', cuerpo: `${quien} una carta: "${item.titulo || 'Sin título'}"`, url: 'index.html' };
+  if (coleccion === 'citas') return { titulo: 'Nueva cita 💕', cuerpo: `${quien} una cita: "${item.titulo || 'Sin título'}"`, url: 'index.html' };
+  if (coleccion === 'metas') return { titulo: 'Nueva meta 💫', cuerpo: `${quien} una meta: ${item.texto || ''}`, url: 'index.html' };
   if (coleccion === 'fotos') {
     const esVideo = item.tipo === 'video';
     const categoria = item.categoria && item.categoria !== 'Sin categoría' ? ` en "${item.categoria}"` : '';
     return esVideo
-      ? { titulo: 'Video nuevo 🎥', cuerpo: `Se subió un video${categoria}`, url: 'index.html' }
-      : { titulo: 'Foto nueva 📷', cuerpo: `Se subió una foto${categoria}`, url: 'index.html' };
+      ? { titulo: 'Video nuevo 🎥', cuerpo: `${quien} un video${categoria}`, url: 'index.html' }
+      : { titulo: 'Foto nueva 📷', cuerpo: `${quien} una foto${categoria}`, url: 'index.html' };
   }
   return null;
 }

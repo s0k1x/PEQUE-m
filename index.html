@@ -794,6 +794,84 @@
       margin: 20px 0 0;
     }
 
+    .config-categorias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 22px;
+    }
+    .config-cat-btn {
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      font-size: 11px;
+      padding: 7px 13px;
+      cursor: pointer;
+      font-family: 'Work Sans', sans-serif;
+    }
+    .config-cat-btn.activa {
+      background: var(--tinta);
+      color: var(--blanco);
+      border-color: var(--tinta);
+    }
+    .config-categoria-contenido[hidden] { display: none; }
+
+    .swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 6px;
+    }
+    .swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--linea);
+      cursor: pointer;
+      padding: 0;
+    }
+    .swatch.activo {
+      border-color: var(--tinta);
+      box-shadow: 0 0 0 2px var(--linea);
+    }
+
+    .config-opciones-radio {
+      display: flex;
+      gap: 20px;
+    }
+    .config-opciones-radio label,
+    .config-fila-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      color: var(--tinta);
+      cursor: pointer;
+    }
+    .config-fila-check {
+      padding: 8px 0;
+    }
+    .config-opciones-radio input,
+    .config-fila-check input {
+      accent-color: var(--naranja);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Accesibilidad: reduce animaciones y movimiento en toda la página */
+    body.reducir-movimiento *,
+    body.reducir-movimiento *::before,
+    body.reducir-movimiento *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    /* Apariencia: texto más grande (zoom, respeta el diseño en px) */
+    .contenedor.texto-grande,
+    #mascota-widget.texto-grande {
+      zoom: 1.14;
+    }
+
     #btn-ajustes-flotante {
       position: absolute;
       top: 14px;
@@ -1102,36 +1180,93 @@
       <div id="seccion-6" class="seccion" hidden>
         <h2>Configuración ⚙️</h2>
 
-        <div class="config-grupo">
-          <span class="config-titulo">🙋 Tu nombre</span>
-          <p class="config-descripcion">Así sabremos quién hizo qué (por ejemplo, en los avisos: "Mario añadió una carta").</p>
-          <div class="config-fila-nombre">
-            <input type="text" id="input-nombre-usuario" maxlength="20" placeholder="Tu nombre">
-            <button id="btn-guardar-nombre-usuario" type="button">Guardar</button>
+        <div class="config-categorias" id="config-categorias">
+          <button type="button" class="config-cat-btn activa" data-cat="perfil">👤 Perfil</button>
+          <button type="button" class="config-cat-btn" data-cat="apariencia">🎨 Apariencia</button>
+          <button type="button" class="config-cat-btn" data-cat="sonido">🔊 Sonido</button>
+          <button type="button" class="config-cat-btn" data-cat="avisos">🔔 Avisos</button>
+          <button type="button" class="config-cat-btn" data-cat="accesibilidad">♿ Accesibilidad</button>
+          <button type="button" class="config-cat-btn" data-cat="sesion">🚪 Sesión</button>
+        </div>
+
+        <!-- Perfil -->
+        <div class="config-categoria-contenido" data-cat-contenido="perfil">
+          <div class="config-grupo">
+            <span class="config-titulo">🙋 Tu nombre</span>
+            <p class="config-descripcion">Así sabremos quién hizo qué (por ejemplo, en los avisos: "Mario añadió una carta").</p>
+            <div class="config-fila-nombre">
+              <input type="text" id="input-nombre-usuario" maxlength="20" placeholder="Tu nombre">
+              <button id="btn-guardar-nombre-usuario" type="button">Guardar</button>
+            </div>
           </div>
         </div>
 
-        <div class="config-grupo">
-          <span class="config-titulo">🔔 Notificaciones</span>
-          <p class="config-descripcion">Te avisa si añaden algo nuevo, o si la mascota necesita algo.</p>
-          <button id="btn-notificaciones" type="button">Activar avisos</button>
+        <!-- Apariencia -->
+        <div class="config-categoria-contenido" data-cat-contenido="apariencia" hidden>
+          <div class="config-grupo">
+            <span class="config-titulo">🎨 Color de acento</span>
+            <p class="config-descripcion">Solo lo ves tú en tu dispositivo, no cambia para el otro.</p>
+            <div class="swatches" id="swatches-color-acento">
+              <button type="button" class="swatch" data-color="naranja" title="Naranja" aria-label="Naranja" style="background:#e8703a"></button>
+              <button type="button" class="swatch" data-color="rosa" title="Rosa" aria-label="Rosa" style="background:#d46a8a"></button>
+              <button type="button" class="swatch" data-color="lavanda" title="Lavanda" aria-label="Lavanda" style="background:#8a6fc4"></button>
+              <button type="button" class="swatch" data-color="verde" title="Verde salvia" aria-label="Verde salvia" style="background:#5f8a5f"></button>
+              <button type="button" class="swatch" data-color="azul" title="Azul" aria-label="Azul" style="background:#4a7fb5"></button>
+            </div>
+          </div>
+          <div class="config-grupo">
+            <span class="config-titulo">🔠 Tamaño del texto</span>
+            <div class="config-opciones-radio">
+              <label><input type="radio" name="tamano-texto" value="normal" checked> Normal</label>
+              <label><input type="radio" name="tamano-texto" value="grande"> Grande</label>
+            </div>
+          </div>
         </div>
 
-        <div class="config-grupo">
-          <span class="config-titulo">🔊 Volumen de la música</span>
-          <input type="range" id="control-volumen" min="0" max="100" value="25">
+        <!-- Sonido -->
+        <div class="config-categoria-contenido" data-cat-contenido="sonido" hidden>
+          <div class="config-grupo">
+            <span class="config-titulo">🔊 Volumen de la música</span>
+            <input type="range" id="control-volumen" min="0" max="100" value="25">
+          </div>
+          <div class="config-grupo">
+            <label class="config-fila-check"><input type="checkbox" id="check-silenciar-musica"> Silenciar la música por completo</label>
+          </div>
         </div>
 
-        <div class="config-grupo">
-          <span class="config-titulo">🚪 Sesión</span>
-          <p class="config-descripcion">Cierra la sesión en este dispositivo — la próxima vez pedirá la contraseña otra vez.</p>
-          <button id="btn-cerrar-sesion" type="button" class="config-btn-secundario">Cerrar sesión</button>
+        <!-- Avisos -->
+        <div class="config-categoria-contenido" data-cat-contenido="avisos" hidden>
+          <div class="config-grupo">
+            <span class="config-titulo">🔔 Notificaciones</span>
+            <p class="config-descripcion">Te avisa si añaden algo nuevo, o si la mascota necesita algo.</p>
+            <button id="btn-notificaciones" type="button">Activar avisos</button>
+          </div>
+          <div class="config-grupo">
+            <span class="config-titulo">Qué te avisa</span>
+            <label class="config-fila-check"><input type="checkbox" id="check-avisos-contenido" checked> Cartas, fotos, citas y metas nuevas</label>
+            <label class="config-fila-check"><input type="checkbox" id="check-avisos-mascota" checked> La mascota necesita algo</label>
+          </div>
         </div>
 
-        <div class="config-grupo">
-          <span class="config-titulo">🔄 Cuestionario</span>
-          <p class="config-descripcion">Vuelve a pedir las 5 preguntas la próxima vez que se entre desde este dispositivo.</p>
-          <button id="btn-reiniciar-cuestionario" type="button" class="config-btn-secundario">Reiniciar cuestionario</button>
+        <!-- Accesibilidad -->
+        <div class="config-categoria-contenido" data-cat-contenido="accesibilidad" hidden>
+          <div class="config-grupo">
+            <label class="config-fila-check"><input type="checkbox" id="check-reducir-movimiento"> Reducir animaciones y movimiento</label>
+          </div>
+        </div>
+
+        <!-- Sesión -->
+        <div class="config-categoria-contenido" data-cat-contenido="sesion" hidden>
+          <div class="config-grupo">
+            <span class="config-titulo">🚪 Sesión</span>
+            <p class="config-descripcion">Cierra la sesión en este dispositivo — la próxima vez pedirá la contraseña otra vez.</p>
+            <button id="btn-cerrar-sesion" type="button" class="config-btn-secundario">Cerrar sesión</button>
+          </div>
+          <div class="config-grupo">
+            <span class="config-titulo">🔄 Cuestionario</span>
+            <p class="config-descripcion">Vuelve a pedir las 5 preguntas la próxima vez que se entre desde este dispositivo.</p>
+            <button id="btn-reiniciar-cuestionario" type="button" class="config-btn-secundario">Reiniciar cuestionario</button>
+          </div>
         </div>
 
         <p class="config-creditos">Hecho con 🧡 para ti</p>
@@ -2156,6 +2291,8 @@
         if (db) {
           await db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({
             suscripcion: suscripcion.toJSON(),
+            prefAvisosContenido: checkAvisosContenido.checked,
+            prefAvisosMascota: checkAvisosMascota.checked,
             creado: firebase.firestore.FieldValue.serverTimestamp()
           });
         }
@@ -2223,6 +2360,110 @@
       sessionStorage.removeItem('claveOk');
       location.reload();
     });
+
+    // ---------- Configuración: navegación por categorías ----------
+    document.querySelectorAll('.config-cat-btn').forEach(boton => {
+      boton.addEventListener('click', () => {
+        document.querySelectorAll('.config-cat-btn').forEach(b => b.classList.remove('activa'));
+        boton.classList.add('activa');
+        document.querySelectorAll('.config-categoria-contenido').forEach(div => {
+          div.hidden = div.dataset.catContenido !== boton.dataset.cat;
+        });
+      });
+    });
+
+    // ---------- Configuración: color de acento ----------
+    const COLORES_ACENTO = {
+      naranja: { principal: '#e8703a', suave: '#f6ddc9' },
+      rosa:    { principal: '#d46a8a', suave: '#f8dde6' },
+      lavanda: { principal: '#8a6fc4', suave: '#e7ddf6' },
+      verde:   { principal: '#5f8a5f', suave: '#dfe9df' },
+      azul:    { principal: '#4a7fb5', suave: '#dde8f2' }
+    };
+
+    function aplicarColorAcento(clave) {
+      const color = COLORES_ACENTO[clave] || COLORES_ACENTO.naranja;
+      document.documentElement.style.setProperty('--naranja', color.principal);
+      document.documentElement.style.setProperty('--naranja-suave', color.suave);
+      document.querySelectorAll('#swatches-color-acento .swatch').forEach(b => {
+        b.classList.toggle('activo', b.dataset.color === clave);
+      });
+    }
+
+    const colorGuardado = localStorage.getItem('colorAcento') || 'naranja';
+    aplicarColorAcento(colorGuardado);
+
+    document.querySelectorAll('#swatches-color-acento .swatch').forEach(boton => {
+      boton.addEventListener('click', () => {
+        localStorage.setItem('colorAcento', boton.dataset.color);
+        aplicarColorAcento(boton.dataset.color);
+      });
+    });
+
+    // ---------- Configuración: tamaño del texto ----------
+    function aplicarTamanoTexto(tamano) {
+      contenedorPrincipal.classList.toggle('texto-grande', tamano === 'grande');
+      mascotaWidget.classList.toggle('texto-grande', tamano === 'grande');
+    }
+
+    const contenedorPrincipal = document.querySelector('.contenedor');
+    const tamanoGuardado = localStorage.getItem('tamanoTexto') || 'normal';
+    aplicarTamanoTexto(tamanoGuardado);
+    document.querySelector(`input[name="tamano-texto"][value="${tamanoGuardado}"]`).checked = true;
+
+    document.querySelectorAll('input[name="tamano-texto"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        localStorage.setItem('tamanoTexto', radio.value);
+        aplicarTamanoTexto(radio.value);
+      });
+    });
+
+    // ---------- Configuración: silenciar música por completo ----------
+    const checkSilenciarMusica = document.getElementById('check-silenciar-musica');
+    checkSilenciarMusica.checked = localStorage.getItem('musicaSilenciada') === 'true';
+    cancionFondo.muted = checkSilenciarMusica.checked;
+
+    checkSilenciarMusica.addEventListener('change', () => {
+      cancionFondo.muted = checkSilenciarMusica.checked;
+      localStorage.setItem('musicaSilenciada', checkSilenciarMusica.checked);
+    });
+
+    // ---------- Configuración: reducir movimiento ----------
+    const checkReducirMovimiento = document.getElementById('check-reducir-movimiento');
+    const reducirGuardado = localStorage.getItem('reducirMovimiento') === 'true';
+    checkReducirMovimiento.checked = reducirGuardado;
+    document.body.classList.toggle('reducir-movimiento', reducirGuardado);
+
+    checkReducirMovimiento.addEventListener('change', () => {
+      document.body.classList.toggle('reducir-movimiento', checkReducirMovimiento.checked);
+      localStorage.setItem('reducirMovimiento', checkReducirMovimiento.checked);
+    });
+
+    // ---------- Configuración: qué tipo de avisos recibir ----------
+    const checkAvisosContenido = document.getElementById('check-avisos-contenido');
+    const checkAvisosMascota = document.getElementById('check-avisos-mascota');
+
+    checkAvisosContenido.checked = localStorage.getItem('avisosContenido') !== 'false';
+    checkAvisosMascota.checked = localStorage.getItem('avisosMascota') !== 'false';
+
+    async function actualizarPreferenciasAvisos() {
+      localStorage.setItem('avisosContenido', checkAvisosContenido.checked);
+      localStorage.setItem('avisosMascota', checkAvisosMascota.checked);
+
+      if (!db || !('serviceWorker' in navigator)) return;
+      const registro = await navigator.serviceWorker.getRegistration();
+      if (!registro) return;
+      const suscripcion = await registro.pushManager.getSubscription();
+      if (!suscripcion) return;
+
+      db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({
+        prefAvisosContenido: checkAvisosContenido.checked,
+        prefAvisosMascota: checkAvisosMascota.checked
+      }, { merge: true });
+    }
+
+    checkAvisosContenido.addEventListener('change', actualizarPreferenciasAvisos);
+    checkAvisosMascota.addEventListener('change', actualizarPreferenciasAvisos);
 
     // ---------- Easter egg: doble toque con dos dedos ----------
     let ultimoToqueDosDedos = 0;

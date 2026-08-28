@@ -1068,6 +1068,67 @@
       margin: 0;
     }
 
+    #ps-selector {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,10,12,0.92);
+      z-index: 2200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #ps-selector[hidden] { display: none; }
+    #ps-selector-caja {
+      background: #17181c;
+      color: #d8d8dc;
+      width: 100%;
+      max-width: 360px;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 18px;
+      border: 1px solid #2c2d33;
+      font-family: 'Work Sans', sans-serif;
+    }
+    #ps-selector-titulo {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 18px;
+      color: #f3c98a;
+      margin: 0 0 14px;
+    }
+    #ps-selector-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 14px;
+    }
+    .ps-opcion-fila {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 8px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .ps-opcion-fila:active { background: #232429; }
+    .ps-opcion-fila input {
+      width: 18px;
+      height: 18px;
+      accent-color: #f3c98a;
+    }
+    .ps-opcion-fila.ps-opcion-boton {
+      background: #232429;
+      border: 1px solid #2c2d33;
+      margin-bottom: 6px;
+    }
+    #ps-selector-botonera {
+      display: flex;
+      gap: 8px;
+    }
+    #ps-selector-botonera button { margin: 0; flex: 1; }
+
     .particula-lluvia {
       position: fixed;
       top: -40px;
@@ -1559,6 +1620,17 @@
       <div class="panel-secreto-grupo" data-cat-contenido="debug" hidden>
         <span class="panel-secreto-titulo">📋 Info de depuración</span>
         <pre id="panel-secreto-info">Cargando...</pre>
+      </div>
+    </div>
+  </div>
+
+  <div id="ps-selector" hidden>
+    <div id="ps-selector-caja">
+      <p id="ps-selector-titulo">¿A quién?</p>
+      <div id="ps-selector-lista"></div>
+      <div id="ps-selector-botonera">
+        <button type="button" id="ps-selector-cancelar" class="config-btn-secundario">Cancelar</button>
+        <button type="button" id="ps-selector-continuar" class="panel-secreto-btn ps-btn-destacado">Continuar</button>
       </div>
     </div>
   </div>
@@ -2627,6 +2699,7 @@
       if (nombre) {
         localStorage.setItem('nombreUsuario', nombre);
         registrarUsuarioEnLaWeb(nombre);
+        sincronizarNombreConSuscripcion(nombre);
       } else {
         localStorage.removeItem('nombreUsuario');
       }
@@ -2652,6 +2725,19 @@
         unido: firebase.firestore.FieldValue.serverTimestamp(),
         ultimaVez: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
+    }
+
+    // Si ya tenía las notificaciones activadas antes de poner el nombre (o si
+    // lo cambia después), esto actualiza su suscripción para que quede
+    // asociada al nombre correcto — así el orden en que se hagan las cosas
+    // ya no importa
+    async function sincronizarNombreConSuscripcion(nombre) {
+      if (!db || !('serviceWorker' in navigator)) return;
+      const registro = await navigator.serviceWorker.getRegistration();
+      if (!registro) return;
+      const suscripcion = await registro.pushManager.getSubscription();
+      if (!suscripcion) return;
+      db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({ nombre }, { merge: true });
     }
 
     // Actualiza "última vez activo" cada vez que se abre la web, si ya tiene nombre puesto
@@ -2881,50 +2967,114 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
       '🌟 Recordatorio sorpresa: te quieren muchísimo'
     ];
 
-    // Convierte lo que la persona escribió (números separados por coma, nombres
-    // sueltos, "todos" o "yo") en una lista real de destinatarios
-    function resolverDestinatarios(entrada, nombresDisponibles) {
-      const texto = entrada.trim().toLowerCase();
-      if (texto === 'todos') return ['todos'];
+    // ---------- Selector visual de personas (con casillas, sin escribir números) ----------
+    const psSelector = document.getElementById('ps-selector');
+    const psSelectorTitulo = document.getElementById('ps-selector-titulo');
+    const psSelectorLista = document.getElementById('ps-selector-lista');
+    const psSelectorContinuar = document.getElementById('ps-selector-continuar');
+    const psSelectorCancelar = document.getElementById('ps-selector-cancelar');
 
-      const partes = entrada.split(',').map(p => p.trim()).filter(Boolean);
-      const resultado = [];
-      partes.forEach(parte => {
-        if (parte.toLowerCase() === 'yo') {
-          resultado.push(obtenerNombreUsuario() || '');
-          return;
-        }
-        const numero = Number(parte);
-        if (!isNaN(numero) && nombresDisponibles[numero - 1]) {
-          resultado.push(nombresDisponibles[numero - 1]);
-        } else {
-          resultado.push(parte); // nombre escrito directamente
-        }
-      });
-      return resultado.filter(Boolean);
+    function cerrarSelector() {
+      psSelector.hidden = true;
+      psSelectorLista.innerHTML = '';
     }
+    psSelectorCancelar.addEventListener('click', cerrarSelector);
 
-    async function pedirDestinatarios(mensajeExtra) {
+    // Muestra casillas para elegir a una o varias personas registradas.
+    // Devuelve un array de nombres (o ['todos']), o null si se cancela.
+    async function elegirUsuarios(titulo) {
       if (!db) return null;
       const snap = await db.collection('usuarios').get();
       const nombres = snap.docs.map(d => d.data().nombre);
-      const lista = nombres.length
-        ? nombres.map((n, i) => `${i + 1}. ${n}`).join('\n')
-        : '(nadie se ha registrado todavía)';
-      const entrada = prompt(
-        `¿A quién? Puedes elegir varios separados por coma (ej: 1,3), escribir "todos", o "yo".\n\n${lista}\n\n${mensajeExtra || ''}`
-      );
-      if (!entrada) return null;
-      const destinatarios = resolverDestinatarios(entrada, nombres);
-      return destinatarios.length ? destinatarios : null;
+
+      psSelectorTitulo.textContent = titulo || '¿A quién?';
+      psSelectorLista.innerHTML = '';
+      psSelectorContinuar.textContent = 'Continuar';
+
+      if (!nombres.length) {
+        psSelectorLista.innerHTML = '<p class="ps-nota">Todavía nadie ha puesto su nombre en Configuración → Perfil.</p>';
+      } else {
+        const filaTodos = document.createElement('label');
+        filaTodos.className = 'ps-opcion-fila';
+        filaTodos.innerHTML = '<input type="checkbox" value="todos"> <strong>Todos</strong>';
+        psSelectorLista.appendChild(filaTodos);
+
+        nombres.forEach(nombre => {
+          const fila = document.createElement('label');
+          fila.className = 'ps-opcion-fila';
+          fila.innerHTML = `<input type="checkbox" value="${nombre}"> ${nombre}`;
+          psSelectorLista.appendChild(fila);
+        });
+
+        // Marcar "Todos" desmarca el resto, y viceversa — no tiene sentido combinarlos
+        filaTodos.querySelector('input').addEventListener('change', (e) => {
+          if (e.target.checked) {
+            psSelectorLista.querySelectorAll('input[type=checkbox]').forEach(c => { if (c !== e.target) c.checked = false; });
+          }
+        });
+      }
+
+      psSelector.hidden = false;
+
+      return new Promise(resolve => {
+        const alTerminar = () => {
+          const marcados = Array.from(psSelectorLista.querySelectorAll('input:checked')).map(i => i.value);
+          cerrarSelector();
+          psSelectorContinuar.removeEventListener('click', alTerminar);
+          psSelectorCancelar.removeEventListener('click', alCancelar);
+          resolve(marcados.length ? marcados : null);
+        };
+        const alCancelar = () => {
+          psSelectorContinuar.removeEventListener('click', alTerminar);
+          psSelectorCancelar.removeEventListener('click', alCancelar);
+          resolve(null);
+        };
+        psSelectorContinuar.addEventListener('click', alTerminar);
+        psSelectorCancelar.addEventListener('click', alCancelar);
+      });
+    }
+
+    // Muestra una lista de botones para elegir UNA acción. Devuelve el texto
+    // del botón elegido, o null si se cancela.
+    function elegirAccion(titulo, opciones) {
+      psSelectorTitulo.textContent = titulo;
+      psSelectorLista.innerHTML = '';
+      opciones.forEach(opcion => {
+        const boton = document.createElement('div');
+        boton.className = 'ps-opcion-fila ps-opcion-boton';
+        boton.textContent = opcion;
+        psSelectorLista.appendChild(boton);
+      });
+      psSelector.hidden = false;
+      document.getElementById('ps-selector-botonera').hidden = true;
+
+      return new Promise(resolve => {
+        function manejarClic(e) {
+          const fila = e.target.closest('.ps-opcion-boton');
+          if (!fila) return;
+          limpiar();
+          resolve(fila.textContent);
+        }
+        function alCancelarFuera(e) {
+          if (e.target === psSelector) { limpiar(); resolve(null); }
+        }
+        function limpiar() {
+          cerrarSelector();
+          document.getElementById('ps-selector-botonera').hidden = false;
+          psSelectorLista.removeEventListener('click', manejarClic);
+          psSelector.removeEventListener('click', alCancelarFuera);
+        }
+        psSelectorLista.addEventListener('click', manejarClic);
+        psSelector.addEventListener('click', alCancelarFuera);
+      });
     }
 
     const accionesPanelSecreto = {
 
       // 📨 Enviar algo
       async enviarMensaje() {
-        const destinatarios = await pedirDestinatarios();
-        if (!destinatarios) { alert('No se reconoció a nadie con esa selección.'); return; }
+        const destinatarios = await elegirUsuarios('¿A quién le mandamos el mensaje?');
+        if (!destinatarios) return;
         const texto = prompt('¿Qué mensaje quieres mandar?');
         if (!texto) return;
         await db.collection('mensajesManual').add({
@@ -2938,8 +3088,8 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
         alert(`Mensaje en cola para: ${destinatarios.join(', ')}. Se entregará en la próxima revisión automática (hasta 10 min), o al instante si ejecutas la Action a mano.`);
       },
       async enviarSorpresa() {
-        const destinatarios = await pedirDestinatarios();
-        if (!destinatarios) { alert('No se reconoció a nadie con esa selección.'); return; }
+        const destinatarios = await elegirUsuarios('¿A quién le mandamos la sorpresa?');
+        if (!destinatarios) return;
         const frase = FRASES_SORPRESA[Math.floor(Math.random() * FRASES_SORPRESA.length)];
         await db.collection('mensajesManual').add({
           destinatarios,
@@ -3251,30 +3401,23 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
       // 🎯 Elegir un usuario registrado y decidir qué hacer con él
       async elegirUsuarioYActuar() {
         if (!db) return;
+        const seleccionNombres = await elegirUsuarios('¿Con quién quieres actuar?');
+        if (!seleccionNombres) return;
+
         const snap = await db.collection('usuarios').get();
-        if (snap.empty) { alert('Todavía nadie se ha registrado (nadie ha puesto su nombre en Configuración → Perfil).'); return; }
-
-        const usuarios = snap.docs.map(d => d.data());
-        const listaTexto = usuarios.map((u, i) => `${i + 1}. ${u.nombre}`).join('\n');
-        const eleccion = prompt(`¿Con quién quieres actuar? Puedes elegir varios separados por coma (ej: 1,3), o escribir "todos".\n\n${listaTexto}`);
-        if (!eleccion) return;
-
-        const nombresElegidos = eleccion.trim().toLowerCase() === 'todos'
-          ? usuarios.map(u => u.nombre)
-          : eleccion.split(',').map(p => p.trim()).map(p => {
-              const num = Number(p);
-              return (!isNaN(num) && usuarios[num - 1]) ? usuarios[num - 1].nombre : p;
-            });
-
-        const seleccionados = usuarios.filter(u => nombresElegidos.some(n => n.toLowerCase() === u.nombre.toLowerCase()));
-        if (!seleccionados.length) { alert('No se reconoció a nadie con esa selección.'); return; }
+        const todosLosUsuarios = snap.docs.map(d => d.data());
+        const seleccionados = seleccionNombres.includes('todos')
+          ? todosLosUsuarios
+          : todosLosUsuarios.filter(u => seleccionNombres.includes(u.nombre));
+        if (!seleccionados.length) return;
 
         const nombresTexto = seleccionados.map(u => u.nombre).join(', ');
-        const menu = `¿Qué quieres hacer con ${nombresTexto}?\n\n1. Enviarles un mensaje\n2. Enviarles una sorpresa\n3. Ver cuándo estuvieron activos por última vez\n4. Renombrar (solo si eliges uno)\n5. Eliminarlos de la lista`;
-        const opcion = prompt(menu);
+        const opciones = ['💌 Enviarles un mensaje', '🎁 Enviarles una sorpresa', '🕐 Ver cuándo estuvieron activos', '✏️ Renombrar (solo si eliges uno)', '🗑️ Eliminarlos de la lista'];
+        const opcion = await elegirAccion(`¿Qué hacemos con ${nombresTexto}?`, opciones);
+        if (!opcion) return;
 
-        if (opcion === '1') {
-          const texto = prompt(`¿Qué mensaje les mandamos?`);
+        if (opcion.startsWith('💌')) {
+          const texto = prompt('¿Qué mensaje les mandamos?');
           if (!texto) return;
           await db.collection('mensajesManual').add({
             destinatarios: seleccionados.map(u => u.nombre),
@@ -3286,7 +3429,7 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
           });
           alert(`Mensaje para ${nombresTexto} en cola. Se entregará pronto.`);
 
-        } else if (opcion === '2') {
+        } else if (opcion.startsWith('🎁')) {
           const frase = FRASES_SORPRESA[Math.floor(Math.random() * FRASES_SORPRESA.length)];
           await db.collection('mensajesManual').add({
             destinatarios: seleccionados.map(u => u.nombre),
@@ -3298,7 +3441,7 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
           });
           alert(`¡Sorpresa para ${nombresTexto} en camino!`);
 
-        } else if (opcion === '3') {
+        } else if (opcion.startsWith('🕐')) {
           const lineas = seleccionados.map(u => {
             const fecha = u.ultimaVez && u.ultimaVez.toDate
               ? u.ultimaVez.toDate().toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
@@ -3307,7 +3450,7 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
           });
           alert(lineas.join('\n'));
 
-        } else if (opcion === '4') {
+        } else if (opcion.startsWith('✏️')) {
           if (seleccionados.length > 1) { alert('Para renombrar, elige solo una persona.'); return; }
           const usuario = seleccionados[0];
           const idUsuario = usuario.nombre.trim().toLowerCase();
@@ -3322,7 +3465,7 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
           await db.collection('usuarios').doc(idUsuario).delete();
           alert(`Renombrado a "${nuevo}".`);
 
-        } else if (opcion === '5') {
+        } else if (opcion.startsWith('🗑️')) {
           if (!confirm(`¿Seguro que quieres eliminar a ${nombresTexto}?`)) return;
           await Promise.all(seleccionados.map(u => db.collection('usuarios').doc(u.nombre.trim().toLowerCase()).delete()));
           alert(`Eliminado(s): ${nombresTexto}.`);

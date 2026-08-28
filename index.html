@@ -1475,8 +1475,8 @@
       <div class="panel-secreto-grupo" data-cat-contenido="enviar">
         <span class="panel-secreto-titulo">📨 Enviar algo</span>
         <p class="ps-nota">Se entrega en cuanto corra la revisión automática (cada 10 min), o al instante si ejecutas la Action a mano en GitHub.</p>
-        <button type="button" class="panel-secreto-btn" data-accion="enviarMensaje">💌 Enviar un mensaje</button>
-        <button type="button" class="panel-secreto-btn" data-accion="enviarSorpresa">🎁 Enviar una sorpresa</button>
+        <button type="button" class="panel-secreto-btn" data-accion="enviarMensaje">💌 Enviar un mensaje (a uno, varios, o todos)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="enviarSorpresa">🎁 Enviar una sorpresa (a uno, varios, o todos)</button>
         <button type="button" class="panel-secreto-btn" data-accion="verPendientes">📬 Ver mensajes pendientes de enviar</button>
         <button type="button" class="panel-secreto-btn" data-accion="cancelarPendientes">🗑️ Cancelar mensajes pendientes</button>
       </div>
@@ -1486,8 +1486,10 @@
         <button type="button" class="panel-secreto-btn" data-accion="notificacionPrueba">Notificación de prueba (a este dispositivo)</button>
         <button type="button" class="panel-secreto-btn" data-accion="notificacionPersonalizada">Notificación de prueba con mensaje propio</button>
         <button type="button" class="panel-secreto-btn" data-accion="borrarSuscripcion">Borrar mi suscripción</button>
+        <button type="button" class="panel-secreto-btn ps-btn-destacado" data-accion="actualizarNombreSuscripcion">🔄 Poner mi nombre actual en mi suscripción</button>
         <button type="button" class="panel-secreto-btn" data-accion="contarSuscripciones">Contar cuántos dispositivos están suscritos</button>
         <button type="button" class="panel-secreto-btn" data-accion="listarNombresSuscritos">Ver nombres de quienes están suscritos</button>
+        <button type="button" class="panel-secreto-btn" data-accion="limpiarSuscripcionesSinNombre">🧹 Borrar suscripciones sin nombre (viejas)</button>
       </div>
 
       <div class="panel-secreto-grupo" data-cat-contenido="mascota" hidden>
@@ -2879,39 +2881,75 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
       '🌟 Recordatorio sorpresa: te quieren muchísimo'
     ];
 
+    // Convierte lo que la persona escribió (números separados por coma, nombres
+    // sueltos, "todos" o "yo") en una lista real de destinatarios
+    function resolverDestinatarios(entrada, nombresDisponibles) {
+      const texto = entrada.trim().toLowerCase();
+      if (texto === 'todos') return ['todos'];
+
+      const partes = entrada.split(',').map(p => p.trim()).filter(Boolean);
+      const resultado = [];
+      partes.forEach(parte => {
+        if (parte.toLowerCase() === 'yo') {
+          resultado.push(obtenerNombreUsuario() || '');
+          return;
+        }
+        const numero = Number(parte);
+        if (!isNaN(numero) && nombresDisponibles[numero - 1]) {
+          resultado.push(nombresDisponibles[numero - 1]);
+        } else {
+          resultado.push(parte); // nombre escrito directamente
+        }
+      });
+      return resultado.filter(Boolean);
+    }
+
+    async function pedirDestinatarios(mensajeExtra) {
+      if (!db) return null;
+      const snap = await db.collection('usuarios').get();
+      const nombres = snap.docs.map(d => d.data().nombre);
+      const lista = nombres.length
+        ? nombres.map((n, i) => `${i + 1}. ${n}`).join('\n')
+        : '(nadie se ha registrado todavía)';
+      const entrada = prompt(
+        `¿A quién? Puedes elegir varios separados por coma (ej: 1,3), escribir "todos", o "yo".\n\n${lista}\n\n${mensajeExtra || ''}`
+      );
+      if (!entrada) return null;
+      const destinatarios = resolverDestinatarios(entrada, nombres);
+      return destinatarios.length ? destinatarios : null;
+    }
+
     const accionesPanelSecreto = {
 
       // 📨 Enviar algo
       async enviarMensaje() {
-        if (!db) return;
-        const destinatario = prompt('¿A quién? Escribe el nombre exacto de la persona registrada, "todos", o "yo" para probarlo contigo mismo:');
-        if (!destinatario) return;
+        const destinatarios = await pedirDestinatarios();
+        if (!destinatarios) { alert('No se reconoció a nadie con esa selección.'); return; }
         const texto = prompt('¿Qué mensaje quieres mandar?');
         if (!texto) return;
         await db.collection('mensajesManual').add({
-          destinatario: destinatario.trim(),
+          destinatarios,
           remitente: obtenerNombreUsuario() || 'Alguien',
           tipo: 'mensaje',
           texto: texto.trim(),
           enviado: false,
           creado: firebase.firestore.FieldValue.serverTimestamp()
         });
-        alert('Mensaje en cola. Se entregará en la próxima revisión automática (hasta 10 min), o al instante si ejecutas la Action a mano.');
+        alert(`Mensaje en cola para: ${destinatarios.join(', ')}. Se entregará en la próxima revisión automática (hasta 10 min), o al instante si ejecutas la Action a mano.`);
       },
       async enviarSorpresa() {
-        if (!db) return;
-        const destinatario = prompt('¿A quién le mandamos la sorpresa? Nombre exacto, "todos", o "yo":');
-        if (!destinatario) return;
+        const destinatarios = await pedirDestinatarios();
+        if (!destinatarios) { alert('No se reconoció a nadie con esa selección.'); return; }
         const frase = FRASES_SORPRESA[Math.floor(Math.random() * FRASES_SORPRESA.length)];
         await db.collection('mensajesManual').add({
-          destinatario: destinatario.trim(),
+          destinatarios,
           remitente: obtenerNombreUsuario() || 'Alguien',
           tipo: 'sorpresa',
           texto: frase,
           enviado: false,
           creado: firebase.firestore.FieldValue.serverTimestamp()
         });
-        alert('¡Sorpresa en camino! Se entregará en la próxima revisión automática.');
+        alert(`¡Sorpresa en camino para: ${destinatarios.join(', ')}!`);
       },
       async verPendientes() {
         if (!db) return;
@@ -2919,7 +2957,8 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
         if (snap.empty) { alert('No hay mensajes pendientes de enviar.'); return; }
         const lineas = snap.docs.map(d => {
           const m = d.data();
-          return `→ ${m.destinatario}: "${m.texto}"`;
+          const destino = (m.destinatarios || [m.destinatario]).join(', ');
+          return `→ ${destino}: "${m.texto}"`;
         });
         alert(lineas.join('\n'));
       },
@@ -2955,6 +2994,17 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
         await desactivarNotificaciones();
         actualizarInfoPanelSecreto();
       },
+      async actualizarNombreSuscripcion() {
+        if (!db || !('serviceWorker' in navigator)) return;
+        const nombre = obtenerNombreUsuario();
+        if (!nombre) { alert('Primero pon tu nombre en Configuración → Perfil.'); return; }
+        const registro = await navigator.serviceWorker.getRegistration();
+        if (!registro) { alert('No tienes las notificaciones activadas todavía en este dispositivo.'); return; }
+        const suscripcion = await registro.pushManager.getSubscription();
+        if (!suscripcion) { alert('No tienes las notificaciones activadas todavía en este dispositivo.'); return; }
+        await db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({ nombre }, { merge: true });
+        alert(`Listo, tu suscripción ahora está asociada al nombre "${nombre}".`);
+      },
       async contarSuscripciones() {
         if (!db) return;
         const snap = await db.collection('suscripciones').get();
@@ -2965,6 +3015,15 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
         const snap = await db.collection('suscripciones').get();
         const nombres = snap.docs.map(d => d.data().nombre || '(sin nombre)');
         alert(nombres.length ? nombres.join('\n') : 'Nadie está suscrito todavía.');
+      },
+      async limpiarSuscripcionesSinNombre() {
+        if (!db) return;
+        const snap = await db.collection('suscripciones').get();
+        const sinNombre = snap.docs.filter(d => !d.data().nombre);
+        if (!sinNombre.length) { alert('No hay ninguna suscripción sin nombre.'); return; }
+        if (!confirm(`Hay ${sinNombre.length} suscripción(es) sin nombre (probablemente viejas). ¿Borrarlas? Si alguna es la tuya, tendrás que volver a activar los avisos después.`)) return;
+        await Promise.all(sinNombre.map(d => d.ref.delete()));
+        alert('Borradas. Ahora vuelve a activar los avisos desde Configuración para crear una suscripción nueva con tu nombre.');
       },
 
       // 🐾 Mascota
@@ -3197,48 +3256,61 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
 
         const usuarios = snap.docs.map(d => d.data());
         const listaTexto = usuarios.map((u, i) => `${i + 1}. ${u.nombre}`).join('\n');
-        const eleccion = prompt(`¿Con quién quieres actuar?\n\n${listaTexto}\n\nEscribe el número:`);
-        const indice = Number(eleccion) - 1;
-        if (!eleccion || isNaN(indice) || !usuarios[indice]) return;
+        const eleccion = prompt(`¿Con quién quieres actuar? Puedes elegir varios separados por coma (ej: 1,3), o escribir "todos".\n\n${listaTexto}`);
+        if (!eleccion) return;
 
-        const usuario = usuarios[indice];
-        const idUsuario = usuario.nombre.trim().toLowerCase();
+        const nombresElegidos = eleccion.trim().toLowerCase() === 'todos'
+          ? usuarios.map(u => u.nombre)
+          : eleccion.split(',').map(p => p.trim()).map(p => {
+              const num = Number(p);
+              return (!isNaN(num) && usuarios[num - 1]) ? usuarios[num - 1].nombre : p;
+            });
 
-        const menu = `¿Qué quieres hacer con ${usuario.nombre}?\n\n1. Enviarle un mensaje\n2. Enviarle una sorpresa\n3. Ver cuándo estuvo activo por última vez\n4. Renombrarlo\n5. Eliminarlo de la lista`;
+        const seleccionados = usuarios.filter(u => nombresElegidos.some(n => n.toLowerCase() === u.nombre.toLowerCase()));
+        if (!seleccionados.length) { alert('No se reconoció a nadie con esa selección.'); return; }
+
+        const nombresTexto = seleccionados.map(u => u.nombre).join(', ');
+        const menu = `¿Qué quieres hacer con ${nombresTexto}?\n\n1. Enviarles un mensaje\n2. Enviarles una sorpresa\n3. Ver cuándo estuvieron activos por última vez\n4. Renombrar (solo si eliges uno)\n5. Eliminarlos de la lista`;
         const opcion = prompt(menu);
 
         if (opcion === '1') {
-          const texto = prompt(`¿Qué mensaje le mandamos a ${usuario.nombre}?`);
+          const texto = prompt(`¿Qué mensaje les mandamos?`);
           if (!texto) return;
           await db.collection('mensajesManual').add({
-            destinatario: usuario.nombre,
+            destinatarios: seleccionados.map(u => u.nombre),
             remitente: obtenerNombreUsuario() || 'Alguien',
             tipo: 'mensaje',
             texto: texto.trim(),
             enviado: false,
             creado: firebase.firestore.FieldValue.serverTimestamp()
           });
-          alert(`Mensaje para ${usuario.nombre} en cola. Se entregará pronto.`);
+          alert(`Mensaje para ${nombresTexto} en cola. Se entregará pronto.`);
 
         } else if (opcion === '2') {
           const frase = FRASES_SORPRESA[Math.floor(Math.random() * FRASES_SORPRESA.length)];
           await db.collection('mensajesManual').add({
-            destinatario: usuario.nombre,
+            destinatarios: seleccionados.map(u => u.nombre),
             remitente: obtenerNombreUsuario() || 'Alguien',
             tipo: 'sorpresa',
             texto: frase,
             enviado: false,
             creado: firebase.firestore.FieldValue.serverTimestamp()
           });
-          alert(`¡Sorpresa para ${usuario.nombre} en camino!`);
+          alert(`¡Sorpresa para ${nombresTexto} en camino!`);
 
         } else if (opcion === '3') {
-          const fecha = usuario.ultimaVez && usuario.ultimaVez.toDate
-            ? usuario.ultimaVez.toDate().toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
-            : 'desconocido';
-          alert(`${usuario.nombre} estuvo activo por última vez: ${fecha}`);
+          const lineas = seleccionados.map(u => {
+            const fecha = u.ultimaVez && u.ultimaVez.toDate
+              ? u.ultimaVez.toDate().toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+              : 'desconocido';
+            return `${u.nombre}: ${fecha}`;
+          });
+          alert(lineas.join('\n'));
 
         } else if (opcion === '4') {
+          if (seleccionados.length > 1) { alert('Para renombrar, elige solo una persona.'); return; }
+          const usuario = seleccionados[0];
+          const idUsuario = usuario.nombre.trim().toLowerCase();
           const nuevo = prompt('¿Nuevo nombre?', usuario.nombre);
           if (!nuevo) return;
           const doc = await db.collection('usuarios').doc(idUsuario).get();
@@ -3251,9 +3323,9 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
           alert(`Renombrado a "${nuevo}".`);
 
         } else if (opcion === '5') {
-          if (!confirm(`¿Seguro que quieres eliminar a ${usuario.nombre}?`)) return;
-          await db.collection('usuarios').doc(idUsuario).delete();
-          alert(`${usuario.nombre} eliminado de la lista.`);
+          if (!confirm(`¿Seguro que quieres eliminar a ${nombresTexto}?`)) return;
+          await Promise.all(seleccionados.map(u => db.collection('usuarios').doc(u.nombre.trim().toLowerCase()).delete()));
+          alert(`Eliminado(s): ${nombresTexto}.`);
         }
       },
 

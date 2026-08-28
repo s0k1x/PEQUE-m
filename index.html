@@ -49,6 +49,15 @@
       overflow-x: hidden;
       touch-action: manipulation;
     }
+    /* Centra la tarjeta verticalmente solo en la pantalla de bienvenida y la de contraseña */
+    body.pantalla-centrada {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    body.pantalla-centrada .contenedor {
+      margin: 0;
+    }
 
     .mancha-fondo {
       position: fixed;
@@ -87,6 +96,7 @@
       margin: 0 auto;
       background: var(--blanco);
       border: 1px solid var(--linea);
+      border-radius: 10px;
       padding: 38px 26px;
       position: relative;
       z-index: 1;
@@ -152,6 +162,7 @@
       background: var(--naranja);
       color: var(--blanco);
       border: none;
+      border-radius: 6px;
       padding: 15px 20px;
       font-weight: 500;
       font-size: 12.5px;
@@ -1145,7 +1156,7 @@
     .btn-opcion.agitando { animation: agitar 0.3s ease; }
   </style>
 </head>
-<body>
+<body class="pantalla-centrada">
 
   <div class="mancha-fondo a"></div>
   <div class="mancha-fondo b"></div>
@@ -1593,6 +1604,7 @@
         contenido.hidden = false;
         mascotaWidget.hidden = false;
         sessionStorage.setItem('claveOk', 'true');
+        document.body.classList.remove('pantalla-centrada');
       } else {
         mensajeErrorClave.hidden = false;
       }
@@ -1702,8 +1714,10 @@
       pantallaClave.hidden = true;
       contenido.hidden = false;
       mascotaWidget.hidden = false;
+      document.body.classList.remove('pantalla-centrada');
     }
     // Si ya completó el cuestionario antes en este dispositivo, saltar directo a la contraseña
+    // (sigue siendo una de las pantallas centradas, así que no se quita la clase aquí)
     else if (localStorage.getItem('cuestionarioCompletado') === 'true') {
       mensajeInicial.hidden = true;
       cuestionario.hidden = true;
@@ -1715,6 +1729,7 @@
       cuestionario.hidden = false;
       cancionFondo.play();
       mostrarPregunta(0);
+      document.body.classList.remove('pantalla-centrada');
     });
 
     // Cuestionario: una pregunta a la vez
@@ -1758,6 +1773,7 @@
           cuestionario.hidden = true;
           pantallaClave.hidden = false;
           localStorage.setItem('cuestionarioCompletado', 'true');
+          document.body.classList.add('pantalla-centrada');
         }
       } else {
         intentos++;

@@ -325,12 +325,24 @@
     }
 
     .contenedor.fondo-crema { background: #fbf8f4; }
+    .contenedor.fondo-blanco { background: #ffffff; }
     .contenedor.fondo-menta { background: #eef6f1; }
     .contenedor.fondo-cielo { background: #eef4fa; }
     .contenedor.fondo-lavanda { background: #f4eefb; }
     .contenedor.fondo-coral { background: #fcefe9; }
     .contenedor.fondo-durazno { background: #fdf1e7; }
     .contenedor.fondo-perla { background: #f1f1ef; }
+
+    /* Modo oscuro real: al cambiar estas variables, todo lo de dentro
+       (texto, líneas, fondo del video, etc) se adapta solo, porque todo
+       el diseño ya está construido con estas variables */
+    .contenedor.fondo-negro {
+      background: #211d1a;
+      --tinta: #f3ede6;
+      --gris: #b3a89c;
+      --linea: #3c3631;
+      --hueso: #2b2622;
+    }
 
     .contenedor.critica {
       border-color: var(--rojo);
@@ -416,23 +428,188 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
+
+    /* Feedback táctil consistente en botones */
+    button { transition: transform 0.12s ease, opacity 0.12s ease; }
+    button:active { transform: scale(0.97); opacity: 0.85; }
+    a:focus-visible, button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--naranja);
+      outline-offset: 2px;
+    }
+
+    #btn-ajustes-flotante {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--hueso);
+      border: 1px solid var(--linea);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: transform 0.35s ease, border-color 0.2s ease;
+    }
+    #btn-ajustes-flotante:hover {
+      transform: rotate(45deg);
+      border-color: var(--naranja);
+    }
+
+    .config-categorias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 22px;
+    }
+    .config-cat-btn {
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      font-size: 11px;
+      padding: 7px 13px;
+      cursor: pointer;
+      font-family: 'Work Sans', sans-serif;
+    }
+    .config-cat-btn.activa {
+      background: var(--tinta);
+      color: var(--blanco);
+      border-color: var(--tinta);
+    }
+    .config-efecto-btn {
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      font-size: 11px;
+      padding: 7px 13px;
+      cursor: pointer;
+      font-family: 'Work Sans', sans-serif;
+    }
+    .config-efecto-btn.activa {
+      background: var(--naranja);
+      color: var(--blanco);
+      border-color: var(--naranja);
+    }
+    .config-categoria-contenido[hidden] { display: none; }
+    .config-categoria-contenido { animation: aparecer 0.35s ease; }
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .config-grupo {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--linea);
+    }
+    .config-titulo {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--tinta);
+      margin-bottom: 6px;
+    }
+    .config-descripcion {
+      font-size: 12px;
+      color: var(--gris);
+      margin: 0 0 10px;
+    }
+    .config-fila-nombre {
+      display: flex;
+      gap: 8px;
+    }
+    .config-fila-nombre input {
+      flex: 1;
+      border: none;
+      border-bottom: 1px solid var(--linea);
+      padding: 8px 0;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      background: transparent;
+      color: var(--tinta);
+    }
+    .config-fila-nombre button {
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      padding: 8px 16px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      font-size: 10.5px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .config-btn-secundario {
+      display: inline-block;
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      padding: 10px 18px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .config-opciones-radio {
+      display: flex;
+      gap: 20px;
+    }
+    .config-opciones-radio label, .config-fila-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      color: var(--tinta);
+      cursor: pointer;
+    }
+    .config-fila-check { padding: 8px 0; }
+    .config-opciones-radio input, .config-fila-check input {
+      accent-color: var(--naranja);
+      width: 16px;
+      height: 16px;
+    }
+
+    .swatch-acento {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--linea);
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.2s cubic-bezier(.34,1.56,.64,1);
+    }
+    .swatch-acento.activo {
+      border-color: var(--tinta);
+      box-shadow: 0 0 0 2px var(--linea);
+      transform: scale(1.12);
+    }
+
+    body.reducir-movimiento *,
+    body.reducir-movimiento *::before,
+    body.reducir-movimiento *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    .contenedor.texto-grande { zoom: 1.14; }
+
   </style>
 </head>
 <body>
 
   <div class="contenedor">
     <a href="index.html" class="volver-link">‹ Volver</a>
-    <button id="btn-notificaciones" type="button">🔔 Activar avisos</button>
+    <button id="btn-ajustes-flotante" type="button" aria-label="Configuración">⚙️</button>
 
-    <div id="nombre-fila">
-      <h1 id="texto-nombre">Tu mascota</h1>
-      <button id="btn-editar-nombre" type="button" aria-label="Editar nombre">✎</button>
-    </div>
-    <div id="form-nombre" hidden>
-      <input type="text" id="input-nombre" maxlength="20" placeholder="Ponle un nombre...">
-      <button id="btn-guardar-nombre" type="button">Guardar</button>
-      <button id="btn-cancelar-nombre" type="button" aria-label="Cancelar">✕</button>
-    </div>
+    <div id="vista-mascota">
+    <h1 id="texto-nombre">Tu mascota</h1>
 
     <div id="nivel-vinculo">
       <span class="emoji-nivel" id="emoji-nivel"></span><span class="texto-nivel" id="texto-nivel"></span>
@@ -478,33 +655,136 @@
       <div class="estadistica"><span class="numero-estadistica" id="stat-caricias">0</span><span class="etiqueta-estadistica">Caricias</span></div>
       <div class="estadistica"><span class="numero-estadistica" id="stat-total">0</span><span class="etiqueta-estadistica">En total</span></div>
     </div>
+    </div>
 
-    <div class="personalizacion">
-      <div class="grupo-personalizar">
-        <span class="titulo-personalizar">Fondo de la tarjeta</span>
-        <div class="swatches" id="swatches-fondo">
-          <button type="button" class="swatch" data-fondo="crema" title="Crema" aria-label="Fondo crema" style="background:#fbf8f4"></button>
-          <button type="button" class="swatch" data-fondo="menta" title="Menta" aria-label="Fondo menta" style="background:#e6f2ea"></button>
-          <button type="button" class="swatch" data-fondo="cielo" title="Cielo" aria-label="Fondo cielo" style="background:#e6eff8"></button>
-          <button type="button" class="swatch" data-fondo="lavanda" title="Lavanda" aria-label="Fondo lavanda" style="background:#f0e9f8"></button>
-          <button type="button" class="swatch" data-fondo="coral" title="Coral" aria-label="Fondo coral" style="background:#fbe8e0"></button>
-          <button type="button" class="swatch" data-fondo="durazno" title="Durazno" aria-label="Fondo durazno" style="background:#fdf1e7"></button>
-          <button type="button" class="swatch" data-fondo="perla" title="Perla" aria-label="Fondo perla" style="background:#f1f1ef"></button>
+    <div id="vista-configuracion" hidden>
+      <h1 style="margin-bottom:20px">Configuración ⚙️</h1>
+
+      <div class="config-categorias" id="config-categorias">
+        <button type="button" class="config-cat-btn activa" data-cat="perfil">👤 Perfil</button>
+        <button type="button" class="config-cat-btn" data-cat="mascota">🐾 Mascota</button>
+        <button type="button" class="config-cat-btn" data-cat="apariencia">🎨 Apariencia</button>
+        <button type="button" class="config-cat-btn" data-cat="avisos">🔔 Avisos</button>
+        <button type="button" class="config-cat-btn" data-cat="accesibilidad">♿ Accesibilidad</button>
+        <button type="button" class="config-cat-btn" data-cat="sesion">🚪 Sesión</button>
+      </div>
+
+      <!-- Perfil -->
+      <div class="config-categoria-contenido" data-cat-contenido="perfil">
+        <div class="config-grupo">
+          <span class="config-titulo">🙋 Tu nombre</span>
+          <p class="config-descripcion">Así sabremos quién hizo qué.</p>
+          <div class="config-fila-nombre">
+            <input type="text" id="input-nombre-usuario" maxlength="20" placeholder="Tu nombre">
+            <button id="btn-guardar-nombre-usuario" type="button">Guardar</button>
+          </div>
         </div>
       </div>
-      <div class="grupo-personalizar">
-        <span class="titulo-personalizar">Accesorio</span>
-        <div class="swatches" id="swatches-accesorio">
-          <button type="button" class="swatch-emoji" data-accesorio="" title="Sin accesorio" aria-label="Sin accesorio">🚫</button>
-          <button type="button" class="swatch-emoji" data-accesorio="🎀" title="Lazo" aria-label="Lazo">🎀</button>
-          <button type="button" class="swatch-emoji" data-accesorio="🧣" title="Bufanda" aria-label="Bufanda">🧣</button>
-          <button type="button" class="swatch-emoji" data-accesorio="👑" title="Corona" aria-label="Corona">👑</button>
-          <button type="button" class="swatch-emoji" data-accesorio="🕶️" title="Gafas de sol" aria-label="Gafas de sol">🕶️</button>
-          <button type="button" class="swatch-emoji" data-accesorio="🌸" title="Flor" aria-label="Flor">🌸</button>
-          <button type="button" class="swatch-emoji" data-accesorio="🎉" title="Gorro de fiesta" aria-label="Gorro de fiesta">🎉</button>
-          <button type="button" class="swatch-emoji" data-accesorio="💍" title="Anillo" aria-label="Anillo">💍</button>
+
+      <!-- Mascota -->
+      <div class="config-categoria-contenido" data-cat-contenido="mascota" hidden>
+        <div class="config-grupo">
+          <span class="config-titulo">🐾 Nombre de la mascota</span>
+          <div class="config-fila-nombre">
+            <input type="text" id="input-nombre-mascota-config" maxlength="20" placeholder="Ponle un nombre...">
+            <button id="btn-guardar-nombre-mascota-config" type="button">Guardar</button>
+          </div>
+        </div>
+        <div class="config-grupo">
+          <span class="config-titulo">Fondo de la tarjeta</span>
+          <div class="swatches" id="swatches-fondo">
+            <button type="button" class="swatch" data-fondo="crema" title="Crema" aria-label="Fondo crema" style="background:#fbf8f4"></button>
+            <button type="button" class="swatch" data-fondo="blanco" title="Blanco" aria-label="Fondo blanco" style="background:#ffffff; border-color:#ddd6ce"></button>
+            <button type="button" class="swatch" data-fondo="negro" title="Negro (modo oscuro)" aria-label="Fondo negro" style="background:#211d1a"></button>
+            <button type="button" class="swatch" data-fondo="menta" title="Menta" aria-label="Fondo menta" style="background:#e6f2ea"></button>
+            <button type="button" class="swatch" data-fondo="cielo" title="Cielo" aria-label="Fondo cielo" style="background:#e6eff8"></button>
+            <button type="button" class="swatch" data-fondo="lavanda" title="Lavanda" aria-label="Fondo lavanda" style="background:#f0e9f8"></button>
+            <button type="button" class="swatch" data-fondo="coral" title="Coral" aria-label="Fondo coral" style="background:#fbe8e0"></button>
+            <button type="button" class="swatch" data-fondo="durazno" title="Durazno" aria-label="Fondo durazno" style="background:#fdf1e7"></button>
+            <button type="button" class="swatch" data-fondo="perla" title="Perla" aria-label="Fondo perla" style="background:#f1f1ef"></button>
+          </div>
+        </div>
+        <div class="config-grupo">
+          <span class="config-titulo">Accesorio</span>
+          <div class="swatches" id="swatches-accesorio">
+            <button type="button" class="swatch-emoji" data-accesorio="" title="Sin accesorio" aria-label="Sin accesorio">🚫</button>
+            <button type="button" class="swatch-emoji" data-accesorio="🎀" title="Lazo" aria-label="Lazo">🎀</button>
+            <button type="button" class="swatch-emoji" data-accesorio="🧣" title="Bufanda" aria-label="Bufanda">🧣</button>
+            <button type="button" class="swatch-emoji" data-accesorio="👑" title="Corona" aria-label="Corona">👑</button>
+            <button type="button" class="swatch-emoji" data-accesorio="🕶️" title="Gafas de sol" aria-label="Gafas de sol">🕶️</button>
+            <button type="button" class="swatch-emoji" data-accesorio="🌸" title="Flor" aria-label="Flor">🌸</button>
+            <button type="button" class="swatch-emoji" data-accesorio="🎉" title="Gorro de fiesta" aria-label="Gorro de fiesta">🎉</button>
+            <button type="button" class="swatch-emoji" data-accesorio="💍" title="Anillo" aria-label="Anillo">💍</button>
+          </div>
+        </div>
+        <div class="config-grupo">
+          <span class="config-titulo">✨ Efecto al acariciar</span>
+          <p class="config-descripcion">Qué aparece flotando cuando la tocas.</p>
+          <div class="config-categorias" id="opciones-efecto-caricia">
+            <button type="button" class="config-efecto-btn activa" data-efecto="corazones">🧡 Corazones</button>
+            <button type="button" class="config-efecto-btn" data-efecto="estrellas">✨ Estrellas</button>
+            <button type="button" class="config-efecto-btn" data-efecto="patitas">🐾 Patitas</button>
+          </div>
+        </div>
+        <div class="config-grupo">
+          <label class="config-fila-check"><input type="checkbox" id="check-vibracion"> Vibrar el teléfono al acariciarla</label>
+          <p class="config-descripcion" style="margin:4px 0 0">Solo funciona en algunos móviles Android.</p>
         </div>
       </div>
+
+      <!-- Apariencia -->
+      <div class="config-categoria-contenido" data-cat-contenido="apariencia" hidden>
+        <div class="config-grupo">
+          <span class="config-titulo">🎨 Color de acento</span>
+          <p class="config-descripcion">Solo lo ves tú en tu dispositivo.</p>
+          <div class="swatches" id="swatches-color-acento">
+            <button type="button" class="swatch-acento" data-color="naranja" title="Naranja" aria-label="Naranja" style="background:#e8703a"></button>
+            <button type="button" class="swatch-acento" data-color="rosa" title="Rosa" aria-label="Rosa" style="background:#d46a8a"></button>
+            <button type="button" class="swatch-acento" data-color="lavanda" title="Lavanda" aria-label="Lavanda" style="background:#8a6fc4"></button>
+            <button type="button" class="swatch-acento" data-color="verde" title="Verde salvia" aria-label="Verde salvia" style="background:#5f8a5f"></button>
+            <button type="button" class="swatch-acento" data-color="azul" title="Azul" aria-label="Azul" style="background:#4a7fb5"></button>
+          </div>
+        </div>
+        <div class="config-grupo">
+          <span class="config-titulo">🔠 Tamaño del texto</span>
+          <div class="config-opciones-radio">
+            <label><input type="radio" name="tamano-texto" value="normal" checked> Normal</label>
+            <label><input type="radio" name="tamano-texto" value="grande"> Grande</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Avisos -->
+      <div class="config-categoria-contenido" data-cat-contenido="avisos" hidden>
+        <div class="config-grupo">
+          <span class="config-titulo">🔔 Notificaciones</span>
+          <p class="config-descripcion">Te avisa si añaden algo nuevo, o si la mascota necesita algo.</p>
+          <button id="btn-notificaciones" type="button">Activar avisos</button>
+        </div>
+        <div class="config-grupo">
+          <span class="config-titulo">Qué te avisa</span>
+          <label class="config-fila-check"><input type="checkbox" id="check-avisos-contenido" checked> Cartas, fotos, citas y metas nuevas</label>
+          <label class="config-fila-check"><input type="checkbox" id="check-avisos-mascota" checked> La mascota necesita algo</label>
+        </div>
+      </div>
+
+      <!-- Accesibilidad -->
+      <div class="config-categoria-contenido" data-cat-contenido="accesibilidad" hidden>
+        <div class="config-grupo">
+          <label class="config-fila-check"><input type="checkbox" id="check-reducir-movimiento"> Reducir animaciones y movimiento</label>
+        </div>
+      </div>
+
+      <!-- Sesión -->
+      <div class="config-categoria-contenido" data-cat-contenido="sesion" hidden>
+        <div class="config-grupo">
+          <span class="config-titulo">🚪 Sesión</span>
+          <p class="config-descripcion">Cierra la sesión — la próxima vez pedirá la contraseña otra vez desde el inicio.</p>
+          <button id="btn-cerrar-sesion" type="button" class="config-btn-secundario">Cerrar sesión</button>
+        </div>
+      </div>
+
+      <button id="btn-volver-mascota" type="button" class="config-btn-secundario" style="margin-top:20px">‹ Volver a la mascota</button>
     </div>
   </div>
 
@@ -564,13 +844,10 @@
     let logrosDesbloqueados = [];
 
     const contenedorEl = document.querySelector('.contenedor');
-    const FONDOS = ['crema', 'menta', 'cielo', 'lavanda', 'coral', 'durazno', 'perla'];
+    const FONDOS = ['crema', 'blanco', 'negro', 'menta', 'cielo', 'lavanda', 'coral', 'durazno', 'perla'];
     const textoNombre = document.getElementById('texto-nombre');
-    const btnEditarNombre = document.getElementById('btn-editar-nombre');
-    const formNombre = document.getElementById('form-nombre');
-    const inputNombre = document.getElementById('input-nombre');
-    const btnGuardarNombre = document.getElementById('btn-guardar-nombre');
-    const btnCancelarNombre = document.getElementById('btn-cancelar-nombre');
+    const inputNombreMascotaConfig = document.getElementById('input-nombre-mascota-config');
+    const btnGuardarNombreMascotaConfig = document.getElementById('btn-guardar-nombre-mascota-config');
     const rachaMascotaEl = document.getElementById('racha-mascota');
     const accesorioEl = document.getElementById('accesorio-mascota');
 
@@ -810,23 +1087,14 @@
       guardarEstado();
     }
 
-    btnEditarNombre.addEventListener('click', () => {
-      inputNombre.value = nombreMascota;
-      formNombre.hidden = false;
-      inputNombre.focus();
-    });
-    btnCancelarNombre.addEventListener('click', () => {
-      formNombre.hidden = true;
-    });
-    inputNombre.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') btnGuardarNombre.click();
-      if (e.key === 'Escape') btnCancelarNombre.click();
-    });
-    btnGuardarNombre.addEventListener('click', () => {
-      nombreMascota = inputNombre.value.trim();
+    btnGuardarNombreMascotaConfig.addEventListener('click', () => {
+      nombreMascota = inputNombreMascotaConfig.value.trim();
       textoNombre.textContent = nombreMascota || 'Tu mascota';
-      formNombre.hidden = true;
       guardarEstado();
+
+      const textoOriginal = btnGuardarNombreMascotaConfig.textContent;
+      btnGuardarNombreMascotaConfig.textContent = '✓ Guardado';
+      setTimeout(() => { btnGuardarNombreMascotaConfig.textContent = textoOriginal; }, 1500);
     });
 
     document.querySelectorAll('#swatches-fondo .swatch').forEach(boton => {
@@ -845,10 +1113,18 @@
       });
     });
 
+    const EFECTOS_CARICIA = {
+      corazones: ['🧡', '💛', '🥰'],
+      estrellas: ['✨', '⭐', '🌟'],
+      patitas: ['🐾', '🐾', '🐾']
+    };
+
     function crearCorazonFlotante(x, y) {
+      const clave = localStorage.getItem('efectoCaricia') || 'corazones';
+      const emojis = EFECTOS_CARICIA[clave] || EFECTOS_CARICIA.corazones;
       const corazon = document.createElement('div');
       corazon.className = 'corazon-flotante';
-      corazon.textContent = ['🧡', '💛', '🥰'][Math.floor(Math.random() * 3)];
+      corazon.textContent = emojis[Math.floor(Math.random() * emojis.length)];
       corazon.style.left = `${x + (Math.random() * 30 - 15)}px`;
       corazon.style.top = `${y}px`;
       document.body.appendChild(corazon);
@@ -863,6 +1139,10 @@
       const x = e.clientX || (rect.left + rect.width / 2);
       const y = e.clientY || (rect.top + rect.height / 2);
       crearCorazonFlotante(x, y);
+
+      if (localStorage.getItem('vibracionCaricia') === 'true' && navigator.vibrate) {
+        navigator.vibrate(40);
+      }
 
       video.classList.remove('acariciando');
       void video.offsetWidth;
@@ -930,6 +1210,8 @@
         if (db) {
           await db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({
             suscripcion: suscripcion.toJSON(),
+            prefAvisosContenido: checkAvisosContenido.checked,
+            prefAvisosMascota: checkAvisosMascota.checked,
             creado: firebase.firestore.FieldValue.serverTimestamp()
           });
         }
@@ -950,6 +1232,154 @@
       btnNotificaciones.textContent = '🔔 Avisos activados';
       btnNotificaciones.classList.add('activo');
     }
+
+    // ---------- Configuración: cambiar entre la mascota y los ajustes ----------
+    const vistaMascota = document.getElementById('vista-mascota');
+    const vistaConfiguracion = document.getElementById('vista-configuracion');
+    const btnAjustesFlotante = document.getElementById('btn-ajustes-flotante');
+    const btnVolverMascota = document.getElementById('btn-volver-mascota');
+
+    btnAjustesFlotante.addEventListener('click', () => {
+      vistaMascota.hidden = true;
+      vistaConfiguracion.hidden = false;
+    });
+    btnVolverMascota.addEventListener('click', () => {
+      vistaConfiguracion.hidden = true;
+      vistaMascota.hidden = false;
+    });
+
+    // ---------- Configuración: navegación por categorías ----------
+    document.querySelectorAll('.config-cat-btn').forEach(boton => {
+      boton.addEventListener('click', () => {
+        document.querySelectorAll('.config-cat-btn').forEach(b => b.classList.remove('activa'));
+        boton.classList.add('activa');
+        document.querySelectorAll('.config-categoria-contenido').forEach(div => {
+          div.hidden = div.dataset.catContenido !== boton.dataset.cat;
+        });
+      });
+    });
+
+    // ---------- Configuración: tu nombre (perfil) ----------
+    const inputNombreUsuario = document.getElementById('input-nombre-usuario');
+    const btnGuardarNombreUsuario = document.getElementById('btn-guardar-nombre-usuario');
+    inputNombreUsuario.value = localStorage.getItem('nombreUsuario') || '';
+
+    btnGuardarNombreUsuario.addEventListener('click', () => {
+      const nombre = inputNombreUsuario.value.trim();
+      if (nombre) localStorage.setItem('nombreUsuario', nombre);
+      else localStorage.removeItem('nombreUsuario');
+      inputNombreUsuario.blur();
+
+      const textoOriginal = btnGuardarNombreUsuario.textContent;
+      btnGuardarNombreUsuario.textContent = '✓ Guardado';
+      setTimeout(() => { btnGuardarNombreUsuario.textContent = textoOriginal; }, 1500);
+    });
+
+    // ---------- Configuración: color de acento ----------
+    const COLORES_ACENTO = {
+      naranja: { principal: '#e8703a', suave: '#f6ddc9' },
+      rosa:    { principal: '#d46a8a', suave: '#f8dde6' },
+      lavanda: { principal: '#8a6fc4', suave: '#e7ddf6' },
+      verde:   { principal: '#5f8a5f', suave: '#dfe9df' },
+      azul:    { principal: '#4a7fb5', suave: '#dde8f2' }
+    };
+
+    function aplicarColorAcento(clave) {
+      const color = COLORES_ACENTO[clave] || COLORES_ACENTO.naranja;
+      document.documentElement.style.setProperty('--naranja', color.principal);
+      document.documentElement.style.setProperty('--naranja-suave', color.suave);
+      document.querySelectorAll('#swatches-color-acento .swatch-acento').forEach(b => {
+        b.classList.toggle('activo', b.dataset.color === clave);
+      });
+    }
+
+    aplicarColorAcento(localStorage.getItem('colorAcentoMascota') || 'naranja');
+
+    document.querySelectorAll('#swatches-color-acento .swatch-acento').forEach(boton => {
+      boton.addEventListener('click', () => {
+        localStorage.setItem('colorAcentoMascota', boton.dataset.color);
+        aplicarColorAcento(boton.dataset.color);
+      });
+    });
+
+    // ---------- Configuración: tamaño del texto ----------
+    function aplicarTamanoTexto(tamano) {
+      contenedorEl.classList.toggle('texto-grande', tamano === 'grande');
+    }
+    const tamanoGuardado = localStorage.getItem('tamanoTextoMascota') || 'normal';
+    aplicarTamanoTexto(tamanoGuardado);
+    document.querySelector(`input[name="tamano-texto"][value="${tamanoGuardado}"]`).checked = true;
+
+    document.querySelectorAll('input[name="tamano-texto"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        localStorage.setItem('tamanoTextoMascota', radio.value);
+        aplicarTamanoTexto(radio.value);
+      });
+    });
+
+    // ---------- Configuración: qué tipo de avisos recibir ----------
+    const checkAvisosContenido = document.getElementById('check-avisos-contenido');
+    const checkAvisosMascota = document.getElementById('check-avisos-mascota');
+    checkAvisosContenido.checked = localStorage.getItem('avisosContenido') !== 'false';
+    checkAvisosMascota.checked = localStorage.getItem('avisosMascota') !== 'false';
+
+    async function actualizarPreferenciasAvisos() {
+      localStorage.setItem('avisosContenido', checkAvisosContenido.checked);
+      localStorage.setItem('avisosMascota', checkAvisosMascota.checked);
+
+      if (!db || !('serviceWorker' in navigator)) return;
+      const registro = await navigator.serviceWorker.getRegistration();
+      if (!registro) return;
+      const suscripcion = await registro.pushManager.getSubscription();
+      if (!suscripcion) return;
+
+      db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({
+        prefAvisosContenido: checkAvisosContenido.checked,
+        prefAvisosMascota: checkAvisosMascota.checked
+      }, { merge: true });
+    }
+
+    checkAvisosContenido.addEventListener('change', actualizarPreferenciasAvisos);
+    checkAvisosMascota.addEventListener('change', actualizarPreferenciasAvisos);
+
+    // ---------- Configuración: efecto al acariciar ----------
+    const efectoGuardado = localStorage.getItem('efectoCaricia') || 'corazones';
+    document.querySelectorAll('#opciones-efecto-caricia .config-efecto-btn').forEach(boton => {
+      boton.classList.toggle('activa', boton.dataset.efecto === efectoGuardado);
+      boton.addEventListener('click', () => {
+        document.querySelectorAll('#opciones-efecto-caricia .config-efecto-btn').forEach(b => b.classList.remove('activa'));
+        boton.classList.add('activa');
+        localStorage.setItem('efectoCaricia', boton.dataset.efecto);
+      });
+    });
+
+    // ---------- Configuración: vibración al acariciar ----------
+    const checkVibracion = document.getElementById('check-vibracion');
+    checkVibracion.checked = localStorage.getItem('vibracionCaricia') === 'true';
+    if (!navigator.vibrate) {
+      checkVibracion.disabled = true;
+      checkVibracion.parentElement.style.opacity = '0.5';
+    }
+    checkVibracion.addEventListener('change', () => {
+      localStorage.setItem('vibracionCaricia', checkVibracion.checked);
+    });
+
+    // ---------- Configuración: reducir movimiento ----------
+    const checkReducirMovimiento = document.getElementById('check-reducir-movimiento');
+    const reducirGuardado = localStorage.getItem('reducirMovimiento') === 'true';
+    checkReducirMovimiento.checked = reducirGuardado;
+    document.body.classList.toggle('reducir-movimiento', reducirGuardado);
+
+    checkReducirMovimiento.addEventListener('change', () => {
+      document.body.classList.toggle('reducir-movimiento', checkReducirMovimiento.checked);
+      localStorage.setItem('reducirMovimiento', checkReducirMovimiento.checked);
+    });
+
+    // ---------- Configuración: cerrar sesión ----------
+    document.getElementById('btn-cerrar-sesion').addEventListener('click', () => {
+      sessionStorage.removeItem('claveOk');
+      location.href = 'index.html';
+    });
 
     if (db) {
       referenciaDoc = db.collection('mascota').doc('estado');
@@ -986,6 +1416,7 @@
 
           nombreMascota = datos.nombre || '';
           textoNombre.textContent = nombreMascota || 'Tu mascota';
+          inputNombreMascotaConfig.value = nombreMascota;
 
           fondoElegido = datos.fondo || 'crema';
           aplicarFondo(fondoElegido);

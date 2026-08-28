@@ -3,827 +3,3569 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>¿Quién te va a dar el regalo?</title>
+  <title>Nuestro Corazón</title>
+  <meta name="apple-mobile-web-app-title" content="Peque">
+  <link rel="apple-touch-icon" href="MENU.PNG">
+  <link rel="icon" type="image/png" href="MENU.PNG">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --noche: #0b0908;
-      --tela: #201510;
-      --tela-sombra: #140d09;
-      --tela-luz: #2c1e16;
-      --ambar: #eea866;
-      --ambar-brillante: #ffcf94;
-      --hueso: #f6efe4;
-      --bronce: #a8783f;
+      --blanco: #ffffff;
+      --hueso: #fbf8f4;
+      --marfil: #f4ede3;
+      --tinta: #262220;
+      --gris: #948c82;
+      --naranja: #e8703a;
+      --naranja-suave: #f6ddc9;
+      --linea: #ece4d8;
     }
 
     * { box-sizing: border-box; }
 
-    html, body {
-      margin: 0;
-      height: 100%;
+    /* Feedback táctil sutil y consistente en todos los botones */
+    button {
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+    button:active {
+      transform: scale(0.97);
+      opacity: 0.85;
+    }
+
+    /* Foco de teclado accesible, con el color de acento en vez del azul por defecto */
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 2px solid var(--naranja);
+      outline-offset: 2px;
     }
 
     body {
-      min-height: 100dvh;
-      background: radial-gradient(ellipse 60% 50% at 50% 38%, #14100d 0%, var(--noche) 70%);
-      color: var(--hueso);
+      margin: 0;
+      background: radial-gradient(ellipse at top, #fffdfb 0%, var(--hueso) 60%);
       font-family: 'Work Sans', sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      color: var(--tinta);
+      padding: 28px 16px 60px;
+      min-height: 100vh;
       position: relative;
+      overflow-x: hidden;
       touch-action: manipulation;
     }
-
-    /* Grano de película sutil, para que no se sienta plano/digital */
-    .grano {
-      position: fixed;
-      inset: 0;
-      z-index: 5;
-      pointer-events: none;
-      opacity: 0.05;
-      mix-blend-mode: overlay;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-    }
-
-    /* ---------- Pantalla de mensaje (se ve antes que todo lo demás) ---------- */
-    #pantalla-mensaje {
-      position: fixed;
-      inset: 0;
-      z-index: 20;
-      background: radial-gradient(ellipse 60% 50% at 50% 35%, #14100d 0%, var(--noche) 75%);
+    /* Centra la tarjeta verticalmente solo en la pantalla de bienvenida y la de contraseña */
+    body.pantalla-centrada {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
     }
-    #pantalla-mensaje[hidden] { display: none; }
+    body.pantalla-centrada .contenedor {
+      margin: 0;
+    }
 
-    .tarjeta-mensaje {
-      width: 100%;
-      max-width: 300px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      animation: apareceMensaje 0.6s ease;
+    .mancha-fondo {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
     }
-    @keyframes apareceMensaje {
+    .mancha-fondo.a {
+      width: 300px; height: 300px;
+      background: var(--naranja-suave);
+      top: -60px; right: -90px;
+      animation: flotarA 22s ease-in-out infinite;
+    }
+    .mancha-fondo.b {
+      width: 240px; height: 240px;
+      background: #ffe9d6;
+      bottom: 8%; left: -90px;
+      animation: flotarB 26s ease-in-out infinite;
+    }
+    @keyframes flotarA {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-25px, 35px) scale(1.08); }
+    }
+    @keyframes flotarB {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, -25px) scale(1.06); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mancha-fondo { animation: none; }
+    }
+
+    .contenedor {
+      max-width: 420px;
+      margin: 0 auto;
+      background: var(--blanco);
+      border: 1px solid var(--linea);
+      border-radius: 10px;
+      padding: 38px 26px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 1px 2px rgba(38,34,32,0.04);
+    }
+    .contenedor::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 26px; right: 26px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--naranja-suave), transparent);
+    }
+
+    section { animation: aparecer 0.5s ease; }
+    @keyframes aparecer {
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .mensaje-icono {
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
       font-size: 26px;
-      margin-bottom: 14px;
-      filter: drop-shadow(0 0 10px rgba(238,168,102,0.4));
+      color: var(--tinta);
+      margin: 0 0 22px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--linea);
     }
-
-    .mensaje-texto {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 19px;
-      color: var(--hueso);
-      margin: 0 0 26px;
-      line-height: 1.4;
-    }
-
-    .btn-ok-imagen {
-      background: #ffffff;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      width: 84px;
-      height: 84px;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 0 0 2px rgba(238,168,102,0.4), 0 0 26px rgba(238,168,102,0.35);
-      transition: transform 0.15s ease, box-shadow 0.2s ease;
-    }
-    .btn-ok-imagen:active { transform: scale(0.93); }
-    .btn-ok-imagen img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    /* ---------- Cortinas: paneles sólidos con sombreado suave de pliegue, no rayas ---------- */
-    .cortina {
-      position: fixed;
-      top: 0; bottom: 0;
-      width: 64px;
-      z-index: 4;
-      background:
-        linear-gradient(90deg,
-          var(--tela-sombra) 0%, var(--tela-luz) 22%, var(--tela) 46%,
-          var(--tela-sombra) 68%, var(--tela-luz) 88%, var(--tela) 100%
-        );
-      box-shadow: 0 0 70px rgba(0,0,0,0.7) inset;
-      transition: transform 1.3s cubic-bezier(.65,0,.2,1);
-    }
-    .cortina.izquierda { left: 0; }
-    .cortina.derecha { right: 0; transform: scaleX(-1); }
-    body.telon-abierto .cortina.izquierda { transform: translateX(-100%); }
-    body.telon-abierto .cortina.derecha { transform: scaleX(-1) translateX(-100%); }
-
-    @media (min-width: 460px) {
-      .cortina { width: 90px; }
-    }
-
-    /* ---------- Luz de escenario: suave, sin bordes duros ---------- */
-    .luz {
-      position: fixed;
-      top: -12%;
-      left: 50%;
-      width: 460px;
-      height: 620px;
-      transform: translateX(-50%);
-      background: radial-gradient(ellipse 50% 55% at 50% 0%, rgba(238,168,102,0.30) 0%, rgba(238,168,102,0.12) 45%, transparent 75%);
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 1.4s ease 0.4s;
-      animation: respirar 5s ease-in-out infinite;
-    }
-    body.telon-abierto .luz { opacity: 1; }
-    @keyframes respirar {
-      0%, 100% { opacity: 0.9; }
-      50% { opacity: 1; }
-    }
-
-    /* ---------- Contenedor principal, ancho fijo, siempre bien encuadrado ---------- */
-    .escenario {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      max-width: 340px;
-      padding: 32px 28px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .eyebrow {
-      font-size: 10px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--bronce);
-      margin: 0 0 18px;
-      opacity: 0;
-      transition: opacity 0.9s ease 0.5s;
-    }
-    body.telon-abierto .eyebrow { opacity: 1; }
-
-    .pregunta {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 500;
-      font-size: 21px;
-      line-height: 1.35;
-      color: var(--hueso);
-      margin: 0 0 34px;
-      opacity: 0;
-      transition: opacity 0.9s ease 0.65s;
-    }
-    body.telon-abierto .pregunta { opacity: 1; }
-
-    /* ---------- Fila con flechas a los lados del marco ---------- */
-    .fila-personaje {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      width: 100%;
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 1s ease 0.8s, transform 1s ease 0.8s;
-    }
-    body.telon-abierto .fila-personaje { opacity: 1; transform: translateY(0); }
-
-    .btn-flecha {
-      background: rgba(246,239,228,0.04);
-      border: 1px solid rgba(238,168,102,0.35);
-      color: var(--ambar-brillante);
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      font-size: 16px;
-      line-height: 1;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
-    }
-    .btn-flecha:active { transform: scale(0.9); background: rgba(238,168,102,0.16); }
-
-    /* ---------- El personaje: sin caja ni ventana, se funde con el fondo ---------- */
-    .marco-personaje { width: 230px; flex-shrink: 0; }
-
-    .marco-arco {
-      position: relative;
-      width: 230px;
-      height: 320px;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    /* Sombra tenue en el "suelo", para que el personaje se sienta apoyado en el escenario */
-    .sombra-suelo {
-      width: 150px;
-      height: 20px;
-      margin: 6px auto 0;
-      border-radius: 50%;
-      background: radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, transparent 75%);
-      transition: opacity 0.3s ease;
-    }
-    .sombra-suelo.cambiando { opacity: 0.3; }
-
-    .marco-arco img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-      filter: drop-shadow(0 14px 26px rgba(0,0,0,0.55));
-      -webkit-mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
-      mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
-    }
-    .marco-arco .silueta {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 48px;
-      opacity: 0.45;
-      filter: drop-shadow(0 0 16px rgba(238,168,102,0.4));
-    }
-    .marco-arco.cambiando { opacity: 0; transform: translateY(4px); }
-
-    .nombre-personaje {
+    h3 {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-weight: 600;
-      font-size: 26px;
-      color: var(--hueso);
-      margin: 20px 0 2px;
-      text-shadow: 0 1px 12px rgba(238,168,102,0.35);
-      transition: opacity 0.3s ease;
+      font-size: 15px;
+      color: var(--naranja);
+      margin: 22px 0 12px;
     }
-    .nombre-personaje.cambiando { opacity: 0; }
 
-    .titulo-personaje {
+    #mensaje-inicial > p:first-of-type {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--tinta);
+      margin: 0 0 28px;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--gris);
+    }
+
+    /* Botones */
+    button {
+      font-family: 'Work Sans', sans-serif;
+      cursor: pointer;
+    }
+
+    #btn-comenzar, #btn-siguiente, #btn-entrar-clave,
+    #btn-guardar-carta, #btn-subir-multimedia, #btn-agregar-meta {
+      display: block;
+      width: 100%;
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      border-radius: 6px;
+      padding: 15px 20px;
+      font-weight: 500;
+      font-size: 12.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+
+    #btn-cancelar-carta, #btn-cancelar-multimedia {
+      display: block;
+      width: 100%;
+      background: transparent;
+      color: var(--gris);
+      border: 1px solid var(--linea);
+      padding: 14px 20px;
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+
+    #btn-nueva-carta, #btn-nueva-foto {
+      display: inline-block;
+      background: none;
+      border: none;
+      color: var(--naranja);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--naranja);
+      padding: 0 0 3px;
+      margin-bottom: 22px;
+    }
+
+    .btn-volver {
+      display: block;
+      background: none;
+      border: none;
+      color: var(--gris);
       font-size: 11px;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      color: var(--bronce);
-      margin: 0;
-      transition: opacity 0.3s ease;
+      padding: 0;
+      margin-top: 24px;
     }
-    .titulo-personaje.cambiando { opacity: 0; }
 
-    .indicadores {
-      display: flex;
-      gap: 7px;
-      margin-top: 18px;
-      opacity: 0;
-      transition: opacity 1s ease 1s;
+    .btn-mini {
+      background: none;
+      border: none;
+      font-size: 10.5px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gris);
+      padding: 0;
+      margin-right: 16px;
     }
-    body.telon-abierto .indicadores { opacity: 1; }
-    .punto {
-      width: 6px;
-      height: 6px;
+    .btn-mini.eliminar { color: #c96a4e; }
+
+    .btn-x {
+      background: rgba(255,255,255,0.9);
+      border: none;
+      color: var(--tinta);
+      width: 22px; height: 22px;
+      font-size: 12px;
+      line-height: 1;
       border-radius: 50%;
-      background: rgba(246,239,228,0.2);
-      transition: background 0.25s ease, transform 0.25s ease;
-    }
-    .punto.activo {
-      background: var(--ambar);
-      transform: scale(1.25);
     }
 
-    .divisor {
-      width: 90px;
+    /* Cuestionario */
+    #barra-progreso-contenedor {
       height: 1px;
-      background: linear-gradient(90deg, transparent, var(--bronce), transparent);
-      margin: 26px 0;
-      opacity: 0;
-      transition: opacity 1s ease 1.05s;
-      position: relative;
+      background: var(--linea);
+      margin-bottom: 8px;
+      overflow: visible;
+    }
+    #barra-progreso {
+      height: 2px;
+      margin-top: -0.5px;
+      background: var(--naranja);
+      transition: width 0.3s;
+    }
+    #texto-progreso {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 14px;
+      color: var(--naranja);
+      font-weight: 600;
+      margin: 0 0 20px;
+    }
+
+    .pregunta p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--tinta);
+      margin: 0 0 18px;
+    }
+    .pregunta label {
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--linea);
+      font-size: 14px;
     }
-    body.telon-abierto .divisor { opacity: 1; }
-    .divisor-diamante {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background: var(--ambar);
-      transform: rotate(45deg);
-      box-shadow: 0 0 8px rgba(238,168,102,0.6);
+    .pregunta input[type="radio"] {
+      accent-color: var(--naranja);
+      width: 15px; height: 15px;
     }
 
-    .btn-elegir {
-      background: linear-gradient(180deg, var(--ambar-brillante), var(--bronce));
-      color: #1c1108;
-      border: none;
-      padding: 14px 40px;
-      font-family: 'Work Sans', sans-serif;
+    #mensaje-error, #mensaje-error-clave {
+      color: #c96a4e;
+      font-size: 12.5px;
+      margin-top: 10px;
+    }
+    #mensaje-pista {
+      color: var(--naranja);
+      font-size: 12.5px;
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      margin-top: 8px;
+    }
+
+    /* Contraseña */
+    #pantalla-clave p:first-of-type {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
       font-weight: 600;
-      font-size: 12px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      border-radius: 3px;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(238,168,102,0.3);
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 1s ease 1.15s, transform 1s ease 1.15s, box-shadow 0.2s ease;
+      color: var(--tinta);
+      margin-bottom: 20px;
     }
-    body.telon-abierto .btn-elegir { opacity: 1; transform: translateY(0); }
-    .btn-elegir:active { transform: scale(0.96); }
+    #input-clave {
+      width: 100%;
+      border: none;
+      border-bottom: 1.5px solid var(--tinta);
+      background: transparent;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 16px;
+      letter-spacing: 6px;
+      padding: 8px 0;
+      margin-bottom: 20px;
+      color: var(--naranja);
+    }
+    #input-clave:focus { outline: none; }
 
-    /* ---------- Pantalla de revelación (tras elegir) ---------- */
-    .revelacion {
+    /* Menú principal */
+    #menu-principal { counter-reset: opcion; }
+    #btn-notificaciones {
+      display: block;
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      font-size: 10.5px;
+      letter-spacing: 0.5px;
+      padding: 6px 12px;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+    #btn-notificaciones.activo {
+      border-color: var(--naranja);
+      color: var(--naranja);
+    }
+    .btn-opcion {
+      counter-increment: opcion;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      width: 100%;
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--linea);
+      padding: 18px 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--tinta);
+      text-align: left;
+      transition: padding-left 0.2s ease, color 0.2s ease;
+    }
+    .btn-opcion:last-child { border-bottom: none; }
+    .btn-opcion:hover, .btn-opcion:active {
+      padding-left: 6px;
+      color: var(--naranja);
+    }
+    .btn-opcion::after {
+      content: '0' counter(opcion);
+      font-family: 'Work Sans', sans-serif;
+      font-size: 10.5px;
+      color: var(--naranja);
+      letter-spacing: 1.5px;
+      font-weight: 500;
+    }
+
+    /* Cartas */
+    .carta {
+      border-bottom: 1px solid var(--linea);
+      padding: 15px 0;
+    }
+    .carta-titulo-btn {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--tinta);
+      padding: 0;
+      cursor: pointer;
+    }
+    .carta-fecha {
+      font-family: 'Work Sans', sans-serif;
+      font-style: normal;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      color: var(--gris);
+      text-transform: uppercase;
+    }
+    .flecha-acordeon {
+      margin-left: auto;
+      color: var(--naranja);
+      font-size: 13px;
+      font-style: normal;
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+    .carta.abierta .flecha-acordeon { transform: rotate(90deg); }
+    .carta-contenido {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      line-height: 1.7;
+      color: #4a3f36;
+      transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.4s ease;
+    }
+    .carta.abierta .carta-contenido {
+      max-height: 2000px;
+      opacity: 1;
+      margin-top: 14px;
+    }
+    .carta-acciones { margin-top: 14px; }
+    .adjunto-carta {
+      max-width: 150px;
+      display: block;
+      margin-top: 10px;
+      border: 1px solid var(--linea);
+    }
+
+    #form-carta, #form-multimedia {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--linea);
+    }
+    #form-carta[hidden], #form-multimedia[hidden] { display: none; }
+    #form-carta input[type="text"],
+    #form-carta textarea,
+    #form-multimedia input[type="text"],
+    #form-multimedia input[type="file"] {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid var(--linea);
+      padding: 8px 0;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      background: transparent;
+      color: var(--tinta);
+    }
+    #form-carta textarea { min-height: 90px; resize: vertical; }
+    #form-carta label {
+      display: block;
+      font-size: 10.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gris);
+    }
+    #form-carta input[type="color"] {
+      border: 1px solid var(--linea);
+      width: 40px; height: 28px;
+      padding: 2px;
+      background: none;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+    #form-carta select {
+      border: none;
+      border-bottom: 1px solid var(--linea);
+      background: transparent;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 13px;
+      padding: 6px 0;
+      margin-left: 8px;
+    }
+
+    /* Fotos y videos */
+    #filtro-categorias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 8px;
+    }
+    #filtro-categorias button {
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      font-size: 11px;
+      padding: 6px 13px;
+    }
+    #filtro-categorias button.activa {
+      background: var(--tinta);
+      color: var(--blanco);
+      border-color: var(--tinta);
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    #galeria-fotos, #galeria-videos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 6px;
+    }
+    #galeria-fotos img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      border: 1px solid var(--linea);
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    #galeria-fotos img:hover { opacity: 0.85; }
+    #galeria-videos {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    #galeria-videos video {
+      width: 100%;
+      max-height: 160px;
+      border: 1px solid var(--linea);
+    }
+    .foto-item {
+      position: relative;
+    }
+    .foto-item .btn-x {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    }
+    .media-fecha {
+      display: block;
+      font-size: 9.5px;
+      color: var(--gris);
+      letter-spacing: 0.3px;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    #visor-media {
       position: fixed;
       inset: 0;
-      z-index: 10;
-      background: radial-gradient(ellipse 60% 50% at 50% 32%, #14100d 0%, var(--noche) 72%);
+      background: rgba(38,34,32,0.94);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 40px 28px;
-      opacity: 0;
-      transition: opacity 0.6s ease;
+      gap: 12px;
+      z-index: 999;
+      padding: 24px;
+      opacity: 1;
+      transition: opacity 0.25s ease;
     }
-    .revelacion.visible { opacity: 1; }
-    .revelacion[hidden] { display: none; }
+    #visor-media[hidden] { display: none; }
+    #visor-media.entrando { opacity: 0; }
+    #visor-media img {
+      max-width: 100%;
+      max-height: 78vh;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      transform: scale(1);
+      opacity: 1;
+      transition: transform 0.3s cubic-bezier(.2,.8,.2,1), opacity 0.3s ease;
+    }
+    #visor-media.entrando img {
+      transform: scale(0.94);
+      opacity: 0;
+    }
+    #cerrar-visor-media {
+      position: fixed;
+      top: 20px;
+      right: 22px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 26px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    #visor-media-fecha {
+      color: var(--naranja-suave);
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
 
-    .revelacion-imagen {
-      max-width: 280px;
-      width: 78%;
-      max-height: 58vh;
+    .sticker-doble-toque {
+      position: fixed;
+      width: 70px;
+      height: 70px;
       object-fit: contain;
-      filter: drop-shadow(0 18px 34px rgba(0,0,0,0.6));
-      -webkit-mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
-      mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
-      opacity: 0;
-      transform: scale(0.95);
-      transition: opacity 0.9s ease 0.15s, transform 0.9s ease 0.15s;
+      transform: translate(-50%, -50%) scale(0.5);
+      pointer-events: none;
+      z-index: 1200;
+      animation: stickerDobleToque 1.1s ease forwards;
     }
-    .revelacion.visible .revelacion-imagen { opacity: 1; transform: scale(1); }
+    @keyframes stickerDobleToque {
+      0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+      15%  { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+      30%  { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      80%  { transform: translate(-50%, -65%) scale(1); opacity: 1; }
+      100% { transform: translate(-50%, -95%) scale(0.9); opacity: 0; }
+    }
 
-    .revelacion-nombre {
+    /* Sorpresa */
+    #candado-sorpresa, #sorpresa-desbloqueada { text-align: center; padding: 20px 0; }
+    #candado-sorpresa p:first-child {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--tinta);
+      margin-bottom: 14px;
+    }
+    #cuenta-regresiva {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 600;
+      font-style: italic;
+      color: var(--naranja);
+    }
+    #sorpresa-desbloqueada p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--tinta);
+    }
+
+    /* Metas */
+    #form-meta {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      border-bottom: 1.5px solid var(--tinta);
+      padding-bottom: 10px;
+      margin-bottom: 22px;
+    }
+    #meta-texto {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      color: var(--tinta);
+    }
+    #btn-agregar-meta {
+      width: auto;
+      display: inline-block;
+      margin: 0;
+      padding: 8px 16px;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+    }
+    #lista-metas {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #lista-metas li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--linea);
+      font-size: 14px;
+    }
+    #lista-metas input[type="checkbox"] {
+      accent-color: var(--naranja);
+      width: 16px; height: 16px;
+    }
+    #lista-metas li.completada span {
+      text-decoration: line-through;
+      color: var(--gris);
+    }
+
+    /* Citas */
+    #form-cita {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--linea);
+    }
+    #form-cita[hidden] { display: none; }
+    #form-cita label {
+      display: block;
+      font-size: 10.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gris);
+    }
+    #form-cita input[type="text"],
+    #form-cita input[type="date"],
+    #form-cita textarea,
+    #form-cita input[type="file"] {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid var(--linea);
+      padding: 8px 0;
+      margin-top: 4px;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      background: transparent;
+      color: var(--tinta);
+    }
+    #form-cita textarea { min-height: 80px; resize: vertical; }
+
+    .cita {
+      border-bottom: 1px solid var(--linea);
+      padding: 15px 0;
+    }
+    .cita-titulo-btn {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--tinta);
+      padding: 0;
+      cursor: pointer;
+    }
+    .cita-fecha {
+      font-family: 'Work Sans', sans-serif;
+      font-style: normal;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      color: var(--naranja);
+      text-transform: uppercase;
+    }
+    .cita-flecha {
+      margin-left: auto;
+      color: var(--naranja);
+      font-size: 13px;
+      font-style: normal;
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+    .cita.abierta .cita-flecha { transform: rotate(90deg); }
+    .cita-contenido {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      line-height: 1.7;
+      color: #4a3f36;
+      transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.4s ease;
+    }
+    .cita.abierta .cita-contenido {
+      max-height: 3000px;
+      opacity: 1;
+      margin-top: 14px;
+    }
+    .cita-acciones { margin-top: 14px; }
+    .galeria-cita {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .galeria-cita img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border: 1px solid var(--linea);
+      cursor: pointer;
+    }
+
+    /* Configuración */
+    .config-grupo {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--linea);
+    }
+    .config-titulo {
+      display: block;
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-weight: 600;
-      font-size: 28px;
-      color: var(--hueso);
-      text-shadow: 0 1px 12px rgba(238,168,102,0.35);
-      margin: 22px 0 30px;
-      opacity: 0;
-      transition: opacity 0.9s ease 0.4s;
+      font-size: 17px;
+      color: var(--tinta);
+      margin-bottom: 6px;
     }
-    .revelacion.visible .revelacion-nombre { opacity: 1; }
-
-    .revelacion .btn-elegir {
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 0.9s ease 0.6s, transform 0.9s ease 0.6s;
+    .config-descripcion {
+      font-size: 12.5px;
+      margin-bottom: 12px;
     }
-    .revelacion.visible .btn-elegir { opacity: 1; transform: translateY(0); }
+    .config-grupo #btn-notificaciones {
+      display: inline-block;
+      width: auto;
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      padding: 10px 18px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .config-grupo #btn-notificaciones.activo {
+      background: none;
+      border: 1px solid var(--naranja);
+      color: var(--naranja);
+    }
+    .config-btn-secundario {
+      display: inline-block;
+      width: auto;
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      padding: 10px 18px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    #control-volumen {
+      width: 100%;
+      accent-color: var(--naranja);
+    }
+    .config-creditos {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 13px;
+      color: var(--gris);
+      margin: 20px 0 0;
+    }
 
-    /* ---------- Pantalla de abrir el regalo ---------- */
-    .pantalla-regalo {
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      background: radial-gradient(ellipse 60% 50% at 50% 32%, #14100d 0%, var(--noche) 72%);
+    .config-categorias {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 22px;
+    }
+    .config-cat-btn {
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      font-size: 11px;
+      padding: 7px 13px;
+      cursor: pointer;
+      font-family: 'Work Sans', sans-serif;
+    }
+    .config-cat-btn.activa {
+      background: var(--tinta);
+      color: var(--blanco);
+      border-color: var(--tinta);
+    }
+    .config-categoria-contenido[hidden] { display: none; }
+    .config-categoria-contenido { animation: aparecer 0.35s ease; }
+
+    .swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 6px;
+    }
+    .swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--linea);
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .swatch.activo {
+      border-color: var(--tinta);
+      box-shadow: 0 0 0 2px var(--linea);
+      transform: scale(1.12);
+    }
+
+    .config-opciones-radio {
+      display: flex;
+      gap: 20px;
+    }
+    .config-opciones-radio label,
+    .config-fila-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      color: var(--tinta);
+      cursor: pointer;
+    }
+    .config-fila-check {
+      padding: 8px 0;
+    }
+    .config-opciones-radio input,
+    .config-fila-check input {
+      accent-color: var(--naranja);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Accesibilidad: reduce animaciones y movimiento en toda la página */
+    body.reducir-movimiento *,
+    body.reducir-movimiento *::before,
+    body.reducir-movimiento *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    /* Apariencia: texto más grande (zoom, respeta el diseño en px) */
+    .contenedor.texto-grande,
+    #mascota-widget.texto-grande {
+      zoom: 1.14;
+    }
+
+    #btn-ajustes-flotante {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--hueso);
+      border: 1px solid var(--linea);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 28px;
-      opacity: 0;
-      animation: apareceMensaje 0.7s ease forwards;
+      z-index: 2;
+      transition: transform 0.35s ease, border-color 0.2s ease;
     }
-    .pantalla-regalo[hidden] { display: none; }
+    #btn-ajustes-flotante:hover {
+      transform: rotate(45deg);
+      border-color: var(--naranja);
+    }
 
-    .regalo-instruccion {
+    .config-fila-nombre {
+      display: flex;
+      gap: 8px;
+    }
+    .config-fila-nombre input {
+      flex: 1;
+      border: none;
+      border-bottom: 1px solid var(--linea);
+      padding: 8px 0;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 14px;
+      background: transparent;
+      color: var(--tinta);
+    }
+    .config-fila-nombre button {
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      padding: 8px 16px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      font-size: 10.5px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    /* Panel secreto */
+    #panel-secreto {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,10,12,0.88);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #panel-secreto[hidden] { display: none; }
+    #panel-secreto-contenido {
+      background: #17181c;
+      color: #d8d8dc;
+      width: 100%;
+      max-width: 380px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 18px;
+      font-family: 'Work Sans', sans-serif;
+      border: 1px solid #2c2d33;
+    }
+    .panel-secreto-cabecera {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-size: 19px;
-      color: var(--hueso);
-      margin: 0 0 38px;
-      text-align: center;
-      transition: opacity 0.4s ease;
+      color: #f3c98a;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #2c2d33;
     }
-    .regalo-instruccion.oculto { opacity: 0; }
-
-    /* Contenedor de referencia: aquí se centran tanto la caja como la
-       imagen del regalo, para que no se descuadren entre sí */
-    .regalo-escenario {
-      position: relative;
-      width: 100%;
-      max-width: 300px;
-      height: 300px;
-    }
-
-    /* La caja, construida solo con CSS */
-    .caja-regalo {
-      position: absolute;
-      inset: 0;
-      margin: auto;
-      width: 150px;
-      height: 150px;
+    #cerrar-panel-secreto {
       background: none;
       border: none;
-      padding: 0;
+      color: #d8d8dc;
+      font-size: 16px;
       cursor: pointer;
-      transition: opacity 0.5s ease, transform 0.5s ease;
     }
-    .caja-regalo:active .caja-cuerpo { transform: scale(0.97); }
-
-    .caja-cuerpo {
-      position: absolute;
-      left: 0; right: 0; bottom: 0;
-      height: 100px;
-      border-radius: 6px;
-      background: linear-gradient(160deg, #d68c4a, #a8632a);
-      box-shadow: 0 16px 34px rgba(0,0,0,0.55), 0 0 30px rgba(238,168,102,0.25);
-      overflow: hidden;
-      transition: transform 0.15s ease;
+    #panel-secreto-pestanas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 16px;
     }
-    .caja-cinta-v {
-      position: absolute;
-      top: 0; bottom: 0;
-      left: 50%;
-      width: 20px;
-      margin-left: -10px;
-      background: var(--ambar-brillante);
+    .ps-pestana {
+      background: #1e1f24;
+      border: 1px solid #2c2d33;
+      color: #9a9aa2;
+      font-size: 10px;
+      padding: 6px 9px;
+      cursor: pointer;
+      font-family: 'Work Sans', sans-serif;
     }
-    .caja-cinta-h {
-      position: absolute;
-      left: 0; right: 0;
-      top: 0;
-      height: 20px;
-      background: var(--ambar-brillante);
+    .ps-pestana.activa {
+      background: #f3c98a;
+      color: #17181c;
+      border-color: #f3c98a;
     }
-
-    .caja-tapa {
-      position: absolute;
-      left: -4px; right: -4px;
-      top: 34px;
-      height: 26px;
-      border-radius: 6px 6px 3px 3px;
-      background: linear-gradient(160deg, #e29d5c, #b6702f);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.4);
-      transform-origin: 50% 100%;
-      transition: transform 0.55s cubic-bezier(.4,-0.2,.6,1.3), opacity 0.5s ease 0.15s;
+    .panel-secreto-grupo[hidden] { display: none; }
+    .ps-nota {
+      font-size: 10.5px;
+      color: #8a8a92;
+      margin: 0 0 10px;
+      line-height: 1.5;
     }
-
-    .caja-lazo {
-      position: absolute;
-      top: 6px;
-      left: 50%;
-      width: 34px;
-      height: 22px;
-      margin-left: -17px;
-      transition: transform 0.5s ease, opacity 0.4s ease 0.1s;
+    .panel-secreto-grupo {
+      margin-bottom: 18px;
     }
-    .caja-lazo::before, .caja-lazo::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      width: 17px;
-      height: 20px;
-      background: var(--ambar-brillante);
-      border-radius: 50% 50% 50% 0;
-      box-shadow: inset 0 0 0 2px rgba(168,99,42,0.4);
+    .panel-secreto-titulo {
+      display: block;
+      font-size: 10.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #8a8a92;
+      margin-bottom: 8px;
     }
-    .caja-lazo::before { left: 0; transform: rotate(-25deg); }
-    .caja-lazo::after { right: 0; transform: rotate(25deg) scaleX(-1); }
-
-    /* Estado: caja abriéndose */
-    .caja-regalo.abriendo .caja-tapa {
-      transform: translateY(-70px) rotate(-50deg);
-      opacity: 0;
+    .panel-secreto-btn {
+      display: block;
+      width: 100%;
+      background: #232429;
+      color: #d8d8dc;
+      border: 1px solid #2c2d33;
+      padding: 11px 12px;
+      font-size: 12.5px;
+      text-align: left;
+      margin-bottom: 7px;
+      cursor: pointer;
+      font-family: 'Work Sans', sans-serif;
     }
-    .caja-regalo.abriendo .caja-lazo {
-      transform: translateY(-70px) scale(0.7);
-      opacity: 0;
+    .panel-secreto-btn:active { background: #2c2d33; }
+    .ps-btn-destacado {
+      background: #3a2f1a !important;
+      border-color: #f3c98a !important;
+      color: #f3c98a !important;
+      font-weight: 600;
     }
-    .caja-regalo.abriendo .caja-cuerpo {
-      animation: temblarCaja 0.35s ease;
-    }
-    @keyframes temblarCaja {
-      0%, 100% { transform: translateX(0) rotate(0); }
-      25% { transform: translateX(-3px) rotate(-2deg); }
-      75% { transform: translateX(3px) rotate(2deg); }
-    }
-    .caja-regalo.escondida {
-      opacity: 0;
-      transform: scale(0.8) translateY(10px);
-      pointer-events: none;
+    #panel-secreto-info {
+      background: #0e0e11;
+      border: 1px solid #2c2d33;
+      padding: 10px;
+      font-size: 10.5px;
+      line-height: 1.6;
+      color: #9fd9a8;
+      white-space: pre-wrap;
+      font-family: 'SF Mono', 'Courier New', monospace;
+      margin: 0;
     }
 
-    /* Ráfaga de partículas al abrir */
-    .particulas-regalo {
-      position: absolute;
+    #ps-selector {
+      position: fixed;
       inset: 0;
+      background: rgba(10,10,12,0.92);
+      z-index: 2200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #ps-selector[hidden] { display: none; }
+    #ps-selector-caja {
+      background: #17181c;
+      color: #d8d8dc;
+      width: 100%;
+      max-width: 360px;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 18px;
+      border: 1px solid #2c2d33;
+      font-family: 'Work Sans', sans-serif;
+    }
+    #ps-selector-titulo {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 18px;
+      color: #f3c98a;
+      margin: 0 0 14px;
+    }
+    #ps-selector-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 14px;
+    }
+    .ps-opcion-fila {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 8px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .ps-opcion-fila:active { background: #232429; }
+    .ps-opcion-fila input {
+      width: 18px;
+      height: 18px;
+      accent-color: #f3c98a;
+    }
+    .ps-opcion-fila.ps-opcion-boton {
+      background: #232429;
+      border: 1px solid #2c2d33;
+      margin-bottom: 6px;
+    }
+    #ps-selector-botonera {
+      display: flex;
+      gap: 8px;
+    }
+    #ps-selector-botonera button { margin: 0; flex: 1; }
+
+    .particula-lluvia {
+      position: fixed;
+      top: -40px;
+      font-size: 24px;
       pointer-events: none;
+      z-index: 2100;
+      animation: caerParticula linear forwards;
+    }
+    @keyframes caerParticula {
+      to { transform: translateY(110vh) rotate(45deg); }
+    }
+
+    /* Mascota */
+    #mascota-widget {
+      max-width: 420px;
+      margin: 28px auto 0;
+      position: relative;
       z-index: 1;
     }
-    .particula-regalo {
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--ambar-brillante);
-      box-shadow: 0 0 8px 1px rgba(255,207,148,0.8);
-      opacity: 0;
+    .mascota-fila {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
     }
-    .particula-regalo.disparada {
-      animation: dispararParticula 0.9s cubic-bezier(.2,.7,.4,1) forwards;
-    }
-    @keyframes dispararParticula {
-      0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1); }
-      100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0.4); }
-    }
-
-    /* La imagen del regalo, se revela igual que las de personaje: sin caja, fundida */
-    .regalo-imagen {
-      position: absolute;
-      inset: 0;
-      margin: auto;
-      max-width: 280px;
-      width: 78%;
-      max-height: 56vh;
-      height: auto;
+    #mascota-img {
+      width: 145px;
+      height: 145px;
       object-fit: contain;
-      filter: drop-shadow(0 18px 34px rgba(0,0,0,0.6));
-      -webkit-mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
-      mask-image: radial-gradient(ellipse 62% 62% at 50% 42%, black 55%, transparent 88%);
-      opacity: 0;
-      transform: scale(0.85);
-      transition: opacity 1s ease, transform 1s cubic-bezier(.2,.8,.3,1.15);
-      pointer-events: none;
+      flex-shrink: 0;
     }
-    .regalo-imagen.visible { opacity: 1; transform: scale(1); }
-
-    .regalo-btn-continuar {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.8s ease;
-      margin-top: 26px;
+    .mascota-derecha {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
     }
-    .regalo-btn-continuar.visible { opacity: 1; pointer-events: auto; }
-
-    @media (max-height: 680px) {
-      .pregunta { margin-bottom: 22px; }
-      .marco-arco { width: 190px; height: 260px; }
-      .marco-personaje { width: 190px; }
-      .divisor { margin: 18px 0; }
+    .bocadillo {
+      position: relative;
+      background: var(--blanco);
+      border: 1px solid var(--linea);
+      padding: 14px 16px;
     }
+    .bocadillo::before {
+      content: '';
+      position: absolute;
+      left: -9px;
+      top: 18px;
+      width: 16px;
+      height: 16px;
+      background: var(--blanco);
+      border-left: 1px solid var(--linea);
+      border-bottom: 1px solid var(--linea);
+      transform: rotate(45deg);
+    }
+    #mascota-frase {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 14.5px;
+      color: var(--tinta);
+      margin: 0;
+      line-height: 1.4;
+      min-height: 20px;
+    }
+    .btn-jugar {
+      display: inline-block;
+      align-self: center;
+      background: var(--naranja);
+      color: var(--blanco);
+      text-decoration: none;
+      padding: 8px 18px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      font-size: 10.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+    .btn-opcion.bloqueada { cursor: default; }
+    .btn-opcion.bloqueada:active { transform: none; }
+    @keyframes agitar {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+    .btn-opcion.agitando { animation: agitar 0.3s ease; }
   </style>
 </head>
-<body class="telon-cerrado">
+<body class="pantalla-centrada">
 
-  <div id="pantalla-mensaje">
-    <div class="tarjeta-mensaje">
-      <span class="mensaje-icono">🎁</span>
-      <p class="mensaje-texto">Mario te ha enviado un regalo</p>
-      <button id="btn-ok-mensaje" class="btn-ok-imagen" aria-label="Vale">
-        <img src="IMG_6447.png" alt="Vale">
-      </button>
-    </div>
-  </div>
+  <div class="mancha-fondo a"></div>
+  <div class="mancha-fondo b"></div>
 
-  <div class="grano"></div>
-  <div class="luz"></div>
-  <div class="cortina izquierda"></div>
-  <div class="cortina derecha"></div>
+  <div class="contenedor">
 
-  <div class="escenario">
-    <p class="eyebrow">Esta noche, el regalo lo entrega</p>
-    <p class="pregunta">Elige quién te lo va a dar</p>
+    <audio id="cancion-fondo" src="MC%2520Bruninho%2520e%2520Vitinho%2520Ferrari%2520-%2520Sou%2520Favela%2520(GR6%2520Filmes)%2520DJ%2520DG%2520e%2520Batida%25CC%2583o%2520Stronda.mp3" loop></audio>
 
-    <div class="fila-personaje">
-      <button class="btn-flecha" id="btn-anterior" aria-label="Personaje anterior">
-        <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M8 1L1.5 7.5L8 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
+    <!-- Pantalla 1: mensaje inicial -->
+    <section id="mensaje-inicial">
+      <p>Holaa pequee, espero que te guste esto que hice para ti :) Pero antes... tienes que responder bien estas 5 preguntitas para poder abrirlo.</p>
+      <button id="btn-comenzar">Comenzar</button>
+    </section>
 
-      <div class="marco-personaje">
-        <div class="marco-arco" id="marco-arco">
-          <span class="silueta">🎭</span>
-          <!-- Cuando tenga la imagen real: <img src="personaje1.png" alt=""> -->
-        </div>
-        <div class="sombra-suelo" id="sombra-suelo"></div>
-        <p class="nombre-personaje" id="nombre-personaje">Personaje 1</p>
-        <p class="titulo-personaje" id="titulo-personaje">Aquí va su título</p>
+    <!-- Pantalla 2: cuestionario -->
+    <section id="cuestionario" hidden>
+
+      <div id="barra-progreso-contenedor">
+        <div id="barra-progreso"></div>
+      </div>
+      <p id="texto-progreso">Pregunta 1 de 5</p>
+
+      <div class="pregunta" data-respuesta="b" data-pista="Es en primavera, mes 4️⃣">
+        <p>¿Cuándo es mi cumpleaños?</p>
+        <label><input type="radio" name="p1" value="a"> 4 de abril</label>
+        <label><input type="radio" name="p1" value="b"> 11 de abril</label>
+        <label><input type="radio" name="p1" value="c"> 11 de mayo</label>
       </div>
 
-      <button class="btn-flecha" id="btn-siguiente" aria-label="Siguiente personaje">
-        <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M1 1L7.5 7.5L1 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
+      <div class="pregunta" data-respuesta="a" data-pista="Es el color de un atardecer 🧡" hidden>
+        <p>¿Cuál es mi color favorito?</p>
+        <label><input type="radio" name="p2" value="a"> Naranja</label>
+        <label><input type="radio" name="p2" value="b"> Azul</label>
+        <label><input type="radio" name="p2" value="c"> Rojo</label>
+      </div>
+
+      <div class="pregunta" data-respuesta="c" data-pista="Tiene que ver con el cielo cuando cae la tarde" hidden>
+        <p>¿Cuál es mi plan favorito?</p>
+        <label><input type="radio" name="p3" value="a"> Ir al cine</label>
+        <label><input type="radio" name="p3" value="b"> Salir a comer</label>
+        <label><input type="radio" name="p3" value="c"> Ir a ver el atardecer contigo</label>
+      </div>
+
+      <div class="pregunta" data-respuesta="b" data-pista="Hay arena y olas 🌊" hidden>
+        <p>¿Piscina o playa?</p>
+        <label><input type="radio" name="p4" value="a"> Piscina</label>
+        <label><input type="radio" name="p4" value="b"> Playa</label>
+        <label><input type="radio" name="p4" value="c"> Ninguna de las dos</label>
+      </div>
+
+      <div class="pregunta" data-respuesta="a" data-pista="Empieza con P" hidden>
+        <p>¿Cómo me gusta decirte de cariño?</p>
+        <label><input type="radio" name="p5" value="a"> Pequee</label>
+        <label><input type="radio" name="p5" value="b"> Amor</label>
+        <label><input type="radio" name="p5" value="c"> Bebé</label>
+      </div>
+
+      <button id="btn-siguiente">Siguiente</button>
+      <p id="mensaje-error" hidden>Esa no es, ¡intenta de nuevo!</p>
+      <p id="mensaje-pista" hidden></p>
+
+    </section>
+
+    <!-- Pantalla 2.5: contraseña para entrar al menú -->
+    <section id="pantalla-clave" hidden>
+      <p>Escribe la contraseña para entrar</p>
+      <input type="password" id="input-clave" placeholder="Contraseña">
+      <button id="btn-entrar-clave">Entrar</button>
+      <p id="mensaje-error-clave" hidden>Contraseña incorrecta, intenta de nuevo</p>
+    </section>
+
+    <!-- Pantalla 3: página principal con 4 opciones -->
+    <section id="contenido" hidden>
+
+      <button id="btn-ajustes-flotante" type="button" aria-label="Configuración">⚙️</button>
+
+      <div id="menu-principal">
+        <h2>Selecciona una opción</h2>
+        <button class="btn-opcion" data-target="seccion-1">Cartas</button>
+        <button class="btn-opcion" data-target="seccion-2">Fotos y Videos</button>
+        <button class="btn-opcion" data-target="seccion-3" id="btn-sorpresa">🎁 Sorpresa</button>
+        <button class="btn-opcion" data-target="seccion-4">💫 Metas</button>
+        <button class="btn-opcion" data-target="seccion-5">💕 Citas</button>
+      </div>
+
+      <div id="seccion-1" class="seccion" hidden>
+        <h2>Cartas</h2>
+        <button id="btn-nueva-carta">➕ Añadir carta</button>
+
+        <div id="form-carta" hidden>
+          <input type="text" id="carta-titulo" placeholder="Título de la carta">
+          <textarea id="carta-texto" placeholder="Escribe tu carta..."></textarea>
+          <label>Color del texto: <input type="color" id="carta-color" value="#000000"></label>
+          <label>Tamaño de letra:
+            <select id="carta-tamano">
+              <option value="14px">Pequeño</option>
+              <option value="18px" selected>Normal</option>
+              <option value="24px">Grande</option>
+            </select>
+          </label>
+          <label>Adjuntar fotos: <input type="file" id="carta-archivos" accept="image/*" multiple></label>
+          <button id="btn-guardar-carta">Guardar carta</button>
+          <button id="btn-cancelar-carta">Cancelar</button>
+        </div>
+
+        <div id="lista-cartas"></div>
+
+        <button class="btn-volver">Volver</button>
+      </div>
+
+      <div id="seccion-2" class="seccion" hidden>
+        <h2>Fotos y Videos</h2>
+        <button id="btn-nueva-foto">➕ Añadir fotos o videos</button>
+
+        <div id="form-multimedia" hidden>
+          <input type="file" id="input-fotos" accept="image/*,video/*" multiple>
+          <input type="text" id="multimedia-categoria" placeholder="Categoría (ej: Vacaciones)" list="lista-categorias">
+          <datalist id="lista-categorias"></datalist>
+          <button id="btn-subir-multimedia">Subir</button>
+          <button id="btn-cancelar-multimedia">Cancelar</button>
+        </div>
+
+        <div id="filtro-categorias"></div>
+
+        <h3>📷 Fotos</h3>
+        <div id="galeria-fotos"></div>
+
+        <h3>🎥 Videos</h3>
+        <div id="galeria-videos"></div>
+
+        <button class="btn-volver">Volver</button>
+
+        <div id="visor-media" hidden>
+          <button id="cerrar-visor-media">✕</button>
+          <img id="visor-media-img" src="">
+          <span id="visor-media-fecha"></span>
+        </div>
+      </div>
+
+      <div id="seccion-3" class="seccion" hidden>
+        <div id="candado-sorpresa">
+          <p>🔒 Esto se desbloquea el 1 de enero</p>
+          <p id="cuenta-regresiva"></p>
+        </div>
+        <div id="sorpresa-desbloqueada" hidden>
+          <p>🎉 ¡Sorpresa! Aquí va el contenido especial.</p>
+        </div>
+        <button class="btn-volver">Volver</button>
+      </div>
+
+      <div id="seccion-4" class="seccion" hidden>
+        <h2>Metas 💫</h2>
+        <div id="form-meta">
+          <input type="text" id="meta-texto" placeholder="Añadir una meta...">
+          <button id="btn-agregar-meta">➕ Añadir</button>
+        </div>
+        <ul id="lista-metas"></ul>
+        <button class="btn-volver">Volver</button>
+      </div>
+
+      <div id="seccion-5" class="seccion" hidden>
+        <h2>Citas 💕</h2>
+        <button id="btn-nueva-cita">➕ Añadir cita</button>
+
+        <div id="form-cita" hidden>
+          <label>Título
+            <input type="text" id="cita-titulo" placeholder="Título de la cita">
+          </label>
+          <label>Fecha
+            <input type="date" id="cita-fecha">
+          </label>
+          <label>¿Cómo fue?
+            <textarea id="cita-descripcion" placeholder="Cuéntame cómo fue esta cita..."></textarea>
+          </label>
+          <label>Fotos: <input type="file" id="cita-archivos" accept="image/*" multiple></label>
+          <button id="btn-guardar-cita">Guardar cita</button>
+          <button id="btn-cancelar-cita">Cancelar</button>
+        </div>
+
+        <div id="lista-citas"></div>
+
+        <button class="btn-volver">Volver</button>
+      </div>
+
+      <div id="seccion-6" class="seccion" hidden>
+        <h2>Configuración ⚙️</h2>
+
+        <div class="config-categorias" id="config-categorias">
+          <button type="button" class="config-cat-btn activa" data-cat="perfil">👤 Perfil</button>
+          <button type="button" class="config-cat-btn" data-cat="apariencia">🎨 Apariencia</button>
+          <button type="button" class="config-cat-btn" data-cat="sonido">🔊 Sonido</button>
+          <button type="button" class="config-cat-btn" data-cat="avisos">🔔 Avisos</button>
+          <button type="button" class="config-cat-btn" data-cat="accesibilidad">♿ Accesibilidad</button>
+          <button type="button" class="config-cat-btn" data-cat="sesion">🚪 Sesión</button>
+        </div>
+
+        <!-- Perfil -->
+        <div class="config-categoria-contenido" data-cat-contenido="perfil">
+          <div class="config-grupo">
+            <span class="config-titulo">🙋 Tu nombre</span>
+            <p class="config-descripcion">Así sabremos quién hizo qué (por ejemplo, en los avisos: "Mario añadió una carta").</p>
+            <div class="config-fila-nombre">
+              <input type="text" id="input-nombre-usuario" maxlength="20" placeholder="Tu nombre">
+              <button id="btn-guardar-nombre-usuario" type="button">Guardar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Apariencia -->
+        <div class="config-categoria-contenido" data-cat-contenido="apariencia" hidden>
+          <div class="config-grupo">
+            <span class="config-titulo">🎨 Color de acento</span>
+            <p class="config-descripcion">Solo lo ves tú en tu dispositivo, no cambia para el otro.</p>
+            <div class="swatches" id="swatches-color-acento">
+              <button type="button" class="swatch" data-color="naranja" title="Naranja" aria-label="Naranja" style="background:#e8703a"></button>
+              <button type="button" class="swatch" data-color="rosa" title="Rosa" aria-label="Rosa" style="background:#d46a8a"></button>
+              <button type="button" class="swatch" data-color="lavanda" title="Lavanda" aria-label="Lavanda" style="background:#8a6fc4"></button>
+              <button type="button" class="swatch" data-color="verde" title="Verde salvia" aria-label="Verde salvia" style="background:#5f8a5f"></button>
+              <button type="button" class="swatch" data-color="azul" title="Azul" aria-label="Azul" style="background:#4a7fb5"></button>
+            </div>
+          </div>
+          <div class="config-grupo">
+            <span class="config-titulo">🔠 Tamaño del texto</span>
+            <div class="config-opciones-radio">
+              <label><input type="radio" name="tamano-texto" value="normal" checked> Normal</label>
+              <label><input type="radio" name="tamano-texto" value="grande"> Grande</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sonido -->
+        <div class="config-categoria-contenido" data-cat-contenido="sonido" hidden>
+          <div class="config-grupo">
+            <span class="config-titulo">🔊 Volumen de la música</span>
+            <input type="range" id="control-volumen" min="0" max="100" value="25">
+          </div>
+          <div class="config-grupo">
+            <label class="config-fila-check"><input type="checkbox" id="check-silenciar-musica"> Silenciar la música por completo</label>
+          </div>
+        </div>
+
+        <!-- Avisos -->
+        <div class="config-categoria-contenido" data-cat-contenido="avisos" hidden>
+          <div class="config-grupo">
+            <span class="config-titulo">🔔 Notificaciones</span>
+            <p class="config-descripcion">Te avisa si añaden algo nuevo, o si la mascota necesita algo.</p>
+            <button id="btn-notificaciones" type="button">Activar avisos</button>
+          </div>
+          <div class="config-grupo">
+            <span class="config-titulo">Qué te avisa</span>
+            <label class="config-fila-check"><input type="checkbox" id="check-avisos-contenido" checked> Cartas, fotos, citas y metas nuevas</label>
+            <label class="config-fila-check"><input type="checkbox" id="check-avisos-mascota" checked> La mascota necesita algo</label>
+          </div>
+        </div>
+
+        <!-- Accesibilidad -->
+        <div class="config-categoria-contenido" data-cat-contenido="accesibilidad" hidden>
+          <div class="config-grupo">
+            <label class="config-fila-check"><input type="checkbox" id="check-reducir-movimiento"> Reducir animaciones y movimiento</label>
+          </div>
+        </div>
+
+        <!-- Sesión -->
+        <div class="config-categoria-contenido" data-cat-contenido="sesion" hidden>
+          <div class="config-grupo">
+            <span class="config-titulo">🚪 Sesión</span>
+            <p class="config-descripcion">Cierra la sesión en este dispositivo — la próxima vez pedirá la contraseña otra vez.</p>
+            <button id="btn-cerrar-sesion" type="button" class="config-btn-secundario">Cerrar sesión</button>
+          </div>
+          <div class="config-grupo">
+            <span class="config-titulo">🔄 Cuestionario</span>
+            <p class="config-descripcion">Vuelve a pedir las 5 preguntas la próxima vez que se entre desde este dispositivo.</p>
+            <button id="btn-reiniciar-cuestionario" type="button" class="config-btn-secundario">Reiniciar cuestionario</button>
+          </div>
+        </div>
+
+        <button class="btn-volver">Volver</button>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div id="mascota-widget" hidden>
+    <div class="mascota-fila">
+      <img src="MENU.PNG" alt="mascota" id="mascota-img">
+      <div class="mascota-derecha">
+        <div class="bocadillo">
+          <p id="mascota-frase"></p>
+        </div>
+        <a href="pou.html" class="btn-jugar">Jugar</a>
+      </div>
     </div>
-
-    <div class="indicadores" id="indicadores"></div>
-    <div class="divisor"><span class="divisor-diamante"></span></div>
-
-    <button class="btn-elegir" id="btn-elegir">Elegir</button>
   </div>
 
-  <div class="revelacion" id="revelacion" hidden>
-    <img class="revelacion-imagen" id="revelacion-imagen" src="" alt="">
-    <p class="revelacion-nombre" id="revelacion-nombre"></p>
-    <button class="btn-elegir" id="btn-continuar">Continuar</button>
-  </div>
+  <div id="panel-secreto" hidden>
+    <div id="panel-secreto-contenido">
+      <div class="panel-secreto-cabecera">
+        <span>⚡ Panel secreto</span>
+        <button type="button" id="cerrar-panel-secreto" aria-label="Cerrar">✕</button>
+      </div>
 
-  <div class="pantalla-regalo" id="pantalla-regalo" hidden>
-    <p class="regalo-instruccion" id="regalo-instruccion">Toca la caja para abrir tu regalo</p>
+      <div id="panel-secreto-pestanas">
+        <button type="button" class="ps-pestana activa" data-cat="enviar">📨 Enviar</button>
+        <button type="button" class="ps-pestana" data-cat="notificaciones">🔔 Avisos</button>
+        <button type="button" class="ps-pestana" data-cat="mascota">🐾 Mascota</button>
+        <button type="button" class="ps-pestana" data-cat="contenido">📋 Contenido</button>
+        <button type="button" class="ps-pestana" data-cat="usuarios">👥 Usuarios</button>
+        <button type="button" class="ps-pestana" data-cat="personalizacion">🎨 Look</button>
+        <button type="button" class="ps-pestana" data-cat="dispositivo">🛠️ Dispositivo</button>
+        <button type="button" class="ps-pestana" data-cat="sitio">🔒 Sitio</button>
+        <button type="button" class="ps-pestana" data-cat="diversion">🎉 Diversión</button>
+        <button type="button" class="ps-pestana" data-cat="debug">📋 Debug</button>
+      </div>
 
-    <div class="regalo-escenario">
-      <div class="particulas-regalo" id="particulas-regalo"></div>
+      <div class="panel-secreto-grupo" data-cat-contenido="enviar">
+        <span class="panel-secreto-titulo">📨 Enviar algo</span>
+        <p class="ps-nota">Se entrega en cuanto corra la revisión automática (cada 10 min), o al instante si ejecutas la Action a mano en GitHub.</p>
+        <button type="button" class="panel-secreto-btn" data-accion="enviarMensaje">💌 Enviar un mensaje (a uno, varios, o todos)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="enviarSorpresa">🎁 Enviar una sorpresa (a uno, varios, o todos)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="verPendientes">📬 Ver mensajes pendientes de enviar</button>
+        <button type="button" class="panel-secreto-btn" data-accion="cancelarPendientes">🗑️ Cancelar mensajes pendientes</button>
+      </div>
 
-      <button class="caja-regalo" id="caja-regalo" aria-label="Abrir regalo">
-        <span class="caja-tapa"></span>
-        <span class="caja-cuerpo">
-          <span class="caja-cinta-v"></span>
-          <span class="caja-cinta-h"></span>
-        </span>
-        <span class="caja-lazo"></span>
-      </button>
+      <div class="panel-secreto-grupo" data-cat-contenido="notificaciones" hidden>
+        <span class="panel-secreto-titulo">🔔 Notificaciones</span>
+        <button type="button" class="panel-secreto-btn" data-accion="notificacionPrueba">Notificación de prueba (a este dispositivo)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="notificacionPersonalizada">Notificación de prueba con mensaje propio</button>
+        <button type="button" class="panel-secreto-btn" data-accion="borrarSuscripcion">Borrar mi suscripción</button>
+        <button type="button" class="panel-secreto-btn ps-btn-destacado" data-accion="actualizarNombreSuscripcion">🔄 Poner mi nombre actual en mi suscripción</button>
+        <button type="button" class="panel-secreto-btn" data-accion="contarSuscripciones">Contar cuántos dispositivos están suscritos</button>
+        <button type="button" class="panel-secreto-btn" data-accion="listarNombresSuscritos">Ver nombres de quienes están suscritos</button>
+        <button type="button" class="panel-secreto-btn" data-accion="limpiarSuscripcionesSinNombre">🧹 Borrar suscripciones sin nombre (viejas)</button>
+      </div>
 
-      <img class="regalo-imagen" id="regalo-imagen" src="Regalo/IMG_6540.png" alt="Tu regalo">
+      <div class="panel-secreto-grupo" data-cat-contenido="mascota" hidden>
+        <span class="panel-secreto-titulo">🐾 Mascota</span>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaMaximo">Rellenar todo al máximo</button>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaVaciar">Vaciar todo (forzar aviso)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaResetearRacha">Resetear racha a 0</button>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaFijarRacha">Fijar la racha a un número</button>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaResetearStats">Resetear estadísticas a 0</button>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaCambiarNombre">Cambiar el nombre de la mascota</button>
+        <button type="button" class="panel-secreto-btn" data-accion="mascotaVerJSON">Ver estado crudo (JSON)</button>
+      </div>
+
+      <div class="panel-secreto-grupo" data-cat-contenido="contenido" hidden>
+        <span class="panel-secreto-titulo">📋 Contenido</span>
+        <button type="button" class="panel-secreto-btn" data-accion="contarCartas">Contar cartas</button>
+        <button type="button" class="panel-secreto-btn" data-accion="contarFotos">Contar fotos y videos</button>
+        <button type="button" class="panel-secreto-btn" data-accion="contarMetas">Contar metas (total / hechas)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="contarCitas">Contar citas</button>
+        <button type="button" class="panel-secreto-btn" data-accion="exportarCartas">Exportar todas las cartas (.txt)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="ultimaCarta">Ver la última carta añadida</button>
+      </div>
+
+      <div class="panel-secreto-grupo" data-cat-contenido="usuarios" hidden>
+        <span class="panel-secreto-titulo">👥 Usuarios registrados (compartido)</span>
+        <button type="button" class="panel-secreto-btn ps-btn-destacado" data-accion="elegirUsuarioYActuar">🎯 Elegir un usuario y decidir qué hacer</button>
+        <button type="button" class="panel-secreto-btn" data-accion="verUsuarios">Ver lista de usuarios y cuándo se unieron</button>
+        <button type="button" class="panel-secreto-btn" data-accion="verUltimaVezUsuarios">Ver última vez que estuvo activo cada uno</button>
+        <button type="button" class="panel-secreto-btn" data-accion="contarUsuarios">Contar cuántos usuarios hay</button>
+        <button type="button" class="panel-secreto-btn" data-accion="renombrarUsuario">Renombrar un usuario registrado</button>
+        <button type="button" class="panel-secreto-btn" data-accion="eliminarUsuario">Eliminar un usuario registrado</button>
+      </div>
+
+      <div class="panel-secreto-grupo" data-cat-contenido="personalizacion" hidden>
+        <span class="panel-secreto-titulo">🎨 Personalización</span>
+        <button type="button" class="panel-secreto-btn" data-accion="resetPersonalizacion">Restablecer toda mi personalización</button>
+        <button type="button" class="panel-secreto-btn" data-accion="copiarAjustes">Copiar mis ajustes (JSON) al portapapeles</button>
+        <button type="button" class="panel-secreto-btn" data-accion="temaAleatorio">Tema de color aleatorio</button>
+        <button type="button" class="panel-secreto-btn" data-accion="alternarTextoGrande">Alternar texto grande / normal</button>
+        <button type="button" class="panel-secreto-btn" data-accion="alternarMovimiento">Alternar reducir movimiento</button>
+      </div>
+
+      <div class="panel-secreto-grupo" data-cat-contenido="dispositivo" hidden>
+        <span class="panel-secreto-titulo">🛠️ Dispositivo</span>
+        <button type="button" class="panel-secreto-btn" data-accion="infoDispositivo">Ver info del dispositivo</button>
+        <button type="button" class="panel-secreto-btn" data-accion="esPWA">¿Es app guardada (PWA) o Safari normal?</button>
+        <button type="button" class="panel-secreto-btn" data-accion="tamanoAlmacenamiento">Ver tamaño de mis datos guardados</button>
+        <button type="button" class="panel-secreto-btn" data-accion="vaciarCacheSW">Vaciar caché y forzar actualización</button>
+        <button type="button" class="panel-secreto-btn" data-accion="estadoConexion">Ver estado de conexión (online/offline)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="copiarInfoPanel">Copiar toda la info del panel</button>
+      </div>
+
+      <div class="panel-secreto-grupo" data-cat-contenido="sitio" hidden>
+        <span class="panel-secreto-titulo">🔒 Diagnóstico del sitio</span>
+        <button type="button" class="panel-secreto-btn" data-accion="verHTTPS">¿La conexión es segura (HTTPS)?</button>
+        <button type="button" class="panel-secreto-btn" data-accion="verReglasFirestore">Ver estado de las reglas de la base de datos</button>
+        <button type="button" class="panel-secreto-btn" data-accion="medirVelocidad">Medir velocidad de lectura de datos</button>
+      </div>
+
+      <div class="panel-secreto-grupo" data-cat-contenido="diversion" hidden>
+        <span class="panel-secreto-titulo">🎉 Diversión</span>
+        <button type="button" class="panel-secreto-btn" data-accion="lluviaCorazones">Lluvia de corazones</button>
+        <button type="button" class="panel-secreto-btn" data-accion="modoConfeti">Modo confeti</button>
+        <button type="button" class="panel-secreto-btn" data-accion="fraseMascotaAhora">Nueva frase de la mascota ahora</button>
+      </div>
+
+      <div class="panel-secreto-grupo" data-cat-contenido="debug" hidden>
+        <span class="panel-secreto-titulo">📋 Info de depuración</span>
+        <pre id="panel-secreto-info">Cargando...</pre>
+      </div>
     </div>
-
-    <button class="btn-elegir regalo-btn-continuar" id="btn-continuar-final">Continuar</button>
   </div>
+
+  <div id="ps-selector" hidden>
+    <div id="ps-selector-caja">
+      <p id="ps-selector-titulo">¿A quién?</p>
+      <div id="ps-selector-lista"></div>
+      <div id="ps-selector-botonera">
+        <button type="button" id="ps-selector-cancelar" class="config-btn-secundario">Cancelar</button>
+        <button type="button" id="ps-selector-continuar" class="panel-secreto-btn ps-btn-destacado">Continuar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCZhcqS0r9w8H1EJ-cDG4XBJjNEjzKPlPY",
+      authDomain: "pequee.firebaseapp.com",
+      projectId: "pequee",
+      storageBucket: "pequee.firebasestorage.app",
+      messagingSenderId: "422064272343",
+      appId: "1:422064272343:web:3b1ff306ef45621e7a9192"
+    };
+    let db = null;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+    } catch (e) {
+      console.error('No se pudo iniciar Firebase:', e);
+    }
+  </script>
 
   <script>
-    // ---------- Datos de los personajes ----------
-    // "sonido" es opcional — si está puesto, suena en cuanto ese personaje
-    // queda seleccionado (al entrar en la pantalla o al pasar a él con las flechas).
-    // "imagenRevelacion" es la foto grande que se muestra tras darle a "Elegir".
-    const PERSONAJES = [
-      { nombre: 'Maeb', titulo: '', imagen: 'Regalo/C3A0F823-027C-4F4D-A49D-F81CCFFB03A7.png', sonido: 'Regalo/Maebaudio.mp3', imagenRevelacion: 'Regalo/DE5075A8-A7ED-4203-89F4-28719BF3D7BE.png' },
-      { nombre: 'Alberto24', titulo: '', imagen: 'Regalo/D95094BA-5E05-4A38-8A18-BE5F43C42527.png', sonido: 'Regalo/Albertoaudio.mp3', imagenRevelacion: 'Regalo/IMG_6555.png' },
-      { nombre: 'Ruth', titulo: 'La empodera', imagen: 'Regalo/D98E3D40-6C92-456C-92E9-9DAA6CB8FB64.png', sonido: 'Regalo/Ruthaudio.mp3', imagenRevelacion: 'Regalo/971C6748-B242-4BDC-8C63-2B2C7A278C45.png' }
+    const btnComenzar = document.getElementById('btn-comenzar');
+    const mensajeInicial = document.getElementById('mensaje-inicial');
+    const cuestionario = document.getElementById('cuestionario');
+    const contenido = document.getElementById('contenido');
+    const mensajeError = document.getElementById('mensaje-error');
+
+    // Pantalla de contraseña para entrar al menú (se pide siempre, cada vez)
+    const pantallaClave = document.getElementById('pantalla-clave');
+    const inputClave = document.getElementById('input-clave');
+    const btnEntrarClave = document.getElementById('btn-entrar-clave');
+    const mensajeErrorClave = document.getElementById('mensaje-error-clave');
+    const CONTRASENA_MENU = 'Peque2';
+
+    btnEntrarClave.addEventListener('click', () => {
+      if (inputClave.value === CONTRASENA_MENU) {
+        mensajeErrorClave.hidden = true;
+        inputClave.value = '';
+        pantallaClave.hidden = true;
+        contenido.hidden = false;
+        mascotaWidget.hidden = false;
+        sessionStorage.setItem('claveOk', 'true');
+        document.body.classList.remove('pantalla-centrada');
+      } else {
+        mensajeErrorClave.hidden = false;
+      }
+    });
+
+    // Navegación del menú principal (4 opciones) — va primero para que funcione
+    // siempre, incluso si algo falla más abajo con Firebase
+    const menuPrincipal = document.getElementById('menu-principal');
+    const botonesOpcion = document.querySelectorAll('.btn-opcion');
+    const botonesVolver = document.querySelectorAll('.btn-volver');
+    const mascotaWidget = document.getElementById('mascota-widget');
+
+    botonesOpcion.forEach(boton => {
+      boton.addEventListener('click', () => {
+        if (boton.id === 'btn-sorpresa' && new Date() < fechaDesbloqueo) {
+          boton.classList.remove('agitando');
+          void boton.offsetWidth; // reinicia la animación si se toca varias veces seguidas
+          boton.classList.add('agitando');
+          return;
+        }
+        const destino = document.getElementById(boton.dataset.target);
+        menuPrincipal.hidden = true;
+        destino.hidden = false;
+        mascotaWidget.hidden = true;
+      });
+    });
+
+    botonesVolver.forEach(boton => {
+      boton.addEventListener('click', () => {
+        boton.closest('.seccion').hidden = true;
+        menuPrincipal.hidden = false;
+        mascotaWidget.hidden = false;
+      });
+    });
+
+    // Ícono flotante de ajustes (esquina superior derecha) — funciona desde
+    // cualquier sección, no solo desde el menú principal
+    const btnAjustesFlotante = document.getElementById('btn-ajustes-flotante');
+    btnAjustesFlotante.addEventListener('click', () => {
+      document.querySelectorAll('.seccion').forEach(s => s.hidden = true);
+      menuPrincipal.hidden = true;
+      document.getElementById('seccion-6').hidden = false;
+      mascotaWidget.hidden = true;
+    });
+
+    // Mascota: frase aleatoria en cada carga de página
+    const frasesMascota = [
+      '¡Hola! ¿Ya viste las cartas de hoy? 💌',
+      'Psst... tienes metas pendientes 💫',
+      '¿Ya viste el atardecer hoy? 🧡',
+      'Te extraño cuando no entras por aquí',
+      '¿Jugamos un rato?',
+      '¿Sabías que eres mi persona favorita?',
+      'Soy una alpaca, no una llama, que quede claro 🦙',
+      '¿Ya me diste de comer hoy?',
+      'Un día vamos a ir a ver el atardecer, lo prometo',
+      'Naranja es el mejor color, no se discute',
+      'Cuídame bien, ¿va?',
+      'Hoy también pienso en ti',
+      '¿Ya escribiste una carta nueva?',
+      'Playa > piscina, siempre'
     ];
+    const mascotaFrase = document.getElementById('mascota-frase');
+    if (mascotaFrase) {
+      mascotaFrase.textContent = frasesMascota[Math.floor(Math.random() * frasesMascota.length)];
+    }
+
+    // Si la mascota tiene alguna necesidad baja de verdad, el bocadillo lo pide
+    // directamente en vez de mostrar una frase al azar (mismas tasas que pou.html)
+    const TASAS_DECAIMIENTO_MASCOTA = { hambre: 6, sueno: 3, felicidad: 3.75 };
+    const UMBRAL_PETICION_MASCOTA = 20;
+    const PETICIONES_MASCOTA = {
+      hambre: ['🍽️ Tengo muchísima hambre... ¿me das de comer?', '🥺 Mi barriguita está vacía'],
+      sueno: ['😴 Estoy agotada, ¿me dejas dormir?', '🥱 Necesito una siesta ya mismo'],
+      felicidad: ['🎾 ¿Jugamos? Te extraño', '💛 Me vendría genial un poco de cariño ahora']
+    };
+
+    if (mascotaFrase && db) {
+      db.collection('mascota').doc('estado').get().then(doc => {
+        if (!doc.exists) return;
+        const datos = doc.data();
+        const ultimaFecha = datos.actualizado && datos.actualizado.toDate ? datos.actualizado.toDate() : new Date();
+        const horas = Math.max(0, (Date.now() - ultimaFecha.getTime()) / (1000 * 60 * 60));
+
+        const estado = {
+          hambre: Math.max(0, (datos.hambre ?? 100) - horas * TASAS_DECAIMIENTO_MASCOTA.hambre),
+          sueno: Math.max(0, (datos.sueno ?? 100) - horas * TASAS_DECAIMIENTO_MASCOTA.sueno),
+          felicidad: Math.max(0, (datos.felicidad ?? 100) - horas * TASAS_DECAIMIENTO_MASCOTA.felicidad)
+        };
+
+        // Prioridad: hambre > sueño > felicidad, la más urgente primero
+        let clave = null;
+        if (estado.hambre < UMBRAL_PETICION_MASCOTA) clave = 'hambre';
+        else if (estado.sueno < UMBRAL_PETICION_MASCOTA) clave = 'sueno';
+        else if (estado.felicidad < UMBRAL_PETICION_MASCOTA) clave = 'felicidad';
+
+        if (clave) {
+          const opciones = PETICIONES_MASCOTA[clave];
+          mascotaFrase.textContent = opciones[Math.floor(Math.random() * opciones.length)];
+        }
+      }).catch(() => {});
+    }
+
+    // Cuenta regresiva de la sección sorpresa (se desbloquea el 1 de enero de 2027)
+    const fechaDesbloqueo = new Date('2027-01-01T00:00:00');
+    const candadoSorpresa = document.getElementById('candado-sorpresa');
+    const sorpresaDesbloqueada = document.getElementById('sorpresa-desbloqueada');
+    const cuentaRegresiva = document.getElementById('cuenta-regresiva');
+    const btnSorpresa = document.getElementById('btn-sorpresa');
+
+    function actualizarCuentaRegresiva() {
+      const ahora = new Date();
+      const diferencia = fechaDesbloqueo - ahora;
+
+      if (diferencia <= 0) {
+        candadoSorpresa.hidden = true;
+        sorpresaDesbloqueada.hidden = false;
+        btnSorpresa.textContent = '🎁 Sorpresa';
+        clearInterval(intervaloCuentaRegresiva);
+        return;
+      }
+
+      btnSorpresa.textContent = '🔒 Sorpresa (bloqueada)';
+
+      const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((diferencia / (1000 * 60 * 60)) % 24);
+      const minutos = Math.floor((diferencia / (1000 * 60)) % 60);
+      const segundos = Math.floor((diferencia / 1000) % 60);
+
+      cuentaRegresiva.textContent = `${dias}d ${horas}h ${minutos}m ${segundos}s`;
+    }
+
+    actualizarCuentaRegresiva();
+    const intervaloCuentaRegresiva = setInterval(actualizarCuentaRegresiva, 1000);
+
+    const cancionFondo = document.getElementById('cancion-fondo');
+    cancionFondo.volume = 0.25;
+
+    // Si ya se puso la contraseña en esta misma sesión (ej. al volver de pou.html), saltar directo al menú
+    if (sessionStorage.getItem('claveOk') === 'true') {
+      mensajeInicial.hidden = true;
+      cuestionario.hidden = true;
+      pantallaClave.hidden = true;
+      contenido.hidden = false;
+      mascotaWidget.hidden = false;
+      document.body.classList.remove('pantalla-centrada');
+    }
+    // Si ya completó el cuestionario antes en este dispositivo, saltar directo a la contraseña
+    // (sigue siendo una de las pantallas centradas, así que no se quita la clase aquí)
+    else if (localStorage.getItem('cuestionarioCompletado') === 'true') {
+      mensajeInicial.hidden = true;
+      cuestionario.hidden = true;
+      pantallaClave.hidden = false;
+    }
+
+    btnComenzar.addEventListener('click', () => {
+      mensajeInicial.hidden = true;
+      cuestionario.hidden = false;
+      cancionFondo.play();
+      mostrarPregunta(0);
+      document.body.classList.remove('pantalla-centrada');
+    });
+
+    // Cuestionario: una pregunta a la vez
+    const preguntas = document.querySelectorAll('.pregunta');
+    const btnSiguiente = document.getElementById('btn-siguiente');
+    const barraProgreso = document.getElementById('barra-progreso');
+    const textoProgreso = document.getElementById('texto-progreso');
+    const mensajePista = document.getElementById('mensaje-pista');
 
     let indiceActual = 0;
+    let intentos = 0;
 
-    const marcoArco = document.getElementById('marco-arco');
-    const nombreEl = document.getElementById('nombre-personaje');
-    const tituloEl = document.getElementById('titulo-personaje');
-    const indicadoresEl = document.getElementById('indicadores');
-    const sombraSuelo = document.getElementById('sombra-suelo');
-
-    // Un solo <audio> que se reutiliza y cambia de fuente según el personaje
-    const audioPersonaje = new Audio();
-    audioPersonaje.volume = 0.7;
-
-    function reproducirSonidoPersonaje(p) {
-      audioPersonaje.pause();
-      if (!p.sonido) return;
-      audioPersonaje.src = p.sonido;
-      audioPersonaje.currentTime = 0;
-      audioPersonaje.play().catch(() => {}); // si el navegador bloquea el autoplay, no pasa nada grave
+    function mostrarPregunta(indice) {
+      preguntas.forEach((p, i) => p.hidden = i !== indice);
+      textoProgreso.textContent = `Pregunta ${indice + 1} de ${preguntas.length}`;
+      barraProgreso.style.width = `${(indice / preguntas.length) * 100}%`;
+      mensajeError.hidden = true;
+      mensajePista.hidden = true;
+      intentos = 0;
+      btnSiguiente.textContent = indice === preguntas.length - 1 ? 'Finalizar' : 'Siguiente';
     }
 
-    function crearIndicadores() {
-      indicadoresEl.innerHTML = '';
-      PERSONAJES.forEach((_, i) => {
-        const punto = document.createElement('div');
-        punto.className = 'punto' + (i === indiceActual ? ' activo' : '');
-        indicadoresEl.appendChild(punto);
+    btnSiguiente.addEventListener('click', () => {
+      const preguntaActual = preguntas[indiceActual];
+      const nombreInput = preguntaActual.querySelector('input').name;
+      const seleccionada = preguntaActual.querySelector(`input[name="${nombreInput}"]:checked`);
+      const respuestaCorrecta = preguntaActual.dataset.respuesta;
+
+      if (!seleccionada) {
+        mensajeError.textContent = 'Selecciona una opción primero';
+        mensajeError.hidden = false;
+        return;
+      }
+
+      if (seleccionada.value === respuestaCorrecta) {
+        indiceActual++;
+        if (indiceActual < preguntas.length) {
+          mostrarPregunta(indiceActual);
+        } else {
+          barraProgreso.style.width = '100%';
+          cuestionario.hidden = true;
+          pantallaClave.hidden = false;
+          localStorage.setItem('cuestionarioCompletado', 'true');
+          document.body.classList.add('pantalla-centrada');
+        }
+      } else {
+        intentos++;
+        mensajeError.textContent = 'Esa no es, ¡intenta de nuevo!';
+        mensajeError.hidden = false;
+        if (intentos >= 1) {
+          mensajePista.textContent = `💡 Pista: ${preguntaActual.dataset.pista}`;
+          mensajePista.hidden = false;
+        }
+      }
+    });
+
+    // ---------- Cartas ----------
+    const btnNuevaCarta = document.getElementById('btn-nueva-carta');
+    const formCarta = document.getElementById('form-carta');
+    const btnGuardarCarta = document.getElementById('btn-guardar-carta');
+    const btnCancelarCarta = document.getElementById('btn-cancelar-carta');
+    const cartaTitulo = document.getElementById('carta-titulo');
+    const cartaTexto = document.getElementById('carta-texto');
+    const cartaColor = document.getElementById('carta-color');
+    const cartaTamano = document.getElementById('carta-tamano');
+    const cartaArchivos = document.getElementById('carta-archivos');
+    const listaCartas = document.getElementById('lista-cartas');
+
+    let cartaEditandoId = null;
+
+    function limpiarFormCarta() {
+      cartaTitulo.value = '';
+      cartaTexto.value = '';
+      cartaColor.value = '#000000';
+      cartaTamano.value = '18px';
+      cartaArchivos.value = '';
+      cartaEditandoId = null;
+    }
+
+    btnNuevaCarta.addEventListener('click', () => {
+      limpiarFormCarta();
+      formCarta.hidden = false;
+    });
+
+    btnCancelarCarta.addEventListener('click', () => {
+      formCarta.hidden = true;
+      limpiarFormCarta();
+    });
+
+    // Solo comprime si la foto pesa más de ~700KB en base64 (deja margen bajo
+    // el límite de 1MB de Firestore); las que ya son ligeras se suben tal cual
+    const LIMITE_BASE64 = 700000;
+
+    function comprimirDataUrl(dataUrl, calidad, maxAncho) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => {
+          const escala = Math.min(1, maxAncho / img.width);
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width * escala;
+          canvas.height = img.height * escala;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', calidad));
+        };
+        img.src = dataUrl;
       });
     }
 
-    function renderizarPersonaje() {
-      const p = PERSONAJES[indiceActual];
-      marcoArco.innerHTML = p.imagen
-        ? `<img src="${p.imagen}" alt="${p.nombre}">`
-        : `<span class="silueta">🎭</span>`;
-      nombreEl.textContent = p.nombre;
-      tituloEl.textContent = p.titulo;
-      tituloEl.style.display = p.titulo ? '' : 'none';
+    // Convierte un timestamp de Firestore en una fecha legible (ej: "27 ago 2026")
+    function formatearFecha(timestamp) {
+      if (!timestamp || !timestamp.toDate) return '';
+      return timestamp.toDate().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
 
-      document.querySelectorAll('.indicadores .punto').forEach((punto, i) => {
-        punto.classList.toggle('activo', i === indiceActual);
+    async function procesarImagen(archivo) {
+      const dataUrlOriginal = await new Promise(resolve => {
+        const lector = new FileReader();
+        lector.onload = () => resolve(lector.result);
+        lector.readAsDataURL(archivo);
       });
 
-      reproducirSonidoPersonaje(p);
+      if (dataUrlOriginal.length <= LIMITE_BASE64) return dataUrlOriginal;
+
+      let resultado = dataUrlOriginal;
+      let calidad = 0.8;
+      let maxAncho = 1600;
+
+      while (resultado.length > LIMITE_BASE64 && (calidad > 0.25 || maxAncho > 400)) {
+        resultado = await comprimirDataUrl(dataUrlOriginal, calidad, maxAncho);
+        if (calidad > 0.25) {
+          calidad -= 0.15;
+        } else {
+          maxAncho -= 300;
+        }
+      }
+
+      return resultado;
     }
 
-    function cambiarPersonaje(direccion) {
-      [marcoArco, nombreEl, tituloEl, sombraSuelo].forEach(el => el.classList.add('cambiando'));
-
-      setTimeout(() => {
-        indiceActual = (indiceActual + direccion + PERSONAJES.length) % PERSONAJES.length;
-        renderizarPersonaje();
-        [marcoArco, nombreEl, tituloEl, sombraSuelo].forEach(el => el.classList.remove('cambiando'));
-      }, 200);
+    function leerArchivosComoBase64(archivos) {
+      return Promise.all(Array.from(archivos).map(procesarImagen));
     }
 
-    document.getElementById('btn-anterior').addEventListener('click', () => cambiarPersonaje(-1));
-    document.getElementById('btn-siguiente').addEventListener('click', () => cambiarPersonaje(1));
-
-    const revelacion = document.getElementById('revelacion');
-    const revelacionImagen = document.getElementById('revelacion-imagen');
-    const revelacionNombre = document.getElementById('revelacion-nombre');
-
-    document.getElementById('btn-elegir').addEventListener('click', () => {
-      const p = PERSONAJES[indiceActual];
-      localStorage.setItem('personajeElegido', p.nombre);
-
-      revelacionImagen.src = p.imagenRevelacion || p.imagen;
-      revelacionImagen.alt = p.nombre;
-      revelacionNombre.textContent = p.nombre;
-
-      revelacion.hidden = false;
-      requestAnimationFrame(() => revelacion.classList.add('visible'));
-
-      reproducirSonidoPersonaje(p); // vuelve a sonar desde el principio en la pantalla de revelación
+    btnGuardarCarta.addEventListener('click', () => {
+      if (!db) {
+        alert('No se pudo conectar con la base de datos. Revisa tu conexión e inténtalo de nuevo.');
+        return;
+      }
+      btnGuardarCarta.disabled = true;
+      leerArchivosComoBase64(cartaArchivos.files).then(imagenesNuevas => {
+        if (cartaEditandoId) {
+          const ref = db.collection('cartas').doc(cartaEditandoId);
+          ref.get().then(doc => {
+            const imagenesActuales = doc.data().imagenes || [];
+            return ref.update({
+              titulo: cartaTitulo.value || 'Sin título',
+              texto: cartaTexto.value,
+              color: cartaColor.value,
+              tamano: cartaTamano.value,
+              imagenes: imagenesActuales.concat(imagenesNuevas)
+            });
+          }).then(() => {
+            formCarta.hidden = true;
+            limpiarFormCarta();
+            btnGuardarCarta.disabled = false;
+          });
+        } else {
+          db.collection('cartas').add({
+            titulo: cartaTitulo.value || 'Sin título',
+            texto: cartaTexto.value,
+            color: cartaColor.value,
+            tamano: cartaTamano.value,
+            imagenes: imagenesNuevas,
+            autor: obtenerNombreUsuario(),
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          }).then(() => {
+            formCarta.hidden = true;
+            limpiarFormCarta();
+            btnGuardarCarta.disabled = false;
+          });
+        }
+      });
     });
 
-    document.getElementById('btn-continuar').addEventListener('click', () => {
-      document.getElementById('pantalla-regalo').hidden = false;
+    function renderizarCartas(cartas) {
+      listaCartas.innerHTML = '';
+
+      cartas.forEach(carta => {
+        const contenedor = document.createElement('div');
+        contenedor.className = 'carta';
+
+        const btnAbrir = document.createElement('button');
+        btnAbrir.className = 'carta-titulo-btn';
+        btnAbrir.innerHTML = `<span>💌 ${carta.titulo}</span><span class="carta-fecha">${formatearFecha(carta.creado)}</span><span class="flecha-acordeon">▸</span>`;
+
+        const contenido = document.createElement('div');
+        contenido.className = 'carta-contenido';
+        contenido.style.color = carta.color;
+        contenido.style.fontSize = carta.tamano;
+
+        const parrafo = document.createElement('p');
+        parrafo.textContent = carta.texto;
+        contenido.appendChild(parrafo);
+
+        (carta.imagenes || []).forEach(src => {
+          const img = document.createElement('img');
+          img.src = src;
+          img.className = 'adjunto-carta';
+          contenido.appendChild(img);
+        });
+
+        const acciones = document.createElement('div');
+        acciones.className = 'carta-acciones';
+
+        const btnEditar = document.createElement('button');
+        btnEditar.className = 'btn-mini';
+        btnEditar.textContent = 'Editar';
+        btnEditar.addEventListener('click', () => {
+          cartaEditandoId = carta.id;
+          cartaTitulo.value = carta.titulo;
+          cartaTexto.value = carta.texto;
+          cartaColor.value = carta.color;
+          cartaTamano.value = carta.tamano;
+          formCarta.hidden = false;
+        });
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.className = 'btn-mini eliminar';
+        btnEliminar.textContent = 'Eliminar';
+        btnEliminar.addEventListener('click', () => {
+          db.collection('cartas').doc(carta.id).delete();
+        });
+
+        acciones.appendChild(btnEditar);
+        acciones.appendChild(btnEliminar);
+        contenido.appendChild(acciones);
+
+        btnAbrir.addEventListener('click', () => {
+          contenedor.classList.toggle('abierta');
+        });
+
+        contenedor.appendChild(btnAbrir);
+        contenedor.appendChild(contenido);
+        listaCartas.appendChild(contenedor);
+      });
+    }
+
+    if (db) {
+      db.collection('cartas').orderBy('creado').onSnapshot(snapshot => {
+        const cartas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderizarCartas(cartas);
+      });
+    }
+
+    // ---------- Fotos y Videos ----------
+    const btnNuevaFoto = document.getElementById('btn-nueva-foto');
+    const formMultimedia = document.getElementById('form-multimedia');
+    const inputFotos = document.getElementById('input-fotos');
+    const multimediaCategoria = document.getElementById('multimedia-categoria');
+    const listaCategorias = document.getElementById('lista-categorias');
+    const btnSubirMultimedia = document.getElementById('btn-subir-multimedia');
+    const btnCancelarMultimedia = document.getElementById('btn-cancelar-multimedia');
+    const filtroCategorias = document.getElementById('filtro-categorias');
+    const galeriaFotos = document.getElementById('galeria-fotos');
+    const galeriaVideos = document.getElementById('galeria-videos');
+
+    let categoriaActiva = 'Todas';
+    let ultimosItems = [];
+
+    btnNuevaFoto.addEventListener('click', () => {
+      formMultimedia.hidden = false;
     });
 
-    // ---------- Abrir la caja de regalo ----------
-    const cajaRegalo = document.getElementById('caja-regalo');
-    const regaloInstruccion = document.getElementById('regalo-instruccion');
-    const regaloImagen = document.getElementById('regalo-imagen');
-    const particulasRegalo = document.getElementById('particulas-regalo');
-    const btnContinuarFinal = document.getElementById('btn-continuar-final');
-    let regaloAbierto = false;
+    btnCancelarMultimedia.addEventListener('click', () => {
+      formMultimedia.hidden = true;
+      inputFotos.value = '';
+      multimediaCategoria.value = '';
+    });
 
-    function dispararParticulasRegalo() {
-      const cantidad = 18;
-      for (let i = 0; i < cantidad; i++) {
-        const p = document.createElement('div');
-        p.className = 'particula-regalo';
-        const angulo = (Math.PI * 2 * i) / cantidad + Math.random() * 0.3;
-        const distancia = 70 + Math.random() * 50;
-        p.style.setProperty('--px', Math.cos(angulo) * distancia + 'px');
-        p.style.setProperty('--py', Math.sin(angulo) * distancia + 'px');
-        particulasRegalo.appendChild(p);
-        requestAnimationFrame(() => p.classList.add('disparada'));
-        setTimeout(() => p.remove(), 1000);
+    function leerVideoComoBase64(archivo) {
+      return new Promise(resolve => {
+        const lector = new FileReader();
+        lector.onload = () => resolve(lector.result);
+        lector.readAsDataURL(archivo);
+      });
+    }
+
+    function blobABase64(blob) {
+      return new Promise(resolve => {
+        const lector = new FileReader();
+        lector.onload = () => resolve(lector.result);
+        lector.readAsDataURL(blob);
+      });
+    }
+
+    // Intenta comprimir el video reduciendo el bitrate según su duración.
+    // Si el navegador no soporta esto (ej. algunas versiones de Safari),
+    // devuelve null y se sube el video sin comprimir.
+    function comprimirVideo(archivo) {
+      return new Promise(resolve => {
+        if (!('MediaRecorder' in window)) {
+          resolve(null);
+          return;
+        }
+
+        const videoURL = URL.createObjectURL(archivo);
+        const video = document.createElement('video');
+        video.src = videoURL;
+        video.muted = false;
+        video.playsInline = true;
+        video.preload = 'auto';
+
+        video.onloadedmetadata = () => {
+          const duracion = video.duration || 5;
+          const bytesObjetivo = 4000000; // ya no depende de caber en 1 solo documento
+          let bitsPorSegundo = Math.floor((bytesObjetivo * 8) / duracion);
+          bitsPorSegundo = Math.max(250000, Math.min(bitsPorSegundo, 4000000));
+
+          let stream;
+          try {
+            stream = video.captureStream ? video.captureStream() : video.mozCaptureStream();
+          } catch (e) {
+            URL.revokeObjectURL(videoURL);
+            resolve(null);
+            return;
+          }
+          if (!stream) {
+            URL.revokeObjectURL(videoURL);
+            resolve(null);
+            return;
+          }
+
+          let mimeType = 'video/webm;codecs=vp8,opus';
+          if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
+          if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = '';
+
+          let mediaRecorder;
+          try {
+            mediaRecorder = mimeType
+              ? new MediaRecorder(stream, { mimeType, videoBitsPerSecond: bitsPorSegundo })
+              : new MediaRecorder(stream, { videoBitsPerSecond: bitsPorSegundo });
+          } catch (e) {
+            URL.revokeObjectURL(videoURL);
+            resolve(null);
+            return;
+          }
+
+          const chunks = [];
+          mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+          mediaRecorder.onstop = () => {
+            URL.revokeObjectURL(videoURL);
+            resolve(chunks.length ? new Blob(chunks, { type: mimeType || 'video/webm' }) : null);
+          };
+          mediaRecorder.onerror = () => {
+            URL.revokeObjectURL(videoURL);
+            resolve(null);
+          };
+
+          video.onended = () => {
+            try { mediaRecorder.stop(); } catch (e) {}
+          };
+
+          mediaRecorder.start();
+          video.play().catch(() => {
+            try { mediaRecorder.stop(); } catch (e) {}
+            URL.revokeObjectURL(videoURL);
+            resolve(null);
+          });
+        };
+
+        video.onerror = () => resolve(null);
+      });
+    }
+
+    async function procesarVideo(archivo) {
+      const blobComprimido = await comprimirVideo(archivo);
+      if (blobComprimido) return blobABase64(blobComprimido);
+      return leerVideoComoBase64(archivo);
+    }
+
+    // Un documento de Firestore aguanta ~1MB, así que un video se parte en
+    // trozos guardados como sub-documentos y se vuelven a unir al mostrarlo
+    const TAMANO_FRAGMENTO = 900000;
+
+    async function subirVideoConFragmentos(dataUrl, categoria) {
+      const docRef = db.collection('fotos').doc();
+      const autor = obtenerNombreUsuario();
+
+      if (dataUrl.length <= TAMANO_FRAGMENTO) {
+        await docRef.set({
+          src: dataUrl,
+          tipo: 'video',
+          categoria,
+          fragmentado: false,
+          autor,
+          creado: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        return;
+      }
+
+      const fragmentos = [];
+      for (let i = 0; i < dataUrl.length; i += TAMANO_FRAGMENTO) {
+        fragmentos.push(dataUrl.slice(i, i + TAMANO_FRAGMENTO));
+      }
+
+      await docRef.set({
+        tipo: 'video',
+        categoria,
+        fragmentado: true,
+        totalFragmentos: fragmentos.length,
+        autor,
+        creado: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      await Promise.all(fragmentos.map((fragmento, i) =>
+        docRef.collection('fragmentos').doc(String(i)).set({ indice: i, data: fragmento })
+      ));
+    }
+
+    function cargarVideoFragmentado(id) {
+      return db.collection('fotos').doc(id).collection('fragmentos')
+        .orderBy('indice')
+        .get()
+        .then(snapshot => snapshot.docs.map(d => d.data().data).join(''));
+    }
+
+    function eliminarItemMultimedia(item) {
+      const ref = db.collection('fotos').doc(item.id);
+      if (item.fragmentado) {
+        ref.collection('fragmentos').get().then(snapshot => {
+          const batch = db.batch();
+          snapshot.docs.forEach(d => batch.delete(d.ref));
+          batch.delete(ref);
+          return batch.commit();
+        });
+      } else {
+        ref.delete();
       }
     }
 
-    cajaRegalo.addEventListener('click', () => {
-      if (regaloAbierto) return;
-      regaloAbierto = true;
-
-      cajaRegalo.classList.add('abriendo');
-      regaloInstruccion.classList.add('oculto');
-      dispararParticulasRegalo();
-
-      setTimeout(() => {
-        cajaRegalo.classList.add('escondida');
-        regaloImagen.classList.add('visible');
-        btnContinuarFinal.classList.add('visible');
-      }, 500);
-    });
-
-    btnContinuarFinal.addEventListener('click', () => {
-      location.href = 'Regalo/Index.html';
-    });
-
-    crearIndicadores();
-
-    // La selección de personaje (con su sonido y el telón abriéndose) no
-    // empieza hasta que se toca "Vale" en la pantalla del mensaje
-    document.getElementById('btn-ok-mensaje').addEventListener('click', () => {
-      document.getElementById('pantalla-mensaje').hidden = true;
-      renderizarPersonaje();
-      setTimeout(() => {
-        document.body.classList.remove('telon-cerrado');
-        document.body.classList.add('telon-abierto');
-      }, 350);
-    });
-
-    // Red de seguridad: si el navegador bloqueó el sonido inicial (por no
-    // venir de un toque directo), se intenta de nuevo en cuanto la persona
-    // toque la pantalla por primera vez
-    document.addEventListener('click', function primerToque() {
-      if (audioPersonaje.paused && audioPersonaje.src) {
-        audioPersonaje.play().catch(() => {});
+    btnSubirMultimedia.addEventListener('click', async () => {
+      if (!db) {
+        alert('No se pudo conectar con la base de datos. Revisa tu conexión e inténtalo de nuevo.');
+        return;
       }
-      document.removeEventListener('click', primerToque);
-    }, { once: true });
+      const archivos = Array.from(inputFotos.files);
+      if (archivos.length === 0) return;
+
+      const categoria = multimediaCategoria.value.trim() || 'Sin categoría';
+      btnSubirMultimedia.disabled = true;
+      btnSubirMultimedia.textContent = 'Subiendo...';
+
+      for (const archivo of archivos) {
+        const esVideo = archivo.type.startsWith('video/');
+
+        if (esVideo) {
+          const src = await procesarVideo(archivo);
+          // Límite de seguridad: ~27MB (unos 30 fragmentos) para no disparar
+          // demasiadas escrituras con un video excesivamente largo
+          if (src.length > TAMANO_FRAGMENTO * 30) {
+            alert(`El video "${archivo.name}" sigue siendo muy pesado incluso comprimido. Prueba con un video más corto.`);
+            continue;
+          }
+          await subirVideoConFragmentos(src, categoria);
+        } else {
+          const src = await procesarImagen(archivo);
+          await db.collection('fotos').add({
+            src,
+            tipo: 'foto',
+            categoria,
+            autor: obtenerNombreUsuario(),
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+      }
+
+      btnSubirMultimedia.disabled = false;
+      btnSubirMultimedia.textContent = 'Subir';
+      formMultimedia.hidden = true;
+      inputFotos.value = '';
+      multimediaCategoria.value = '';
+    });
+
+    function renderizarFiltroCategorias(items) {
+      const categorias = ['Todas', ...new Set(items.map(i => i.categoria || 'Sin categoría'))];
+      filtroCategorias.innerHTML = '';
+
+      categorias.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.textContent = cat;
+        if (cat === categoriaActiva) btn.classList.add('activa');
+        btn.addEventListener('click', () => {
+          categoriaActiva = cat;
+          renderizarTodo(ultimosItems);
+        });
+        filtroCategorias.appendChild(btn);
+      });
+
+      // Autocompletar categorías al escribir una nueva
+      listaCategorias.innerHTML = '';
+      [...new Set(items.map(i => i.categoria || 'Sin categoría'))].forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        listaCategorias.appendChild(option);
+      });
+    }
+
+    // Visor de foto en grande
+    const visorMedia = document.getElementById('visor-media');
+    const visorMediaImg = document.getElementById('visor-media-img');
+    const visorMediaFecha = document.getElementById('visor-media-fecha');
+    const cerrarVisorMedia = document.getElementById('cerrar-visor-media');
+
+    function abrirVisorMedia(src, fecha) {
+      visorMediaImg.src = src;
+      visorMediaFecha.textContent = fecha;
+      visorMedia.classList.add('entrando');
+      visorMedia.hidden = false;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => visorMedia.classList.remove('entrando'));
+      });
+    }
+
+    cerrarVisorMedia.addEventListener('click', () => { visorMedia.hidden = true; });
+    visorMedia.addEventListener('click', (e) => {
+      if (e.target === visorMedia) visorMedia.hidden = true;
+    });
+
+    function crearItemMultimedia(item, esVideo) {
+      const div = document.createElement('div');
+      div.className = 'foto-item';
+
+      const btnEliminar = document.createElement('button');
+      btnEliminar.className = 'btn-x';
+      btnEliminar.textContent = '✕';
+      btnEliminar.addEventListener('click', () => {
+        eliminarItemMultimedia(item);
+      });
+
+      const fecha = document.createElement('span');
+      fecha.className = 'media-fecha';
+      fecha.textContent = formatearFecha(item.creado);
+
+      if (esVideo) {
+        const video = document.createElement('video');
+        video.controls = true;
+
+        if (item.fragmentado) {
+          const cargando = document.createElement('p');
+          cargando.textContent = 'Cargando video...';
+          div.appendChild(cargando);
+          cargarVideoFragmentado(item.id).then(src => {
+            video.src = src;
+            cargando.remove();
+          });
+        } else {
+          video.src = item.src;
+        }
+
+        div.appendChild(video);
+      } else {
+        const img = document.createElement('img');
+        img.src = item.src;
+        img.addEventListener('click', () => abrirVisorMedia(item.src, fecha.textContent));
+        div.appendChild(img);
+      }
+
+      div.appendChild(fecha);
+      div.appendChild(btnEliminar);
+      return div;
+    }
+
+    function renderizarTodo(items) {
+      renderizarFiltroCategorias(items);
+
+      const filtrados = categoriaActiva === 'Todas'
+        ? items
+        : items.filter(i => (i.categoria || 'Sin categoría') === categoriaActiva);
+
+      galeriaFotos.innerHTML = '';
+      galeriaVideos.innerHTML = '';
+
+      filtrados.forEach(item => {
+        const esVideo = item.tipo === 'video';
+        const elemento = crearItemMultimedia(item, esVideo);
+        (esVideo ? galeriaVideos : galeriaFotos).appendChild(elemento);
+      });
+    }
+
+    if (db) {
+      db.collection('fotos').orderBy('creado').onSnapshot(snapshot => {
+        ultimosItems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderizarTodo(ultimosItems);
+      });
+    }
+
+    // ---------- Bucket List ----------
+    const metaTexto = document.getElementById('meta-texto');
+    const btnAgregarMeta = document.getElementById('btn-agregar-meta');
+    const listaMetas = document.getElementById('lista-metas');
+
+    btnAgregarMeta.addEventListener('click', () => {
+      if (!db) {
+        alert('No se pudo conectar con la base de datos. Revisa tu conexión e inténtalo de nuevo.');
+        return;
+      }
+      const texto = metaTexto.value.trim();
+      if (!texto) return;
+
+      db.collection('metas').add({
+        texto,
+        hecho: false,
+        autor: obtenerNombreUsuario(),
+        creado: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      metaTexto.value = '';
+    });
+
+    function renderizarMetas(metas) {
+      listaMetas.innerHTML = '';
+
+      metas.forEach(meta => {
+        const li = document.createElement('li');
+        if (meta.hecho) li.classList.add('completada');
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = meta.hecho;
+        checkbox.addEventListener('change', () => {
+          db.collection('metas').doc(meta.id).update({ hecho: checkbox.checked });
+        });
+
+        const span = document.createElement('span');
+        span.textContent = meta.texto;
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.className = 'btn-x';
+        btnEliminar.textContent = '✕';
+        btnEliminar.addEventListener('click', () => {
+          db.collection('metas').doc(meta.id).delete();
+        });
+
+        li.appendChild(checkbox);
+        li.appendChild(span);
+        li.appendChild(btnEliminar);
+        listaMetas.appendChild(li);
+      });
+    }
+
+    if (db) {
+      db.collection('metas').orderBy('creado').onSnapshot(snapshot => {
+        const metas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderizarMetas(metas);
+      });
+    }
+
+    // ---------- Citas ----------
+    const btnNuevaCita = document.getElementById('btn-nueva-cita');
+    const formCita = document.getElementById('form-cita');
+    const btnGuardarCita = document.getElementById('btn-guardar-cita');
+    const btnCancelarCita = document.getElementById('btn-cancelar-cita');
+    const citaTitulo = document.getElementById('cita-titulo');
+    const citaFecha = document.getElementById('cita-fecha');
+    const citaDescripcion = document.getElementById('cita-descripcion');
+    const citaArchivos = document.getElementById('cita-archivos');
+    const listaCitas = document.getElementById('lista-citas');
+
+    let citaEditandoId = null;
+
+    function limpiarFormCita() {
+      citaTitulo.value = '';
+      citaFecha.value = '';
+      citaDescripcion.value = '';
+      citaArchivos.value = '';
+      citaEditandoId = null;
+    }
+
+    btnNuevaCita.addEventListener('click', () => {
+      limpiarFormCita();
+      formCita.hidden = false;
+    });
+
+    btnCancelarCita.addEventListener('click', () => {
+      formCita.hidden = true;
+      limpiarFormCita();
+    });
+
+    // Convierte "YYYY-MM-DD" en algo legible, ej: "11 abr 2026"
+    function formatearFechaCita(fechaStr) {
+      if (!fechaStr) return '';
+      const fecha = new Date(fechaStr + 'T00:00:00');
+      return fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    btnGuardarCita.addEventListener('click', () => {
+      if (!db) {
+        alert('No se pudo conectar con la base de datos. Revisa tu conexión e inténtalo de nuevo.');
+        return;
+      }
+      btnGuardarCita.disabled = true;
+      leerArchivosComoBase64(citaArchivos.files).then(imagenesNuevas => {
+        if (citaEditandoId) {
+          const ref = db.collection('citas').doc(citaEditandoId);
+          ref.get().then(doc => {
+            const imagenesActuales = doc.data().imagenes || [];
+            return ref.update({
+              titulo: citaTitulo.value || 'Sin título',
+              fecha: citaFecha.value,
+              descripcion: citaDescripcion.value,
+              imagenes: imagenesActuales.concat(imagenesNuevas)
+            });
+          }).then(() => {
+            formCita.hidden = true;
+            limpiarFormCita();
+            btnGuardarCita.disabled = false;
+          });
+        } else {
+          db.collection('citas').add({
+            titulo: citaTitulo.value || 'Sin título',
+            fecha: citaFecha.value,
+            descripcion: citaDescripcion.value,
+            imagenes: imagenesNuevas,
+            autor: obtenerNombreUsuario(),
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          }).then(() => {
+            formCita.hidden = true;
+            limpiarFormCita();
+            btnGuardarCita.disabled = false;
+          });
+        }
+      });
+    });
+
+    function renderizarCitas(citas) {
+      listaCitas.innerHTML = '';
+
+      citas.forEach(cita => {
+        const contenedor = document.createElement('div');
+        contenedor.className = 'cita';
+
+        const btnAbrir = document.createElement('button');
+        btnAbrir.className = 'cita-titulo-btn';
+        btnAbrir.innerHTML = `<span>💕 ${cita.titulo}</span><span class="cita-fecha">${formatearFechaCita(cita.fecha)}</span><span class="cita-flecha">▸</span>`;
+
+        const contenido = document.createElement('div');
+        contenido.className = 'cita-contenido';
+
+        const parrafo = document.createElement('p');
+        parrafo.textContent = cita.descripcion;
+        contenido.appendChild(parrafo);
+
+        if ((cita.imagenes || []).length > 0) {
+          const galeria = document.createElement('div');
+          galeria.className = 'galeria-cita';
+          cita.imagenes.forEach(src => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.addEventListener('click', () => abrirVisorMedia(src, formatearFechaCita(cita.fecha)));
+            galeria.appendChild(img);
+          });
+          contenido.appendChild(galeria);
+        }
+
+        const acciones = document.createElement('div');
+        acciones.className = 'cita-acciones';
+
+        const btnEditar = document.createElement('button');
+        btnEditar.className = 'btn-mini';
+        btnEditar.textContent = 'Editar';
+        btnEditar.addEventListener('click', () => {
+          citaEditandoId = cita.id;
+          citaTitulo.value = cita.titulo;
+          citaFecha.value = cita.fecha;
+          citaDescripcion.value = cita.descripcion;
+          formCita.hidden = false;
+        });
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.className = 'btn-mini eliminar';
+        btnEliminar.textContent = 'Eliminar';
+        btnEliminar.addEventListener('click', () => {
+          db.collection('citas').doc(cita.id).delete();
+        });
+
+        acciones.appendChild(btnEditar);
+        acciones.appendChild(btnEliminar);
+        contenido.appendChild(acciones);
+
+        btnAbrir.addEventListener('click', () => {
+          contenedor.classList.toggle('abierta');
+        });
+
+        contenedor.appendChild(btnAbrir);
+        contenedor.appendChild(contenido);
+        listaCitas.appendChild(contenedor);
+      });
+    }
+
+    if (db) {
+      db.collection('citas').orderBy('fecha', 'desc').onSnapshot(snapshot => {
+        const citas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderizarCitas(citas);
+      });
+    }
+
+    // ---------- Notificaciones push ----------
+    const VAPID_PUBLIC_KEY = 'BOXRvDCyRFSZIvHdJk2z2auDIU75W7nrhx_SUgXu6OKrSpJXlMkHMokKsUfyEUgU-HAH9pn8C6jJYIJ16bkvQDc';
+    const btnNotificaciones = document.getElementById('btn-notificaciones');
+
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+      const rawData = atob(base64);
+      return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+    }
+
+    async function desactivarNotificaciones() {
+      try {
+        if ('serviceWorker' in navigator) {
+          const registro = await navigator.serviceWorker.getRegistration();
+          if (registro) {
+            const suscripcion = await registro.pushManager.getSubscription();
+            if (suscripcion) {
+              if (db) await db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).delete();
+              await suscripcion.unsubscribe();
+            }
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+      btnNotificaciones.textContent = 'Activar avisos';
+      btnNotificaciones.classList.remove('activo');
+    }
+
+    async function activarNotificaciones() {
+      if (btnNotificaciones.classList.contains('activo')) {
+        await desactivarNotificaciones();
+        return;
+      }
+
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        alert('Tu navegador no soporta notificaciones aquí.');
+        return;
+      }
+      try {
+        const permiso = await Notification.requestPermission();
+        if (permiso !== 'granted') {
+          alert('No diste permiso para las notificaciones.');
+          return;
+        }
+        const registro = await navigator.serviceWorker.register('sw.js');
+        await navigator.serviceWorker.ready; // espera a que el service worker esté realmente activo
+        const suscripcion = await registro.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        });
+
+        if (db) {
+          await db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({
+            suscripcion: suscripcion.toJSON(),
+            nombre: obtenerNombreUsuario(),
+            prefAvisosContenido: checkAvisosContenido.checked,
+            prefAvisosMascota: checkAvisosMascota.checked,
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+
+        btnNotificaciones.textContent = '🔔 Avisos activados';
+        btnNotificaciones.classList.add('activo');
+      } catch (err) {
+        console.error(err);
+        alert('No se pudo activar:\n' + (err.name || '') + '\n' + (err.message || err));
+      }
+    }
+
+    btnNotificaciones.addEventListener('click', activarNotificaciones);
+
+    if ('Notification' in window && Notification.permission === 'granted') {
+      btnNotificaciones.textContent = '🔔 Avisos activados';
+      btnNotificaciones.classList.add('activo');
+    }
+
+    // ---------- Configuración: nombre de usuario ----------
+    const inputNombreUsuario = document.getElementById('input-nombre-usuario');
+    const btnGuardarNombreUsuario = document.getElementById('btn-guardar-nombre-usuario');
+
+    inputNombreUsuario.value = localStorage.getItem('nombreUsuario') || '';
+
+    btnGuardarNombreUsuario.addEventListener('click', () => {
+      const nombre = inputNombreUsuario.value.trim();
+      if (nombre) {
+        localStorage.setItem('nombreUsuario', nombre);
+        registrarUsuarioEnLaWeb(nombre);
+        sincronizarNombreConSuscripcion(nombre);
+      } else {
+        localStorage.removeItem('nombreUsuario');
+      }
+      inputNombreUsuario.blur();
+
+      const textoOriginal = btnGuardarNombreUsuario.textContent;
+      btnGuardarNombreUsuario.textContent = '✓ Guardado';
+      setTimeout(() => { btnGuardarNombreUsuario.textContent = textoOriginal; }, 1500);
+    });
+
+    // Devuelve el nombre guardado, o null si no se ha puesto ninguno
+    function obtenerNombreUsuario() {
+      return localStorage.getItem('nombreUsuario') || null;
+    }
+
+    // Registra (o actualiza) a la persona en la base de datos compartida,
+    // para que se vea desde cualquier dispositivo, no solo el suyo
+    function registrarUsuarioEnLaWeb(nombre) {
+      if (!db || !nombre) return;
+      const id = nombre.trim().toLowerCase();
+      db.collection('usuarios').doc(id).set({
+        nombre: nombre.trim(),
+        unido: firebase.firestore.FieldValue.serverTimestamp(),
+        ultimaVez: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    }
+
+    // Si ya tenía las notificaciones activadas antes de poner el nombre (o si
+    // lo cambia después), esto actualiza su suscripción para que quede
+    // asociada al nombre correcto — así el orden en que se hagan las cosas
+    // ya no importa
+    async function sincronizarNombreConSuscripcion(nombre) {
+      if (!db || !('serviceWorker' in navigator)) return;
+      const registro = await navigator.serviceWorker.getRegistration();
+      if (!registro) return;
+      const suscripcion = await registro.pushManager.getSubscription();
+      if (!suscripcion) return;
+      db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({ nombre }, { merge: true });
+    }
+
+    // Actualiza "última vez activo" cada vez que se abre la web, si ya tiene nombre puesto
+    if (db && obtenerNombreUsuario()) {
+      const idUsuarioActual = obtenerNombreUsuario().trim().toLowerCase();
+      db.collection('usuarios').doc(idUsuarioActual).set({
+        ultimaVez: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    }
+
+    // ---------- Configuración: volumen de la música ----------
+    const controlVolumen = document.getElementById('control-volumen');
+    const volumenGuardado = localStorage.getItem('volumenMusica');
+
+    if (volumenGuardado !== null) {
+      cancionFondo.volume = Number(volumenGuardado);
+      controlVolumen.value = Math.round(Number(volumenGuardado) * 100);
+    }
+
+    controlVolumen.addEventListener('input', () => {
+      const nuevoVolumen = controlVolumen.value / 100;
+      cancionFondo.volume = nuevoVolumen;
+      localStorage.setItem('volumenMusica', nuevoVolumen);
+    });
+
+    // ---------- Configuración: cerrar sesión ----------
+    document.getElementById('btn-cerrar-sesion').addEventListener('click', () => {
+      sessionStorage.removeItem('claveOk');
+      location.reload();
+    });
+
+    // ---------- Configuración: reiniciar cuestionario ----------
+    document.getElementById('btn-reiniciar-cuestionario').addEventListener('click', () => {
+      localStorage.removeItem('cuestionarioCompletado');
+      sessionStorage.removeItem('claveOk');
+      location.reload();
+    });
+
+    // ---------- Configuración: navegación por categorías ----------
+    document.querySelectorAll('.config-cat-btn').forEach(boton => {
+      boton.addEventListener('click', () => {
+        document.querySelectorAll('.config-cat-btn').forEach(b => b.classList.remove('activa'));
+        boton.classList.add('activa');
+        document.querySelectorAll('.config-categoria-contenido').forEach(div => {
+          div.hidden = div.dataset.catContenido !== boton.dataset.cat;
+        });
+      });
+    });
+
+    // ---------- Configuración: color de acento ----------
+    const COLORES_ACENTO = {
+      naranja: { principal: '#e8703a', suave: '#f6ddc9' },
+      rosa:    { principal: '#d46a8a', suave: '#f8dde6' },
+      lavanda: { principal: '#8a6fc4', suave: '#e7ddf6' },
+      verde:   { principal: '#5f8a5f', suave: '#dfe9df' },
+      azul:    { principal: '#4a7fb5', suave: '#dde8f2' }
+    };
+
+    function aplicarColorAcento(clave) {
+      const color = COLORES_ACENTO[clave] || COLORES_ACENTO.naranja;
+      document.documentElement.style.setProperty('--naranja', color.principal);
+      document.documentElement.style.setProperty('--naranja-suave', color.suave);
+      document.querySelectorAll('#swatches-color-acento .swatch').forEach(b => {
+        b.classList.toggle('activo', b.dataset.color === clave);
+      });
+    }
+
+    const colorGuardado = localStorage.getItem('colorAcento') || 'naranja';
+    aplicarColorAcento(colorGuardado);
+
+    document.querySelectorAll('#swatches-color-acento .swatch').forEach(boton => {
+      boton.addEventListener('click', () => {
+        localStorage.setItem('colorAcento', boton.dataset.color);
+        aplicarColorAcento(boton.dataset.color);
+      });
+    });
+
+    // ---------- Configuración: tamaño del texto ----------
+    function aplicarTamanoTexto(tamano) {
+      contenedorPrincipal.classList.toggle('texto-grande', tamano === 'grande');
+      mascotaWidget.classList.toggle('texto-grande', tamano === 'grande');
+    }
+
+    const contenedorPrincipal = document.querySelector('.contenedor');
+    const tamanoGuardado = localStorage.getItem('tamanoTexto') || 'normal';
+    aplicarTamanoTexto(tamanoGuardado);
+    document.querySelector(`input[name="tamano-texto"][value="${tamanoGuardado}"]`).checked = true;
+
+    document.querySelectorAll('input[name="tamano-texto"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        localStorage.setItem('tamanoTexto', radio.value);
+        aplicarTamanoTexto(radio.value);
+      });
+    });
+
+    // ---------- Configuración: silenciar música por completo ----------
+    const checkSilenciarMusica = document.getElementById('check-silenciar-musica');
+    checkSilenciarMusica.checked = localStorage.getItem('musicaSilenciada') === 'true';
+    cancionFondo.muted = checkSilenciarMusica.checked;
+
+    checkSilenciarMusica.addEventListener('change', () => {
+      cancionFondo.muted = checkSilenciarMusica.checked;
+      localStorage.setItem('musicaSilenciada', checkSilenciarMusica.checked);
+    });
+
+    // ---------- Configuración: reducir movimiento ----------
+    const checkReducirMovimiento = document.getElementById('check-reducir-movimiento');
+    const reducirGuardado = localStorage.getItem('reducirMovimiento') === 'true';
+    checkReducirMovimiento.checked = reducirGuardado;
+    document.body.classList.toggle('reducir-movimiento', reducirGuardado);
+
+    checkReducirMovimiento.addEventListener('change', () => {
+      document.body.classList.toggle('reducir-movimiento', checkReducirMovimiento.checked);
+      localStorage.setItem('reducirMovimiento', checkReducirMovimiento.checked);
+    });
+
+    // ---------- Configuración: qué tipo de avisos recibir ----------
+    const checkAvisosContenido = document.getElementById('check-avisos-contenido');
+    const checkAvisosMascota = document.getElementById('check-avisos-mascota');
+
+    checkAvisosContenido.checked = localStorage.getItem('avisosContenido') !== 'false';
+    checkAvisosMascota.checked = localStorage.getItem('avisosMascota') !== 'false';
+
+    async function actualizarPreferenciasAvisos() {
+      localStorage.setItem('avisosContenido', checkAvisosContenido.checked);
+      localStorage.setItem('avisosMascota', checkAvisosMascota.checked);
+
+      if (!db || !('serviceWorker' in navigator)) return;
+      const registro = await navigator.serviceWorker.getRegistration();
+      if (!registro) return;
+      const suscripcion = await registro.pushManager.getSubscription();
+      if (!suscripcion) return;
+
+      db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({
+        prefAvisosContenido: checkAvisosContenido.checked,
+        prefAvisosMascota: checkAvisosMascota.checked
+      }, { merge: true });
+    }
+
+    checkAvisosContenido.addEventListener('change', actualizarPreferenciasAvisos);
+    checkAvisosMascota.addEventListener('change', actualizarPreferenciasAvisos);
+
+    // ---------- Easter egg: doble toque con dos dedos ----------
+    let ultimoToqueDosDedos = 0;
+
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) {
+        const ahora = Date.now();
+        if (ahora - ultimoToqueDosDedos < 400) {
+          const x = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+          const y = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+          mostrarStickerDobleToque(x, y);
+          ultimoToqueDosDedos = 0;
+        } else {
+          ultimoToqueDosDedos = ahora;
+        }
+      }
+    });
+
+    function mostrarStickerDobleToque(x, y) {
+      const img = document.createElement('img');
+      img.src = 'IMG_6447.png';
+      img.className = 'sticker-doble-toque';
+      img.style.left = `${x}px`;
+      img.style.top = `${y}px`;
+      document.body.appendChild(img);
+      setTimeout(() => img.remove(), 1200);
+    }
+
+    // ---------- Panel secreto: 5 toques con 3 dedos ----------
+    let contadorToques3Dedos = 0;
+    let temporizadorToques3Dedos = null;
+
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 3) {
+        contadorToques3Dedos++;
+        clearTimeout(temporizadorToques3Dedos);
+        temporizadorToques3Dedos = setTimeout(() => { contadorToques3Dedos = 0; }, 3000);
+
+        if (contadorToques3Dedos >= 5) {
+          contadorToques3Dedos = 0;
+          abrirPanelSecreto();
+        }
+      }
+    });
+
+    const panelSecreto = document.getElementById('panel-secreto');
+    const panelSecretoInfo = document.getElementById('panel-secreto-info');
+
+    function abrirPanelSecreto() {
+      panelSecreto.hidden = false;
+      actualizarInfoPanelSecreto();
+    }
+    document.getElementById('cerrar-panel-secreto').addEventListener('click', () => {
+      panelSecreto.hidden = true;
+    });
+
+    async function actualizarInfoPanelSecreto() {
+      let suscrito = 'No';
+      let endpointCorto = '—';
+      if ('serviceWorker' in navigator) {
+        const registro = await navigator.serviceWorker.getRegistration();
+        if (registro) {
+          const suscripcion = await registro.pushManager.getSubscription();
+          if (suscripcion) {
+            suscrito = 'Sí';
+            endpointCorto = '...' + suscripcion.endpoint.slice(-16);
+          }
+        }
+      }
+      panelSecretoInfo.textContent =
+`nombre: ${localStorage.getItem('nombreUsuario') || '(sin poner)'}
+suscrito a avisos: ${suscrito}
+endpoint: ${endpointCorto}
+avisos contenido: ${localStorage.getItem('avisosContenido') !== 'false'}
+avisos mascota: ${localStorage.getItem('avisosMascota') !== 'false'}
+color acento: ${localStorage.getItem('colorAcento') || 'naranja'}
+tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
+    }
+
+    // ---------- Las herramientas del panel ----------
+    const FRASES_SORPRESA = [
+      '🎁 Alguien está pensando mucho en ti ahora mismo...',
+      '🧡 Sorpresa: eres la persona favorita de alguien por aquí',
+      '✨ Psst... alguien te manda un abrazo desde el otro lado de la pantalla',
+      '💌 Un mensaje sorpresa solo para alegrarte el día',
+      '🌟 Recordatorio sorpresa: te quieren muchísimo'
+    ];
+
+    // ---------- Selector visual de personas (con casillas, sin escribir números) ----------
+    const psSelector = document.getElementById('ps-selector');
+    const psSelectorTitulo = document.getElementById('ps-selector-titulo');
+    const psSelectorLista = document.getElementById('ps-selector-lista');
+    const psSelectorContinuar = document.getElementById('ps-selector-continuar');
+    const psSelectorCancelar = document.getElementById('ps-selector-cancelar');
+
+    function cerrarSelector() {
+      psSelector.hidden = true;
+      psSelectorLista.innerHTML = '';
+    }
+    psSelectorCancelar.addEventListener('click', cerrarSelector);
+
+    // Muestra casillas para elegir a una o varias personas registradas.
+    // Devuelve un array de nombres (o ['todos']), o null si se cancela.
+    async function elegirUsuarios(titulo) {
+      if (!db) return null;
+      const snap = await db.collection('usuarios').get();
+      const nombres = snap.docs.map(d => d.data().nombre);
+
+      psSelectorTitulo.textContent = titulo || '¿A quién?';
+      psSelectorLista.innerHTML = '';
+      psSelectorContinuar.textContent = 'Continuar';
+
+      if (!nombres.length) {
+        psSelectorLista.innerHTML = '<p class="ps-nota">Todavía nadie ha puesto su nombre en Configuración → Perfil.</p>';
+      } else {
+        const filaTodos = document.createElement('label');
+        filaTodos.className = 'ps-opcion-fila';
+        filaTodos.innerHTML = '<input type="checkbox" value="todos"> <strong>Todos</strong>';
+        psSelectorLista.appendChild(filaTodos);
+
+        nombres.forEach(nombre => {
+          const fila = document.createElement('label');
+          fila.className = 'ps-opcion-fila';
+          fila.innerHTML = `<input type="checkbox" value="${nombre}"> ${nombre}`;
+          psSelectorLista.appendChild(fila);
+        });
+
+        // Marcar "Todos" desmarca el resto, y viceversa — no tiene sentido combinarlos
+        filaTodos.querySelector('input').addEventListener('change', (e) => {
+          if (e.target.checked) {
+            psSelectorLista.querySelectorAll('input[type=checkbox]').forEach(c => { if (c !== e.target) c.checked = false; });
+          }
+        });
+      }
+
+      psSelector.hidden = false;
+
+      return new Promise(resolve => {
+        const alTerminar = () => {
+          const marcados = Array.from(psSelectorLista.querySelectorAll('input:checked')).map(i => i.value);
+          cerrarSelector();
+          psSelectorContinuar.removeEventListener('click', alTerminar);
+          psSelectorCancelar.removeEventListener('click', alCancelar);
+          resolve(marcados.length ? marcados : null);
+        };
+        const alCancelar = () => {
+          psSelectorContinuar.removeEventListener('click', alTerminar);
+          psSelectorCancelar.removeEventListener('click', alCancelar);
+          resolve(null);
+        };
+        psSelectorContinuar.addEventListener('click', alTerminar);
+        psSelectorCancelar.addEventListener('click', alCancelar);
+      });
+    }
+
+    // Muestra una lista de botones para elegir UNA acción. Devuelve el texto
+    // del botón elegido, o null si se cancela.
+    function elegirAccion(titulo, opciones) {
+      psSelectorTitulo.textContent = titulo;
+      psSelectorLista.innerHTML = '';
+      opciones.forEach(opcion => {
+        const boton = document.createElement('div');
+        boton.className = 'ps-opcion-fila ps-opcion-boton';
+        boton.textContent = opcion;
+        psSelectorLista.appendChild(boton);
+      });
+      psSelector.hidden = false;
+      document.getElementById('ps-selector-botonera').hidden = true;
+
+      return new Promise(resolve => {
+        function manejarClic(e) {
+          const fila = e.target.closest('.ps-opcion-boton');
+          if (!fila) return;
+          limpiar();
+          resolve(fila.textContent);
+        }
+        function alCancelarFuera(e) {
+          if (e.target === psSelector) { limpiar(); resolve(null); }
+        }
+        function limpiar() {
+          cerrarSelector();
+          document.getElementById('ps-selector-botonera').hidden = false;
+          psSelectorLista.removeEventListener('click', manejarClic);
+          psSelector.removeEventListener('click', alCancelarFuera);
+        }
+        psSelectorLista.addEventListener('click', manejarClic);
+        psSelector.addEventListener('click', alCancelarFuera);
+      });
+    }
+
+    const accionesPanelSecreto = {
+
+      // 📨 Enviar algo
+      async enviarMensaje() {
+        const destinatarios = await elegirUsuarios('¿A quién le mandamos el mensaje?');
+        if (!destinatarios) return;
+        const texto = prompt('¿Qué mensaje quieres mandar?');
+        if (!texto) return;
+        await db.collection('mensajesManual').add({
+          destinatarios,
+          remitente: obtenerNombreUsuario() || 'Alguien',
+          tipo: 'mensaje',
+          texto: texto.trim(),
+          enviado: false,
+          creado: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert(`Mensaje en cola para: ${destinatarios.join(', ')}. Se entregará en la próxima revisión automática (hasta 10 min), o al instante si ejecutas la Action a mano.`);
+      },
+      async enviarSorpresa() {
+        const destinatarios = await elegirUsuarios('¿A quién le mandamos la sorpresa?');
+        if (!destinatarios) return;
+        const frase = FRASES_SORPRESA[Math.floor(Math.random() * FRASES_SORPRESA.length)];
+        await db.collection('mensajesManual').add({
+          destinatarios,
+          remitente: obtenerNombreUsuario() || 'Alguien',
+          tipo: 'sorpresa',
+          texto: frase,
+          enviado: false,
+          creado: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert(`¡Sorpresa en camino para: ${destinatarios.join(', ')}!`);
+      },
+      async verPendientes() {
+        if (!db) return;
+        const snap = await db.collection('mensajesManual').where('enviado', '==', false).get();
+        if (snap.empty) { alert('No hay mensajes pendientes de enviar.'); return; }
+        const lineas = snap.docs.map(d => {
+          const m = d.data();
+          const destino = (m.destinatarios || [m.destinatario]).join(', ');
+          return `→ ${destino}: "${m.texto}"`;
+        });
+        alert(lineas.join('\n'));
+      },
+      async cancelarPendientes() {
+        if (!db) return;
+        const snap = await db.collection('mensajesManual').where('enviado', '==', false).get();
+        if (snap.empty) { alert('No hay nada pendiente que cancelar.'); return; }
+        if (!confirm(`¿Cancelar ${snap.size} mensaje(s) pendiente(s)?`)) return;
+        await Promise.all(snap.docs.map(d => d.ref.delete()));
+        alert('Cancelado.');
+      },
+
+      // 🔔 Notificaciones
+      async notificacionPrueba() {
+        if (!('serviceWorker' in navigator)) return;
+        const registro = await navigator.serviceWorker.getRegistration();
+        if (!registro) { alert('Primero activa las notificaciones desde Configuración.'); return; }
+        registro.showNotification('Notificación de prueba 🧪', {
+          body: 'Si ves esto, las notificaciones locales funcionan en tu dispositivo.',
+          icon: 'MENU.PNG'
+        });
+      },
+      async notificacionPersonalizada() {
+        if (!('serviceWorker' in navigator)) return;
+        const registro = await navigator.serviceWorker.getRegistration();
+        if (!registro) { alert('Primero activa las notificaciones desde Configuración.'); return; }
+        const texto = prompt('¿Qué mensaje quieres que salga?', '¡Hola! 🧡');
+        if (!texto) return;
+        registro.showNotification('Mensaje de prueba', { body: texto, icon: 'MENU.PNG' });
+      },
+      async borrarSuscripcion() {
+        if (!confirm('¿Borrar tu suscripción a notificaciones?')) return;
+        await desactivarNotificaciones();
+        actualizarInfoPanelSecreto();
+      },
+      async actualizarNombreSuscripcion() {
+        if (!db || !('serviceWorker' in navigator)) return;
+        const nombre = obtenerNombreUsuario();
+        if (!nombre) { alert('Primero pon tu nombre en Configuración → Perfil.'); return; }
+        const registro = await navigator.serviceWorker.getRegistration();
+        if (!registro) { alert('No tienes las notificaciones activadas todavía en este dispositivo.'); return; }
+        const suscripcion = await registro.pushManager.getSubscription();
+        if (!suscripcion) { alert('No tienes las notificaciones activadas todavía en este dispositivo.'); return; }
+        await db.collection('suscripciones').doc(suscripcion.endpoint.slice(-40)).set({ nombre }, { merge: true });
+        alert(`Listo, tu suscripción ahora está asociada al nombre "${nombre}".`);
+      },
+      async contarSuscripciones() {
+        if (!db) return;
+        const snap = await db.collection('suscripciones').get();
+        alert(`Hay ${snap.size} dispositivo(s) suscrito(s) a los avisos.`);
+      },
+      async listarNombresSuscritos() {
+        if (!db) return;
+        const snap = await db.collection('suscripciones').get();
+        const nombres = snap.docs.map(d => d.data().nombre || '(sin nombre)');
+        alert(nombres.length ? nombres.join('\n') : 'Nadie está suscrito todavía.');
+      },
+      async limpiarSuscripcionesSinNombre() {
+        if (!db) return;
+        const snap = await db.collection('suscripciones').get();
+        const sinNombre = snap.docs.filter(d => !d.data().nombre);
+        if (!sinNombre.length) { alert('No hay ninguna suscripción sin nombre.'); return; }
+        if (!confirm(`Hay ${sinNombre.length} suscripción(es) sin nombre (probablemente viejas). ¿Borrarlas? Si alguna es la tuya, tendrás que volver a activar los avisos después.`)) return;
+        await Promise.all(sinNombre.map(d => d.ref.delete()));
+        alert('Borradas. Ahora vuelve a activar los avisos desde Configuración para crear una suscripción nueva con tu nombre.');
+      },
+
+      // 🐾 Mascota
+      mascotaMaximo() {
+        if (!db) return;
+        db.collection('mascota').doc('estado').set({ hambre: 100, sueno: 100, felicidad: 100 }, { merge: true });
+        alert('Mascota rellenada al máximo.');
+      },
+      mascotaVaciar() {
+        if (!db) return;
+        if (!confirm('Esto vacía las barras de la mascota (para probar los avisos). ¿Seguro?')) return;
+        db.collection('mascota').doc('estado').set({ hambre: 5, sueno: 5, felicidad: 5 }, { merge: true });
+        alert('Mascota vaciada. El próximo aviso de mascota debería saltar.');
+      },
+      mascotaResetearRacha() {
+        if (!db) return;
+        if (!confirm('¿Resetear la racha de la mascota a 0?')) return;
+        db.collection('mascota').doc('estado').set({ racha: 0, ultimoDiaCuidado: null }, { merge: true });
+        alert('Racha reseteada.');
+      },
+      mascotaFijarRacha() {
+        if (!db) return;
+        const numero = prompt('¿A qué número quieres fijar la racha?', '10');
+        if (numero === null || isNaN(Number(numero))) return;
+        db.collection('mascota').doc('estado').set({ racha: Number(numero), rachaMaxima: Number(numero) }, { merge: true });
+        alert('Racha fijada a ' + numero + '.');
+      },
+      mascotaResetearStats() {
+        if (!db) return;
+        if (!confirm('¿Resetear las estadísticas (comidas, siestas, juegos...) a 0?')) return;
+        db.collection('mascota').doc('estado').set({
+          contadores: { comer: 0, dormir: 0, jugar: 0, saltar: 0, caricias: 0 }
+        }, { merge: true });
+        alert('Estadísticas reseteadas.');
+      },
+      mascotaCambiarNombre() {
+        if (!db) return;
+        const nombre = prompt('Nuevo nombre para la mascota:');
+        if (!nombre) return;
+        db.collection('mascota').doc('estado').set({ nombre }, { merge: true });
+        alert('Nombre actualizado a "' + nombre + '".');
+      },
+      async mascotaVerJSON() {
+        if (!db) return;
+        const doc = await db.collection('mascota').doc('estado').get();
+        alert(doc.exists ? JSON.stringify(doc.data(), null, 2) : 'No hay mascota creada todavía.');
+      },
+
+      // 📋 Contenido
+      async contarCartas() {
+        if (!db) return;
+        const snap = await db.collection('cartas').get();
+        alert(`Hay ${snap.size} carta(s).`);
+      },
+      async contarFotos() {
+        if (!db) return;
+        const snap = await db.collection('fotos').get();
+        const fotos = snap.docs.filter(d => d.data().tipo !== 'video').length;
+        const videos = snap.docs.filter(d => d.data().tipo === 'video').length;
+        alert(`${fotos} foto(s) y ${videos} video(s).`);
+      },
+      async contarMetas() {
+        if (!db) return;
+        const snap = await db.collection('metas').get();
+        const hechas = snap.docs.filter(d => d.data().hecho).length;
+        alert(`${snap.size} meta(s) en total, ${hechas} completada(s).`);
+      },
+      async contarCitas() {
+        if (!db) return;
+        const snap = await db.collection('citas').get();
+        alert(`Hay ${snap.size} cita(s).`);
+      },
+      async exportarCartas() {
+        if (!db) return;
+        const snap = await db.collection('cartas').orderBy('creado').get();
+        if (snap.empty) { alert('No hay cartas todavía.'); return; }
+        let texto = '';
+        snap.docs.forEach(d => {
+          const c = d.data();
+          texto += `— ${c.titulo || 'Sin título'} —\n${c.texto || ''}\n\n`;
+        });
+        const blob = new Blob([texto], { type: 'text/plain' });
+        const enlace = document.createElement('a');
+        enlace.href = URL.createObjectURL(blob);
+        enlace.download = 'cartas.txt';
+        enlace.click();
+      },
+      async ultimaCarta() {
+        if (!db) return;
+        const snap = await db.collection('cartas').orderBy('creado', 'desc').limit(1).get();
+        if (snap.empty) { alert('No hay cartas todavía.'); return; }
+        const c = snap.docs[0].data();
+        alert(`"${c.titulo}"\n\n${c.texto}`);
+      },
+
+      // 🎨 Personalización
+      resetPersonalizacion() {
+        if (!confirm('Esto borra tu nombre, colores, tamaño de texto y demás ajustes personales de este dispositivo. ¿Seguro?')) return;
+        ['nombreUsuario', 'colorAcento', 'tamanoTexto', 'musicaSilenciada', 'volumenMusica', 'reducirMovimiento', 'avisosContenido', 'avisosMascota'].forEach(clave => localStorage.removeItem(clave));
+        location.reload();
+      },
+      copiarAjustes() {
+        const ajustes = {
+          nombreUsuario: localStorage.getItem('nombreUsuario'),
+          colorAcento: localStorage.getItem('colorAcento'),
+          tamanoTexto: localStorage.getItem('tamanoTexto'),
+          musicaSilenciada: localStorage.getItem('musicaSilenciada'),
+          volumenMusica: localStorage.getItem('volumenMusica'),
+          reducirMovimiento: localStorage.getItem('reducirMovimiento')
+        };
+        navigator.clipboard.writeText(JSON.stringify(ajustes, null, 2))
+          .then(() => alert('Ajustes copiados al portapapeles.'))
+          .catch(() => alert('No se pudo copiar.'));
+      },
+      temaAleatorio() {
+        const colores = ['naranja', 'rosa', 'lavanda', 'verde', 'azul'];
+        const elegido = colores[Math.floor(Math.random() * colores.length)];
+        localStorage.setItem('colorAcento', elegido);
+        aplicarColorAcento(elegido);
+        alert('Color cambiado a: ' + elegido);
+      },
+      alternarTextoGrande() {
+        const actual = localStorage.getItem('tamanoTexto') || 'normal';
+        const nuevo = actual === 'normal' ? 'grande' : 'normal';
+        localStorage.setItem('tamanoTexto', nuevo);
+        aplicarTamanoTexto(nuevo);
+      },
+      alternarMovimiento() {
+        const actual = document.body.classList.toggle('reducir-movimiento');
+        localStorage.setItem('reducirMovimiento', actual);
+      },
+
+      // 🛠️ Dispositivo
+      infoDispositivo() {
+        alert(`Navegador: ${navigator.userAgent}\n\nPantalla: ${screen.width}x${screen.height}\nZona horaria: ${Intl.DateTimeFormat().resolvedOptions().timeZone}\nIdioma: ${navigator.language}`);
+      },
+      esPWA() {
+        const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+        alert(standalone ? 'Estás usando la app guardada en pantalla de inicio 📱' : 'Estás en Safari/navegador normal 🌐');
+      },
+      tamanoAlmacenamiento() {
+        let total = 0;
+        for (const clave in localStorage) {
+          if (localStorage.hasOwnProperty(clave)) total += (localStorage[clave].length + clave.length);
+        }
+        alert(`Estás usando aproximadamente ${(total / 1024).toFixed(2)} KB de almacenamiento local.`);
+      },
+      async vaciarCacheSW() {
+        if (!confirm('Esto borra el service worker y las cachés, y recarga la página. ¿Seguro?')) return;
+        if ('serviceWorker' in navigator) {
+          const registros = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registros.map(r => r.unregister()));
+        }
+        if ('caches' in window) {
+          const nombres = await caches.keys();
+          await Promise.all(nombres.map(n => caches.delete(n)));
+        }
+        location.reload(true);
+      },
+      estadoConexion() {
+        alert(navigator.onLine ? 'Conectado a internet ✅' : 'Sin conexión ❌');
+      },
+      copiarInfoPanel() {
+        navigator.clipboard.writeText(panelSecretoInfo.textContent)
+          .then(() => alert('Info copiada al portapapeles.'))
+          .catch(() => alert('No se pudo copiar.'));
+      },
+
+      // 👥 Usuarios registrados (compartido en Firestore, no local)
+      async verUsuarios() {
+        if (!db) return;
+        const snap = await db.collection('usuarios').get();
+        if (snap.empty) { alert('Todavía nadie ha puesto su nombre en Configuración → Perfil.'); return; }
+        const lineas = snap.docs.map(d => {
+          const u = d.data();
+          const fecha = u.unido && u.unido.toDate ? u.unido.toDate().toLocaleDateString('es-ES') : '?';
+          return `${u.nombre} — desde ${fecha}`;
+        });
+        alert(lineas.join('\n'));
+      },
+      async verUltimaVezUsuarios() {
+        if (!db) return;
+        const snap = await db.collection('usuarios').get();
+        if (snap.empty) { alert('Todavía no hay usuarios registrados.'); return; }
+        const lineas = snap.docs.map(d => {
+          const u = d.data();
+          const fecha = u.ultimaVez && u.ultimaVez.toDate
+            ? u.ultimaVez.toDate().toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+            : '?';
+          return `${u.nombre} — última vez: ${fecha}`;
+        });
+        alert(lineas.join('\n'));
+      },
+      async contarUsuarios() {
+        if (!db) return;
+        const snap = await db.collection('usuarios').get();
+        alert(`Hay ${snap.size} usuario(s) registrado(s).`);
+      },
+      async renombrarUsuario() {
+        if (!db) return;
+        const actual = prompt('¿Nombre exacto del usuario a renombrar?');
+        if (!actual) return;
+        const idActual = actual.trim().toLowerCase();
+        const doc = await db.collection('usuarios').doc(idActual).get();
+        if (!doc.exists) { alert('No existe ningún usuario con ese nombre.'); return; }
+        const nuevo = prompt('¿Nuevo nombre?', doc.data().nombre);
+        if (!nuevo) return;
+        await db.collection('usuarios').doc(nuevo.trim().toLowerCase()).set({
+          nombre: nuevo.trim(),
+          unido: doc.data().unido,
+          ultimaVez: doc.data().ultimaVez
+        });
+        await db.collection('usuarios').doc(idActual).delete();
+        alert('Renombrado a "' + nuevo + '".');
+      },
+      async eliminarUsuario() {
+        if (!db) return;
+        const nombre = prompt('¿Nombre exacto del usuario a eliminar?');
+        if (!nombre) return;
+        if (!confirm(`¿Seguro que quieres eliminar a "${nombre}" de la lista de usuarios?`)) return;
+        await db.collection('usuarios').doc(nombre.trim().toLowerCase()).delete();
+        alert('Usuario eliminado.');
+      },
+
+      // 🎯 Elegir un usuario registrado y decidir qué hacer con él
+      async elegirUsuarioYActuar() {
+        if (!db) return;
+        const seleccionNombres = await elegirUsuarios('¿Con quién quieres actuar?');
+        if (!seleccionNombres) return;
+
+        const snap = await db.collection('usuarios').get();
+        const todosLosUsuarios = snap.docs.map(d => d.data());
+        const seleccionados = seleccionNombres.includes('todos')
+          ? todosLosUsuarios
+          : todosLosUsuarios.filter(u => seleccionNombres.includes(u.nombre));
+        if (!seleccionados.length) return;
+
+        const nombresTexto = seleccionados.map(u => u.nombre).join(', ');
+        const opciones = ['💌 Enviarles un mensaje', '🎁 Enviarles una sorpresa', '🕐 Ver cuándo estuvieron activos', '✏️ Renombrar (solo si eliges uno)', '🗑️ Eliminarlos de la lista'];
+        const opcion = await elegirAccion(`¿Qué hacemos con ${nombresTexto}?`, opciones);
+        if (!opcion) return;
+
+        if (opcion.startsWith('💌')) {
+          const texto = prompt('¿Qué mensaje les mandamos?');
+          if (!texto) return;
+          await db.collection('mensajesManual').add({
+            destinatarios: seleccionados.map(u => u.nombre),
+            remitente: obtenerNombreUsuario() || 'Alguien',
+            tipo: 'mensaje',
+            texto: texto.trim(),
+            enviado: false,
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          alert(`Mensaje para ${nombresTexto} en cola. Se entregará pronto.`);
+
+        } else if (opcion.startsWith('🎁')) {
+          const frase = FRASES_SORPRESA[Math.floor(Math.random() * FRASES_SORPRESA.length)];
+          await db.collection('mensajesManual').add({
+            destinatarios: seleccionados.map(u => u.nombre),
+            remitente: obtenerNombreUsuario() || 'Alguien',
+            tipo: 'sorpresa',
+            texto: frase,
+            enviado: false,
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          alert(`¡Sorpresa para ${nombresTexto} en camino!`);
+
+        } else if (opcion.startsWith('🕐')) {
+          const lineas = seleccionados.map(u => {
+            const fecha = u.ultimaVez && u.ultimaVez.toDate
+              ? u.ultimaVez.toDate().toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+              : 'desconocido';
+            return `${u.nombre}: ${fecha}`;
+          });
+          alert(lineas.join('\n'));
+
+        } else if (opcion.startsWith('✏️')) {
+          if (seleccionados.length > 1) { alert('Para renombrar, elige solo una persona.'); return; }
+          const usuario = seleccionados[0];
+          const idUsuario = usuario.nombre.trim().toLowerCase();
+          const nuevo = prompt('¿Nuevo nombre?', usuario.nombre);
+          if (!nuevo) return;
+          const doc = await db.collection('usuarios').doc(idUsuario).get();
+          await db.collection('usuarios').doc(nuevo.trim().toLowerCase()).set({
+            nombre: nuevo.trim(),
+            unido: doc.data().unido,
+            ultimaVez: doc.data().ultimaVez
+          });
+          await db.collection('usuarios').doc(idUsuario).delete();
+          alert(`Renombrado a "${nuevo}".`);
+
+        } else if (opcion.startsWith('🗑️')) {
+          if (!confirm(`¿Seguro que quieres eliminar a ${nombresTexto}?`)) return;
+          await Promise.all(seleccionados.map(u => db.collection('usuarios').doc(u.nombre.trim().toLowerCase()).delete()));
+          alert(`Eliminado(s): ${nombresTexto}.`);
+        }
+      },
+
+      // 🔒 Diagnóstico del sitio
+      verHTTPS() {
+        alert(location.protocol === 'https:' ? 'Sí, la conexión es segura (HTTPS) 🔒' : 'No, esto no es HTTPS ⚠️');
+      },
+      verReglasFirestore() {
+        alert('Las reglas de la base de datos están configuradas como abiertas (allow read, write: if true), a propósito, porque esta web no usa cuentas de usuario — la protección real es la contraseña de la página.');
+      },
+      async medirVelocidad() {
+        if (!db) return;
+        const inicio = performance.now();
+        await db.collection('metas').limit(1).get();
+        const fin = performance.now();
+        alert(`La base de datos respondió en ${(fin - inicio).toFixed(0)} ms.`);
+      },
+
+      // 🎉 Diversión
+      lluviaCorazones() {
+        crearLluvia(['🧡', '💛', '🥰', '💕']);
+      },
+      modoConfeti() {
+        crearLluvia(['🎉', '✨', '🎊', '⭐']);
+      },
+      fraseMascotaAhora() {
+        if (mascotaFrase) mascotaFrase.textContent = frasesMascota[Math.floor(Math.random() * frasesMascota.length)];
+      }
+    };
+
+    function crearLluvia(emojis) {
+      for (let i = 0; i < 30; i++) {
+        setTimeout(() => {
+          const particula = document.createElement('div');
+          particula.className = 'particula-lluvia';
+          particula.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+          particula.style.left = Math.random() * 100 + 'vw';
+          particula.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+          document.body.appendChild(particula);
+          setTimeout(() => particula.remove(), 3600);
+        }, i * 60);
+      }
+    }
+
+    panelSecreto.addEventListener('click', (e) => {
+      const boton = e.target.closest('[data-accion]');
+      if (!boton) return;
+      const accion = accionesPanelSecreto[boton.dataset.accion];
+      if (accion) accion();
+    });
+
+    // Navegación por pestañas dentro del panel secreto
+    document.querySelectorAll('.ps-pestana').forEach(pestana => {
+      pestana.addEventListener('click', () => {
+        document.querySelectorAll('.ps-pestana').forEach(p => p.classList.remove('activa'));
+        pestana.classList.add('activa');
+        document.querySelectorAll('.panel-secreto-grupo').forEach(grupo => {
+          grupo.hidden = grupo.dataset.catContenido !== pestana.dataset.cat;
+        });
+      });
+    });
   </script>
 
 </body>

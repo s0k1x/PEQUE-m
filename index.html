@@ -987,6 +987,33 @@
       font-size: 16px;
       cursor: pointer;
     }
+    #panel-secreto-pestanas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 16px;
+    }
+    .ps-pestana {
+      background: #1e1f24;
+      border: 1px solid #2c2d33;
+      color: #9a9aa2;
+      font-size: 10px;
+      padding: 6px 9px;
+      cursor: pointer;
+      font-family: 'Work Sans', sans-serif;
+    }
+    .ps-pestana.activa {
+      background: #f3c98a;
+      color: #17181c;
+      border-color: #f3c98a;
+    }
+    .panel-secreto-grupo[hidden] { display: none; }
+    .ps-nota {
+      font-size: 10.5px;
+      color: #8a8a92;
+      margin: 0 0 10px;
+      line-height: 1.5;
+    }
     .panel-secreto-grupo {
       margin-bottom: 18px;
     }
@@ -1012,6 +1039,12 @@
       font-family: 'Work Sans', sans-serif;
     }
     .panel-secreto-btn:active { background: #2c2d33; }
+    .ps-btn-destacado {
+      background: #3a2f1a !important;
+      border-color: #f3c98a !important;
+      color: #f3c98a !important;
+      font-weight: 600;
+    }
     #panel-secreto-info {
       background: #0e0e11;
       border: 1px solid #2c2d33;
@@ -1415,7 +1448,29 @@
         <button type="button" id="cerrar-panel-secreto" aria-label="Cerrar">✕</button>
       </div>
 
-      <div class="panel-secreto-grupo">
+      <div id="panel-secreto-pestanas">
+        <button type="button" class="ps-pestana activa" data-cat="enviar">📨 Enviar</button>
+        <button type="button" class="ps-pestana" data-cat="notificaciones">🔔 Avisos</button>
+        <button type="button" class="ps-pestana" data-cat="mascota">🐾 Mascota</button>
+        <button type="button" class="ps-pestana" data-cat="contenido">📋 Contenido</button>
+        <button type="button" class="ps-pestana" data-cat="usuarios">👥 Usuarios</button>
+        <button type="button" class="ps-pestana" data-cat="personalizacion">🎨 Look</button>
+        <button type="button" class="ps-pestana" data-cat="dispositivo">🛠️ Dispositivo</button>
+        <button type="button" class="ps-pestana" data-cat="sitio">🔒 Sitio</button>
+        <button type="button" class="ps-pestana" data-cat="diversion">🎉 Diversión</button>
+        <button type="button" class="ps-pestana" data-cat="debug">📋 Debug</button>
+      </div>
+
+      <div class="panel-secreto-grupo" data-cat-contenido="enviar">
+        <span class="panel-secreto-titulo">📨 Enviar algo</span>
+        <p class="ps-nota">Se entrega en cuanto corra la revisión automática (cada 10 min), o al instante si ejecutas la Action a mano en GitHub.</p>
+        <button type="button" class="panel-secreto-btn" data-accion="enviarMensaje">💌 Enviar un mensaje</button>
+        <button type="button" class="panel-secreto-btn" data-accion="enviarSorpresa">🎁 Enviar una sorpresa</button>
+        <button type="button" class="panel-secreto-btn" data-accion="verPendientes">📬 Ver mensajes pendientes de enviar</button>
+        <button type="button" class="panel-secreto-btn" data-accion="cancelarPendientes">🗑️ Cancelar mensajes pendientes</button>
+      </div>
+
+      <div class="panel-secreto-grupo" data-cat-contenido="notificaciones" hidden>
         <span class="panel-secreto-titulo">🔔 Notificaciones</span>
         <button type="button" class="panel-secreto-btn" data-accion="notificacionPrueba">Notificación de prueba (a este dispositivo)</button>
         <button type="button" class="panel-secreto-btn" data-accion="notificacionPersonalizada">Notificación de prueba con mensaje propio</button>
@@ -1424,7 +1479,7 @@
         <button type="button" class="panel-secreto-btn" data-accion="listarNombresSuscritos">Ver nombres de quienes están suscritos</button>
       </div>
 
-      <div class="panel-secreto-grupo">
+      <div class="panel-secreto-grupo" data-cat-contenido="mascota" hidden>
         <span class="panel-secreto-titulo">🐾 Mascota</span>
         <button type="button" class="panel-secreto-btn" data-accion="mascotaMaximo">Rellenar todo al máximo</button>
         <button type="button" class="panel-secreto-btn" data-accion="mascotaVaciar">Vaciar todo (forzar aviso)</button>
@@ -1435,7 +1490,7 @@
         <button type="button" class="panel-secreto-btn" data-accion="mascotaVerJSON">Ver estado crudo (JSON)</button>
       </div>
 
-      <div class="panel-secreto-grupo">
+      <div class="panel-secreto-grupo" data-cat-contenido="contenido" hidden>
         <span class="panel-secreto-titulo">📋 Contenido</span>
         <button type="button" class="panel-secreto-btn" data-accion="contarCartas">Contar cartas</button>
         <button type="button" class="panel-secreto-btn" data-accion="contarFotos">Contar fotos y videos</button>
@@ -1445,7 +1500,17 @@
         <button type="button" class="panel-secreto-btn" data-accion="ultimaCarta">Ver la última carta añadida</button>
       </div>
 
-      <div class="panel-secreto-grupo">
+      <div class="panel-secreto-grupo" data-cat-contenido="usuarios" hidden>
+        <span class="panel-secreto-titulo">👥 Usuarios registrados (compartido)</span>
+        <button type="button" class="panel-secreto-btn ps-btn-destacado" data-accion="elegirUsuarioYActuar">🎯 Elegir un usuario y decidir qué hacer</button>
+        <button type="button" class="panel-secreto-btn" data-accion="verUsuarios">Ver lista de usuarios y cuándo se unieron</button>
+        <button type="button" class="panel-secreto-btn" data-accion="verUltimaVezUsuarios">Ver última vez que estuvo activo cada uno</button>
+        <button type="button" class="panel-secreto-btn" data-accion="contarUsuarios">Contar cuántos usuarios hay</button>
+        <button type="button" class="panel-secreto-btn" data-accion="renombrarUsuario">Renombrar un usuario registrado</button>
+        <button type="button" class="panel-secreto-btn" data-accion="eliminarUsuario">Eliminar un usuario registrado</button>
+      </div>
+
+      <div class="panel-secreto-grupo" data-cat-contenido="personalizacion" hidden>
         <span class="panel-secreto-titulo">🎨 Personalización</span>
         <button type="button" class="panel-secreto-btn" data-accion="resetPersonalizacion">Restablecer toda mi personalización</button>
         <button type="button" class="panel-secreto-btn" data-accion="copiarAjustes">Copiar mis ajustes (JSON) al portapapeles</button>
@@ -1454,7 +1519,7 @@
         <button type="button" class="panel-secreto-btn" data-accion="alternarMovimiento">Alternar reducir movimiento</button>
       </div>
 
-      <div class="panel-secreto-grupo">
+      <div class="panel-secreto-grupo" data-cat-contenido="dispositivo" hidden>
         <span class="panel-secreto-titulo">🛠️ Dispositivo</span>
         <button type="button" class="panel-secreto-btn" data-accion="infoDispositivo">Ver info del dispositivo</button>
         <button type="button" class="panel-secreto-btn" data-accion="esPWA">¿Es app guardada (PWA) o Safari normal?</button>
@@ -1464,21 +1529,21 @@
         <button type="button" class="panel-secreto-btn" data-accion="copiarInfoPanel">Copiar toda la info del panel</button>
       </div>
 
-      <div class="panel-secreto-grupo">
+      <div class="panel-secreto-grupo" data-cat-contenido="sitio" hidden>
         <span class="panel-secreto-titulo">🔒 Diagnóstico del sitio</span>
         <button type="button" class="panel-secreto-btn" data-accion="verHTTPS">¿La conexión es segura (HTTPS)?</button>
         <button type="button" class="panel-secreto-btn" data-accion="verReglasFirestore">Ver estado de las reglas de la base de datos</button>
         <button type="button" class="panel-secreto-btn" data-accion="medirVelocidad">Medir velocidad de lectura de datos</button>
       </div>
 
-      <div class="panel-secreto-grupo">
+      <div class="panel-secreto-grupo" data-cat-contenido="diversion" hidden>
         <span class="panel-secreto-titulo">🎉 Diversión</span>
         <button type="button" class="panel-secreto-btn" data-accion="lluviaCorazones">Lluvia de corazones</button>
         <button type="button" class="panel-secreto-btn" data-accion="modoConfeti">Modo confeti</button>
         <button type="button" class="panel-secreto-btn" data-accion="fraseMascotaAhora">Nueva frase de la mascota ahora</button>
       </div>
 
-      <div class="panel-secreto-grupo">
+      <div class="panel-secreto-grupo" data-cat-contenido="debug" hidden>
         <span class="panel-secreto-titulo">📋 Info de depuración</span>
         <pre id="panel-secreto-info">Cargando...</pre>
       </div>
@@ -2543,6 +2608,7 @@
       const nombre = inputNombreUsuario.value.trim();
       if (nombre) {
         localStorage.setItem('nombreUsuario', nombre);
+        registrarUsuarioEnLaWeb(nombre);
       } else {
         localStorage.removeItem('nombreUsuario');
       }
@@ -2556,6 +2622,26 @@
     // Devuelve el nombre guardado, o null si no se ha puesto ninguno
     function obtenerNombreUsuario() {
       return localStorage.getItem('nombreUsuario') || null;
+    }
+
+    // Registra (o actualiza) a la persona en la base de datos compartida,
+    // para que se vea desde cualquier dispositivo, no solo el suyo
+    function registrarUsuarioEnLaWeb(nombre) {
+      if (!db || !nombre) return;
+      const id = nombre.trim().toLowerCase();
+      db.collection('usuarios').doc(id).set({
+        nombre: nombre.trim(),
+        unido: firebase.firestore.FieldValue.serverTimestamp(),
+        ultimaVez: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    }
+
+    // Actualiza "última vez activo" cada vez que se abre la web, si ya tiene nombre puesto
+    if (db && obtenerNombreUsuario()) {
+      const idUsuarioActual = obtenerNombreUsuario().trim().toLowerCase();
+      db.collection('usuarios').doc(idUsuarioActual).set({
+        ultimaVez: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
     }
 
     // ---------- Configuración: volumen de la música ----------
@@ -2768,8 +2854,67 @@ color acento: ${localStorage.getItem('colorAcento') || 'naranja'}
 tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
     }
 
-    // ---------- Las 35 herramientas del panel ----------
+    // ---------- Las herramientas del panel ----------
+    const FRASES_SORPRESA = [
+      '🎁 Alguien está pensando mucho en ti ahora mismo...',
+      '🧡 Sorpresa: eres la persona favorita de alguien por aquí',
+      '✨ Psst... alguien te manda un abrazo desde el otro lado de la pantalla',
+      '💌 Un mensaje sorpresa solo para alegrarte el día',
+      '🌟 Recordatorio sorpresa: te quieren muchísimo'
+    ];
+
     const accionesPanelSecreto = {
+
+      // 📨 Enviar algo
+      async enviarMensaje() {
+        if (!db) return;
+        const destinatario = prompt('¿A quién? Escribe el nombre exacto de la persona registrada, "todos", o "yo" para probarlo contigo mismo:');
+        if (!destinatario) return;
+        const texto = prompt('¿Qué mensaje quieres mandar?');
+        if (!texto) return;
+        await db.collection('mensajesManual').add({
+          destinatario: destinatario.trim(),
+          remitente: obtenerNombreUsuario() || 'Alguien',
+          tipo: 'mensaje',
+          texto: texto.trim(),
+          enviado: false,
+          creado: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert('Mensaje en cola. Se entregará en la próxima revisión automática (hasta 10 min), o al instante si ejecutas la Action a mano.');
+      },
+      async enviarSorpresa() {
+        if (!db) return;
+        const destinatario = prompt('¿A quién le mandamos la sorpresa? Nombre exacto, "todos", o "yo":');
+        if (!destinatario) return;
+        const frase = FRASES_SORPRESA[Math.floor(Math.random() * FRASES_SORPRESA.length)];
+        await db.collection('mensajesManual').add({
+          destinatario: destinatario.trim(),
+          remitente: obtenerNombreUsuario() || 'Alguien',
+          tipo: 'sorpresa',
+          texto: frase,
+          enviado: false,
+          creado: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert('¡Sorpresa en camino! Se entregará en la próxima revisión automática.');
+      },
+      async verPendientes() {
+        if (!db) return;
+        const snap = await db.collection('mensajesManual').where('enviado', '==', false).get();
+        if (snap.empty) { alert('No hay mensajes pendientes de enviar.'); return; }
+        const lineas = snap.docs.map(d => {
+          const m = d.data();
+          return `→ ${m.destinatario}: "${m.texto}"`;
+        });
+        alert(lineas.join('\n'));
+      },
+      async cancelarPendientes() {
+        if (!db) return;
+        const snap = await db.collection('mensajesManual').where('enviado', '==', false).get();
+        if (snap.empty) { alert('No hay nada pendiente que cancelar.'); return; }
+        if (!confirm(`¿Cancelar ${snap.size} mensaje(s) pendiente(s)?`)) return;
+        await Promise.all(snap.docs.map(d => d.ref.delete()));
+        alert('Cancelado.');
+      },
 
       // 🔔 Notificaciones
       async notificacionPrueba() {
@@ -2972,6 +3117,130 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
           .catch(() => alert('No se pudo copiar.'));
       },
 
+      // 👥 Usuarios registrados (compartido en Firestore, no local)
+      async verUsuarios() {
+        if (!db) return;
+        const snap = await db.collection('usuarios').get();
+        if (snap.empty) { alert('Todavía nadie ha puesto su nombre en Configuración → Perfil.'); return; }
+        const lineas = snap.docs.map(d => {
+          const u = d.data();
+          const fecha = u.unido && u.unido.toDate ? u.unido.toDate().toLocaleDateString('es-ES') : '?';
+          return `${u.nombre} — desde ${fecha}`;
+        });
+        alert(lineas.join('\n'));
+      },
+      async verUltimaVezUsuarios() {
+        if (!db) return;
+        const snap = await db.collection('usuarios').get();
+        if (snap.empty) { alert('Todavía no hay usuarios registrados.'); return; }
+        const lineas = snap.docs.map(d => {
+          const u = d.data();
+          const fecha = u.ultimaVez && u.ultimaVez.toDate
+            ? u.ultimaVez.toDate().toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+            : '?';
+          return `${u.nombre} — última vez: ${fecha}`;
+        });
+        alert(lineas.join('\n'));
+      },
+      async contarUsuarios() {
+        if (!db) return;
+        const snap = await db.collection('usuarios').get();
+        alert(`Hay ${snap.size} usuario(s) registrado(s).`);
+      },
+      async renombrarUsuario() {
+        if (!db) return;
+        const actual = prompt('¿Nombre exacto del usuario a renombrar?');
+        if (!actual) return;
+        const idActual = actual.trim().toLowerCase();
+        const doc = await db.collection('usuarios').doc(idActual).get();
+        if (!doc.exists) { alert('No existe ningún usuario con ese nombre.'); return; }
+        const nuevo = prompt('¿Nuevo nombre?', doc.data().nombre);
+        if (!nuevo) return;
+        await db.collection('usuarios').doc(nuevo.trim().toLowerCase()).set({
+          nombre: nuevo.trim(),
+          unido: doc.data().unido,
+          ultimaVez: doc.data().ultimaVez
+        });
+        await db.collection('usuarios').doc(idActual).delete();
+        alert('Renombrado a "' + nuevo + '".');
+      },
+      async eliminarUsuario() {
+        if (!db) return;
+        const nombre = prompt('¿Nombre exacto del usuario a eliminar?');
+        if (!nombre) return;
+        if (!confirm(`¿Seguro que quieres eliminar a "${nombre}" de la lista de usuarios?`)) return;
+        await db.collection('usuarios').doc(nombre.trim().toLowerCase()).delete();
+        alert('Usuario eliminado.');
+      },
+
+      // 🎯 Elegir un usuario registrado y decidir qué hacer con él
+      async elegirUsuarioYActuar() {
+        if (!db) return;
+        const snap = await db.collection('usuarios').get();
+        if (snap.empty) { alert('Todavía nadie se ha registrado (nadie ha puesto su nombre en Configuración → Perfil).'); return; }
+
+        const usuarios = snap.docs.map(d => d.data());
+        const listaTexto = usuarios.map((u, i) => `${i + 1}. ${u.nombre}`).join('\n');
+        const eleccion = prompt(`¿Con quién quieres actuar?\n\n${listaTexto}\n\nEscribe el número:`);
+        const indice = Number(eleccion) - 1;
+        if (!eleccion || isNaN(indice) || !usuarios[indice]) return;
+
+        const usuario = usuarios[indice];
+        const idUsuario = usuario.nombre.trim().toLowerCase();
+
+        const menu = `¿Qué quieres hacer con ${usuario.nombre}?\n\n1. Enviarle un mensaje\n2. Enviarle una sorpresa\n3. Ver cuándo estuvo activo por última vez\n4. Renombrarlo\n5. Eliminarlo de la lista`;
+        const opcion = prompt(menu);
+
+        if (opcion === '1') {
+          const texto = prompt(`¿Qué mensaje le mandamos a ${usuario.nombre}?`);
+          if (!texto) return;
+          await db.collection('mensajesManual').add({
+            destinatario: usuario.nombre,
+            remitente: obtenerNombreUsuario() || 'Alguien',
+            tipo: 'mensaje',
+            texto: texto.trim(),
+            enviado: false,
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          alert(`Mensaje para ${usuario.nombre} en cola. Se entregará pronto.`);
+
+        } else if (opcion === '2') {
+          const frase = FRASES_SORPRESA[Math.floor(Math.random() * FRASES_SORPRESA.length)];
+          await db.collection('mensajesManual').add({
+            destinatario: usuario.nombre,
+            remitente: obtenerNombreUsuario() || 'Alguien',
+            tipo: 'sorpresa',
+            texto: frase,
+            enviado: false,
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          alert(`¡Sorpresa para ${usuario.nombre} en camino!`);
+
+        } else if (opcion === '3') {
+          const fecha = usuario.ultimaVez && usuario.ultimaVez.toDate
+            ? usuario.ultimaVez.toDate().toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+            : 'desconocido';
+          alert(`${usuario.nombre} estuvo activo por última vez: ${fecha}`);
+
+        } else if (opcion === '4') {
+          const nuevo = prompt('¿Nuevo nombre?', usuario.nombre);
+          if (!nuevo) return;
+          const doc = await db.collection('usuarios').doc(idUsuario).get();
+          await db.collection('usuarios').doc(nuevo.trim().toLowerCase()).set({
+            nombre: nuevo.trim(),
+            unido: doc.data().unido,
+            ultimaVez: doc.data().ultimaVez
+          });
+          await db.collection('usuarios').doc(idUsuario).delete();
+          alert(`Renombrado a "${nuevo}".`);
+
+        } else if (opcion === '5') {
+          if (!confirm(`¿Seguro que quieres eliminar a ${usuario.nombre}?`)) return;
+          await db.collection('usuarios').doc(idUsuario).delete();
+          alert(`${usuario.nombre} eliminado de la lista.`);
+        }
+      },
+
       // 🔒 Diagnóstico del sitio
       verHTTPS() {
         alert(location.protocol === 'https:' ? 'Sí, la conexión es segura (HTTPS) 🔒' : 'No, esto no es HTTPS ⚠️');
@@ -3018,6 +3287,17 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
       if (!boton) return;
       const accion = accionesPanelSecreto[boton.dataset.accion];
       if (accion) accion();
+    });
+
+    // Navegación por pestañas dentro del panel secreto
+    document.querySelectorAll('.ps-pestana').forEach(pestana => {
+      pestana.addEventListener('click', () => {
+        document.querySelectorAll('.ps-pestana').forEach(p => p.classList.remove('activa'));
+        pestana.classList.add('activa');
+        document.querySelectorAll('.panel-secreto-grupo').forEach(grupo => {
+          grupo.hidden = grupo.dataset.catContenido !== pestana.dataset.cat;
+        });
+      });
     });
   </script>
 

@@ -1749,6 +1749,7 @@
         <button type="button" class="ps-pestana activa" data-cat="enviar">📨 Enviar</button>
         <button type="button" class="ps-pestana" data-cat="notificaciones">🔔 Avisos</button>
         <button type="button" class="ps-pestana" data-cat="mascota">🐾 Mascota</button>
+        <button type="button" class="ps-pestana" data-cat="economia">💰 Economía</button>
         <button type="button" class="ps-pestana" data-cat="contenido">📋 Contenido</button>
         <button type="button" class="ps-pestana" data-cat="usuarios">👥 Usuarios</button>
         <button type="button" class="ps-pestana" data-cat="personalizacion">🎨 Look</button>
@@ -1787,6 +1788,20 @@
         <button type="button" class="panel-secreto-btn" data-accion="mascotaResetearStats">Resetear estadísticas a 0</button>
         <button type="button" class="panel-secreto-btn" data-accion="mascotaCambiarNombre">Cambiar el nombre de la mascota</button>
         <button type="button" class="panel-secreto-btn" data-accion="mascotaVerJSON">Ver estado crudo (JSON)</button>
+      </div>
+
+      <div class="panel-secreto-grupo" data-cat-contenido="economia" hidden>
+        <span class="panel-secreto-titulo">💰 Economía (de pou.html)</span>
+        <p class="ps-nota">Las monedas son personales de cada uno (usuarios/&lt;nombre&gt;) — la mascota, el inventario y el nivel siguen siendo compartidos.</p>
+        <button type="button" class="panel-secreto-btn ps-btn-destacado" data-accion="darMonedas">🪙 Dar o quitar monedas a alguien</button>
+        <button type="button" class="panel-secreto-btn" data-accion="verMonedasTodos">Ver monedas de cada uno</button>
+        <button type="button" class="panel-secreto-btn" data-accion="resetearCooldownsEconomia">🔄 Resetear ruleta y buscar monedas de alguien (para probar ya)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="verInventarioMascota">🎒 Ver inventario de la mascota (JSON)</button>
+        <button type="button" class="panel-secreto-btn" data-accion="darItemInventario">➕ Añadir un artículo al inventario</button>
+        <button type="button" class="panel-secreto-btn" data-accion="vaciarInventarioMascota">🗑️ Vaciar el inventario</button>
+        <button type="button" class="panel-secreto-btn" data-accion="verLogrosUsuario">🏆 Ver logros de tienda conseguidos por alguien</button>
+        <button type="button" class="panel-secreto-btn" data-accion="resetearLogrosUsuario">Resetear logros de tienda de alguien</button>
+        <button type="button" class="panel-secreto-btn" data-accion="verEconomiaJSON">Ver economía completa de alguien (JSON)</button>
       </div>
 
       <div class="panel-secreto-grupo" data-cat-contenido="contenido" hidden>
@@ -3743,6 +3758,109 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
         if (!db) return;
         const doc = await db.collection('mascota').doc('estado').get();
         alert(doc.exists ? JSON.stringify(doc.data(), null, 2) : 'No hay mascota creada todavía.');
+      },
+
+      // 💰 Economía (de pou.html)
+      async darMonedas() {
+        if (!db) return;
+        const seleccionNombres = await elegirUsuarios('¿A quién le damos (o quitamos) monedas?');
+        if (!seleccionNombres) return;
+
+        const snap = await db.collection('usuarios').get();
+        const todos = snap.docs.map(d => d.data());
+        const seleccionados = seleccionNombres.includes('todos') ? todos : todos.filter(u => seleccionNombres.includes(u.nombre));
+        if (!seleccionados.length) return;
+
+        const cantidadTexto = prompt('¿Cuántas monedas? (pon un número negativo para quitar, ej: -20)', '50');
+        if (cantidadTexto === null || isNaN(Number(cantidadTexto))) return;
+        const cantidad = Number(cantidadTexto);
+
+        await Promise.all(seleccionados.map(u =>
+          db.collection('usuarios').doc(u.nombre.trim().toLowerCase())
+            .set({ monedas: firebase.firestore.FieldValue.increment(cantidad) }, { merge: true })
+        ));
+        alert(`${cantidad >= 0 ? '+' : ''}${cantidad} 🪙 aplicado a: ${seleccionados.map(u => u.nombre).join(', ')}.`);
+      },
+      async verMonedasTodos() {
+        if (!db) return;
+        const snap = await db.collection('usuarios').get();
+        if (snap.empty) { alert('Todavía no hay usuarios registrados.'); return; }
+        const lineas = snap.docs.map(d => {
+          const u = d.data();
+          return `${u.nombre}: ${u.monedas || 0} 🪙`;
+        });
+        alert(lineas.join('\n'));
+      },
+      async resetearCooldownsEconomia() {
+        if (!db) return;
+        const seleccionNombres = await elegirUsuarios('¿A quién le reseteamos la ruleta y buscar monedas?');
+        if (!seleccionNombres) return;
+
+        const snap = await db.collection('usuarios').get();
+        const todos = snap.docs.map(d => d.data());
+        const seleccionados = seleccionNombres.includes('todos') ? todos : todos.filter(u => seleccionNombres.includes(u.nombre));
+        if (!seleccionados.length) return;
+
+        await Promise.all(seleccionados.map(u =>
+          db.collection('usuarios').doc(u.nombre.trim().toLowerCase())
+            .set({ ultimoGiroRuleta: null, ultimaBusquedaMonedas: null }, { merge: true })
+        ));
+        alert(`Reseteado para: ${seleccionados.map(u => u.nombre).join(', ')}. Ya pueden girar la ruleta y buscar monedas otra vez.`);
+      },
+      async verInventarioMascota() {
+        if (!db) return;
+        const doc = await db.collection('mascota').doc('estado').get();
+        const inventario = doc.exists ? (doc.data().inventario || {}) : {};
+        alert(Object.keys(inventario).length ? JSON.stringify(inventario, null, 2) : 'El inventario está vacío.');
+      },
+      async darItemInventario() {
+        if (!db) return;
+        const itemId = prompt('ID del artículo (ej: snack, postre, siesta, noche, ratito, tarde):');
+        if (!itemId) return;
+        const cantidadTexto = prompt('¿Cuántas unidades añadir?', '1');
+        if (cantidadTexto === null || isNaN(Number(cantidadTexto))) return;
+        const cantidad = Number(cantidadTexto);
+        await db.collection('mascota').doc('estado').set({
+          inventario: { [itemId.trim()]: firebase.firestore.FieldValue.increment(cantidad) }
+        }, { merge: true });
+        alert(`Añadido ${cantidad}× "${itemId.trim()}" al inventario.`);
+      },
+      async vaciarInventarioMascota() {
+        if (!db) return;
+        if (!confirm('¿Vaciar todo el inventario de la mascota? Esto no se puede deshacer.')) return;
+        await db.collection('mascota').doc('estado').set({ inventario: {} }, { merge: true });
+        alert('Inventario vaciado.');
+      },
+      async verLogrosUsuario() {
+        if (!db) return;
+        const seleccionNombres = await elegirUsuarios('¿De quién quieres ver los logros?');
+        if (!seleccionNombres || seleccionNombres.includes('todos')) { alert('Elige una sola persona para esto.'); return; }
+        const nombre = seleccionNombres[0];
+        const doc = await db.collection('usuarios').doc(nombre.trim().toLowerCase()).get();
+        const logros = doc.exists ? (doc.data().logrosTiendaConseguidos || []) : [];
+        alert(logros.length ? `${nombre} ha conseguido:\n${logros.join('\n')}` : `${nombre} todavía no tiene logros de tienda.`);
+      },
+      async resetearLogrosUsuario() {
+        if (!db) return;
+        const seleccionNombres = await elegirUsuarios('¿A quién le reseteamos los logros de tienda?');
+        if (!seleccionNombres) return;
+        const snap = await db.collection('usuarios').get();
+        const todos = snap.docs.map(d => d.data());
+        const seleccionados = seleccionNombres.includes('todos') ? todos : todos.filter(u => seleccionNombres.includes(u.nombre));
+        if (!seleccionados.length) return;
+        if (!confirm(`¿Resetear los logros de tienda de ${seleccionados.map(u => u.nombre).join(', ')}? Podrán volver a conseguirlos y cobrar la recompensa otra vez.`)) return;
+        await Promise.all(seleccionados.map(u =>
+          db.collection('usuarios').doc(u.nombre.trim().toLowerCase()).set({ logrosTiendaConseguidos: [] }, { merge: true })
+        ));
+        alert('Logros reseteados.');
+      },
+      async verEconomiaJSON() {
+        if (!db) return;
+        const seleccionNombres = await elegirUsuarios('¿De quién quieres ver la economía completa?');
+        if (!seleccionNombres || seleccionNombres.includes('todos')) { alert('Elige una sola persona para esto.'); return; }
+        const nombre = seleccionNombres[0];
+        const doc = await db.collection('usuarios').doc(nombre.trim().toLowerCase()).get();
+        alert(doc.exists ? JSON.stringify(doc.data(), null, 2) : `${nombre} todavía no tiene datos de economía.`);
       },
 
       // 📋 Contenido

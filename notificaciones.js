@@ -138,6 +138,41 @@ async function revisarMascota() {
   console.log('Aviso de mascota enviado:', mensaje);
 }
 
+// ---------- 1b. Recordatorio de cada hora, todos los días ----------
+// Independiente de si la mascota necesita algo o no — un empujoncito
+// constante para que se acuerden de entrar y jugar un rato.
+const MINUTOS_ENTRE_RECORDATORIOS = 55; // un poco menos de 1h, para no saltarse ninguna por el margen del cron
+
+const MENSAJES_RECORDATORIO = [
+  '🎾 ¡Juega conmigo, te espero!',
+  '🦙 Vengo a decirte hola, ¿entras un ratito?',
+  '💛 Pienso en ti ahora mismo',
+  '🐾 ¿Ya viste cómo estoy hoy?',
+  '🎉 ¡Vamos a jugar un rato!',
+  '🌟 Te echo de menos, ven a verme',
+  '🥰 Un ratito conmigo, ¿va?',
+  '🍬 Tengo ganas de que me visites',
+  '🎈 ¿Qué tal si entras un momento?',
+  '🌈 Te estoy esperando por aquí'
+];
+
+async function revisarRecordatorioHorario() {
+  const refMascota = db.collection('mascota').doc('estado');
+  const docMascota = await refMascota.get();
+  if (!docMascota.exists) return;
+
+  const datos = docMascota.data();
+  const ultimo = datos.ultimoRecordatorioHorario ? datos.ultimoRecordatorioHorario.toDate() : null;
+  if (ultimo && (Date.now() - ultimo.getTime()) / (1000 * 60) < MINUTOS_ENTRE_RECORDATORIOS) {
+    return;
+  }
+
+  const mensaje = elegirAlAzar(MENSAJES_RECORDATORIO);
+  await enviarATodos('mascota', 'Tu mascota 🦙', mensaje, 'pou.html');
+  await refMascota.set({ ultimoRecordatorioHorario: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+  console.log('Recordatorio horario enviado:', mensaje);
+}
+
 // ---------- 2. Contenido nuevo (cartas, fotos, videos, citas, metas) ----------
 const COLECCIONES_CONTENIDO = ['cartas', 'fotos', 'citas', 'metas'];
 
@@ -206,7 +241,9 @@ async function revisarMensajesManuales() {
 
   for (const doc of pendientes.docs) {
     const m = doc.data();
-    const titulo = m.tipo === 'sorpresa' ? `Sorpresa de ${m.remitente} 🎁` : `Mensaje de ${m.remitente} 💌`;
+    const titulo = m.tipo === 'sorpresa' ? `Sorpresa de ${m.remitente} 🎁`
+      : m.tipo === 'regalo' ? `${m.remitente} te ha regalado algo 🎁`
+      : `Mensaje de ${m.remitente} 💌`;
 
     // Compatibilidad: acepta tanto el campo nuevo (destinatarios, array) como
     // el viejo (destinatario, un solo texto), por si quedó algo pendiente
@@ -251,6 +288,7 @@ async function revisarMensajesManuales() {
 
 async function main() {
   await revisarMascota();
+  await revisarRecordatorioHorario();
   await revisarContenido();
   await revisarMensajesManuales();
 }

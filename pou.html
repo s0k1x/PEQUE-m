@@ -151,20 +151,21 @@
     #video-envoltorio {
       position: relative;
       max-width: 260px;
+      aspect-ratio: 1 / 1;
       margin: 0 auto 22px;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 10px 26px rgba(38,34,32,0.16);
     }
     #video-mascota {
       width: 100%;
-      min-height: 260px;
-      object-fit: contain;
+      height: 100%;
+      object-fit: cover;
       display: block;
       border: none;
-      background: radial-gradient(ellipse at center, var(--hueso) 0%, transparent 72%);
+      background: var(--hueso);
       cursor: pointer;
       transition: transform 0.15s ease, opacity 0.35s ease;
-      -webkit-mask-image: radial-gradient(ellipse 66% 66% at 50% 46%, black 58%, transparent 90%);
-      mask-image: radial-gradient(ellipse 66% 66% at 50% 46%, black 58%, transparent 90%);
-      filter: drop-shadow(0 10px 22px rgba(38,34,32,0.18));
     }
     #accesorio-mascota {
       position: absolute;

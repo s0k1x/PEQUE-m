@@ -879,6 +879,91 @@
       100% { transform: rotate(360deg); }
     }
 
+    /* ---------- Ruleta visual de verdad ---------- */
+    .ruleta-envoltorio {
+      position: relative;
+      width: 190px;
+      margin: 6px auto 16px;
+    }
+    .ruleta-puntero {
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      color: var(--naranja);
+      z-index: 2;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.25));
+    }
+    .ruleta-rueda {
+      position: relative;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      border: 5px solid var(--naranja);
+      box-shadow: 0 6px 20px rgba(38,34,32,0.2), inset 0 0 0 3px var(--blanco);
+      transition: transform 4.2s cubic-bezier(.15,.65,.15,1);
+    }
+    .ruleta-rueda::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 22px; height: 22px;
+      margin: -11px;
+      border-radius: 50%;
+      background: var(--naranja);
+      border: 3px solid var(--blanco);
+      z-index: 1;
+    }
+    .ruleta-etiqueta {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 700;
+      font-size: 12.5px;
+      color: var(--tinta);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+      pointer-events: none;
+    }
+    .ruleta-etiqueta.especial { color: var(--blanco); text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+
+    /* ---------- Mini-juego de buscar monedas ---------- */
+    .buscar-spots {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .spot-buscar {
+      flex: 1;
+      background: var(--hueso);
+      border: 1.5px solid var(--linea);
+      border-radius: 10px;
+      padding: 16px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .spot-buscar:active:not(:disabled) { transform: scale(0.94); }
+    .spot-buscar:disabled { cursor: default; opacity: 0.55; }
+    .spot-emoji { font-size: 26px; transition: transform 0.3s ease; }
+    .spot-buscar.excavando .spot-emoji { animation: excavar 0.4s ease infinite; }
+    @keyframes excavar {
+      0%, 100% { transform: translateX(0) rotate(0); }
+      25% { transform: translateX(-2px) rotate(-8deg); }
+      75% { transform: translateX(2px) rotate(8deg); }
+    }
+    .spot-resultado {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--naranja);
+      min-height: 14px;
+    }
+    .spot-buscar.encontrado { border-color: var(--naranja); background: var(--naranja-suave); }
+
     .tienda-lista { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
     .tienda-item {
       display: flex;
@@ -1238,12 +1323,20 @@
         <div class="tienda-seccion">
           <span class="config-titulo">🎡 Ruleta diaria</span>
           <p class="config-descripcion" id="ruleta-descripcion">Gira una vez al día y gana monedas gratis.</p>
+          <div class="ruleta-envoltorio">
+            <span class="ruleta-puntero">▼</span>
+            <div class="ruleta-rueda" id="ruleta-rueda"></div>
+          </div>
           <button id="btn-ruleta" type="button" class="tienda-btn-ruleta">Girar la ruleta</button>
         </div>
         <div class="tienda-seccion">
           <span class="config-titulo">🔍 Buscar monedas</span>
-          <p class="config-descripcion" id="buscar-descripcion">Busca por ahí cada cierto tiempo — nunca sabes cuánto vas a encontrar.</p>
-          <button id="btn-buscar-monedas" type="button" class="tienda-btn-ruleta">Buscar monedas</button>
+          <p class="config-descripcion" id="buscar-descripcion">Elige un sitio para buscar — nunca sabes qué vas a encontrar.</p>
+          <div class="buscar-spots" id="buscar-spots">
+            <button class="spot-buscar" type="button" data-spot="0"><span class="spot-emoji">🌳</span><span class="spot-resultado"></span></button>
+            <button class="spot-buscar" type="button" data-spot="1"><span class="spot-emoji">🪨</span><span class="spot-resultado"></span></button>
+            <button class="spot-buscar" type="button" data-spot="2"><span class="spot-emoji">🕳️</span><span class="spot-resultado"></span></button>
+          </div>
         </div>
         <div class="tienda-seccion">
           <span class="config-titulo">💰 Formas de ganar monedas</span>
@@ -1253,8 +1346,8 @@
             <li>Jugar: <strong>+4 🪙</strong></li>
             <li>Saltar: <strong>+2 🪙</strong></li>
             <li>Acariciar: <strong>+1 🪙</strong></li>
-            <li>Ruleta diaria: <strong>hasta +40 🪙</strong></li>
-            <li>Buscar monedas: <strong>cada 20 min, hasta +12 🪙</strong></li>
+            <li>Ruleta diaria: <strong>hasta ×3, o 80 🪙 de bote</strong></li>
+            <li>Buscar monedas: <strong>cada 20 min, con suerte hasta 50 🪙</strong></li>
             <li>Logros: <strong>recompensa única</strong></li>
           </ul>
         </div>
@@ -2340,9 +2433,56 @@
       return exito;
     }
 
-    // ---------- Ruleta diaria ----------
+    // ---------- Ruleta diaria — de verdad, con rueda que gira ----------
+    // Cada segmento tiene un valor fijo o un multiplicador ('x2'/'x3'), que
+    // se aplica sobre una base al azar. Los pesos deciden la probabilidad
+    // real de cada uno (no tiene por qué coincidir con el tamaño visual).
+    const RULETA_SEGMENTOS = [
+      { texto: '10', valor: 10 },
+      { texto: '×2', valor: 'x2', especial: true },
+      { texto: '5', valor: 5 },
+      { texto: '20', valor: 20 },
+      { texto: '15', valor: 15 },
+      { texto: '×3', valor: 'x3', especial: true },
+      { texto: '8', valor: 8 },
+      { texto: '80', valor: 80, especial: true }
+    ];
+    const PESOS_RULETA = [18, 13, 22, 10, 15, 6, 14, 2]; // suman 100
+
     const btnRuleta = document.getElementById('btn-ruleta');
     const ruletaDescripcion = document.getElementById('ruleta-descripcion');
+    const ruedaEl = document.getElementById('ruleta-rueda');
+    let rotacionRuletaAcumulada = 0;
+
+    function elegirIndicePonderado(pesos) {
+      const total = pesos.reduce((a, b) => a + b, 0);
+      let r = Math.random() * total;
+      for (let i = 0; i < pesos.length; i++) {
+        if (r < pesos[i]) return i;
+        r -= pesos[i];
+      }
+      return pesos.length - 1;
+    }
+
+    function construirRuedaVisual() {
+      const n = RULETA_SEGMENTOS.length;
+      const anguloSeg = 360 / n;
+      const tramos = RULETA_SEGMENTOS.map((seg, i) => {
+        const color = seg.especial ? 'var(--naranja)' : (i % 2 === 0 ? 'var(--naranja-suave)' : '#fff4e8');
+        return `${color} ${i * anguloSeg}deg ${(i + 1) * anguloSeg}deg`;
+      });
+      ruedaEl.style.background = `conic-gradient(${tramos.join(',')})`;
+
+      RULETA_SEGMENTOS.forEach((seg, i) => {
+        const centro = i * anguloSeg + anguloSeg / 2;
+        const etiqueta = document.createElement('span');
+        etiqueta.className = 'ruleta-etiqueta' + (seg.especial ? ' especial' : '');
+        etiqueta.textContent = seg.texto;
+        etiqueta.style.transform = `translate(-50%, -50%) rotate(${centro}deg) translateY(-70px) rotate(${-centro}deg)`;
+        ruedaEl.appendChild(etiqueta);
+      });
+    }
+    construirRuedaVisual();
 
     function actualizarBotonRuleta() {
       const hoy = fechaAString(new Date());
@@ -2351,41 +2491,91 @@
       btnRuleta.textContent = yaGiro ? 'Ya has girado hoy' : 'Girar la ruleta';
       ruletaDescripcion.textContent = yaGiro
         ? 'Vuelve mañana para girar otra vez.'
-        : 'Gira una vez al día y gana monedas gratis.';
+        : 'Gira una vez al día — hay multiplicadores y hasta un bote de 80 🪙.';
     }
 
     btnRuleta.addEventListener('click', async () => {
       if (!referenciaUsuario || !db || btnRuleta.disabled) return;
       const hoy = fechaAString(new Date());
-      btnRuleta.classList.add('girando');
+      const indice = elegirIndicePonderado(PESOS_RULETA);
+      const segmento = RULETA_SEGMENTOS[indice];
 
       let premio = 0;
+      let exito = false;
       await db.runTransaction(async (transaccion) => {
         const doc = await transaccion.get(referenciaUsuario);
         const datos = doc.data() || {};
         if ((datos.ultimoGiroRuleta || null) === hoy) return; // ya giró hoy
-        premio = [5, 10, 10, 15, 20, 25, 40][Math.floor(Math.random() * 7)];
+
+        if (typeof segmento.valor === 'number') {
+          premio = segmento.valor;
+        } else {
+          const base = 8 + Math.floor(Math.random() * 13); // 8 a 20
+          const multiplicador = segmento.valor === 'x2' ? 2 : 3;
+          premio = base * multiplicador;
+        }
+
         transaccion.set(referenciaUsuario, {
           monedas: (datos.monedas || 0) + premio,
           ultimoGiroRuleta: hoy
         }, { merge: true });
         monedas = (datos.monedas || 0) + premio;
         ultimoGiroRuleta = hoy;
+        exito = true;
       });
 
+      if (!exito) { actualizarBotonRuleta(); return; }
+
+      btnRuleta.disabled = true;
+
+      // Calcula cuánto girar para que el puntero termine exacto en el
+      // centro del segmento premiado, sumando siempre vueltas de más
+      const n = RULETA_SEGMENTOS.length;
+      const anguloSeg = 360 / n;
+      const centro = indice * anguloSeg + anguloSeg / 2;
+      const objetivoMod = (360 - centro + 360) % 360;
+      const actualMod = ((rotacionRuletaAcumulada % 360) + 360) % 360;
+      const delta = (objetivoMod - actualMod + 360) % 360;
+      rotacionRuletaAcumulada += 5 * 360 + delta;
+      ruedaEl.style.transform = `rotate(${rotacionRuletaAcumulada}deg)`;
+
       setTimeout(() => {
-        btnRuleta.classList.remove('girando');
         actualizarMonedasUI();
         actualizarBotonRuleta();
-        if (premio > 0) mostrarMensaje(`¡Ganaste ${premio} 🪙!`);
-      }, 600);
+        mostrarMensaje(segmento.especial && typeof segmento.valor !== 'number'
+          ? `${segmento.texto} 🎉 ¡Ganaste ${premio} 🪙!`
+          : `¡Ganaste ${premio} 🪙!`);
+      }, 4300);
     });
 
-    // ---------- Buscar monedas (cada 20 minutos, cantidad al azar) ----------
+    // ---------- Buscar monedas: mini-juego de elegir un sitio (cada 20 min) ----------
     const MINUTOS_ENFRIAMIENTO_BUSQUEDA = 20;
-    const btnBuscarMonedas = document.getElementById('btn-buscar-monedas');
     const buscarDescripcion = document.getElementById('buscar-descripcion');
-    let intervaloBusquedaMonedas = null;
+    const spotsBuscar = Array.from(document.querySelectorAll('.spot-buscar'));
+
+    // El pozo de premios: casi siempre poco, a veces un multiplicador,
+    // rara vez un tesoro grande
+    const POZO_BUSQUEDA = [
+      { texto: '+2 🪙', valor: 2, peso: 20 },
+      { texto: '+4 🪙', valor: 4, peso: 18 },
+      { texto: '+6 🪙', valor: 6, peso: 16 },
+      { texto: '+8 🪙', valor: 8, peso: 14 },
+      { texto: '+12 🪙', valor: 12, peso: 10 },
+      { texto: '×2 🍀', valor: 'x2', peso: 10 },
+      { texto: '+20 🪙', valor: 20, peso: 8 },
+      { texto: '×3 🍀', valor: 'x3', peso: 2 },
+      { texto: '💎 +50', valor: 50, peso: 2 }
+    ];
+    const PESO_TOTAL_BUSQUEDA = POZO_BUSQUEDA.reduce((s, p) => s + p.peso, 0);
+
+    function elegirPremioBusqueda() {
+      let r = Math.random() * PESO_TOTAL_BUSQUEDA;
+      for (const p of POZO_BUSQUEDA) {
+        if (r < p.peso) return p;
+        r -= p.peso;
+      }
+      return POZO_BUSQUEDA[0];
+    }
 
     function minutosRestantesBusqueda() {
       if (!ultimaBusquedaMonedas) return 0;
@@ -2396,46 +2586,68 @@
     function actualizarBotonBuscarMonedas() {
       const restantes = minutosRestantesBusqueda();
       const enEspera = restantes > 0;
-      btnBuscarMonedas.disabled = enEspera;
-      btnBuscarMonedas.textContent = enEspera ? `Vuelve en ${restantes} min` : 'Buscar monedas';
+      spotsBuscar.forEach(spot => {
+        spot.disabled = enEspera;
+        spot.classList.remove('encontrado', 'excavando');
+        spot.querySelector('.spot-resultado').textContent = '';
+      });
       buscarDescripcion.textContent = enEspera
-        ? 'Todavía no ha pasado suficiente tiempo desde la última vez.'
-        : 'Busca por ahí cada cierto tiempo — nunca sabes cuánto vas a encontrar.';
+        ? `Vuelve en ${restantes} min para buscar otra vez.`
+        : 'Elige un sitio para buscar — nunca sabes qué vas a encontrar.';
     }
 
-    btnBuscarMonedas.addEventListener('click', async () => {
-      if (!referenciaUsuario || !db || btnBuscarMonedas.disabled) return;
-      btnBuscarMonedas.classList.add('girando');
+    spotsBuscar.forEach(spot => {
+      spot.addEventListener('click', async () => {
+        if (!referenciaUsuario || !db || spot.disabled) return;
+        spotsBuscar.forEach(s => s.disabled = true);
+        spot.classList.add('excavando');
 
-      let premio = 0;
-      await db.runTransaction(async (transaccion) => {
-        const doc = await transaccion.get(referenciaUsuario);
-        const datos = doc.data() || {};
-        const ultimo = datos.ultimaBusquedaMonedas || null;
-        const pasados = ultimo ? (Date.now() - ultimo.toDate().getTime()) / (1000 * 60) : Infinity;
-        if (pasados < MINUTOS_ENFRIAMIENTO_BUSQUEDA) return; // todavía en espera
+        let premio = 0;
+        let textoPremio = '';
+        let exito = false;
+        await db.runTransaction(async (transaccion) => {
+          const doc = await transaccion.get(referenciaUsuario);
+          const datos = doc.data() || {};
+          const ultimo = datos.ultimaBusquedaMonedas || null;
+          const pasados = ultimo ? (Date.now() - ultimo.toDate().getTime()) / (1000 * 60) : Infinity;
+          if (pasados < MINUTOS_ENFRIAMIENTO_BUSQUEDA) return; // todavía en espera
 
-        premio = [2, 3, 4, 5, 6, 8, 12][Math.floor(Math.random() * 7)];
-        const ahora = firebase.firestore.Timestamp.now();
-        transaccion.set(referenciaUsuario, {
-          monedas: (datos.monedas || 0) + premio,
-          ultimaBusquedaMonedas: ahora
-        }, { merge: true });
-        monedas = (datos.monedas || 0) + premio;
-        ultimaBusquedaMonedas = ahora;
+          const elegido = elegirPremioBusqueda();
+          textoPremio = elegido.texto;
+          if (typeof elegido.valor === 'number') {
+            premio = elegido.valor;
+          } else {
+            const base = 3 + Math.floor(Math.random() * 8); // 3 a 10
+            const multiplicador = elegido.valor === 'x2' ? 2 : 3;
+            premio = base * multiplicador;
+          }
+
+          const ahora = firebase.firestore.Timestamp.now();
+          transaccion.set(referenciaUsuario, {
+            monedas: (datos.monedas || 0) + premio,
+            ultimaBusquedaMonedas: ahora
+          }, { merge: true });
+          monedas = (datos.monedas || 0) + premio;
+          ultimaBusquedaMonedas = ahora;
+          exito = true;
+        });
+
+        setTimeout(() => {
+          spot.classList.remove('excavando');
+          if (exito) {
+            spot.classList.add('encontrado');
+            spot.querySelector('.spot-resultado').textContent = `+${premio} 🪙`;
+            actualizarMonedasUI();
+            mostrarMensaje(`🔍 ${textoPremio} → ¡${premio} 🪙 encontradas!`);
+          }
+          actualizarBotonBuscarMonedas();
+        }, 700);
       });
-
-      setTimeout(() => {
-        btnBuscarMonedas.classList.remove('girando');
-        actualizarMonedasUI();
-        actualizarBotonBuscarMonedas();
-        if (premio > 0) mostrarMensaje(`🔍 ¡Encontraste ${premio} 🪙!`);
-      }, 600);
     });
 
-    // Refresca la cuenta atrás cada 30 segundos, para que el botón se
-    // reactive solo sin tener que recargar la página
-    intervaloBusquedaMonedas = setInterval(actualizarBotonBuscarMonedas, 30000);
+    // Refresca la cuenta atrás cada 30 segundos, para que los sitios se
+    // reactiven solos sin tener que recargar la página
+    setInterval(actualizarBotonBuscarMonedas, 30000);
 
     // ---------- Tienda: renderizado de artículos ----------
     const listaMascotaEl = document.getElementById('tienda-lista-mascota');

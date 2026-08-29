@@ -1,1 +1,32 @@
-s
+name: Avisar de la mascota y contenido nuevo
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'   # cada 10 minutos
+  workflow_dispatch:          # también se puede ejecutar a mano desde GitHub
+
+concurrency:
+  group: notificaciones
+  cancel-in-progress: false   # si ya hay una ejecución en marcha, la nueva espera en cola en vez de solaparse
+
+jobs:
+  revisar-y-avisar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Revisar mascota y contenido nuevo, avisar si hace falta
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+        run: node notificaciones.js

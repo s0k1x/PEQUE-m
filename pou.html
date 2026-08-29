@@ -136,33 +136,21 @@
       font-weight: 500;
       margin: 0;
     }
-    #racha-mascota {
-      text-align: center;
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 13px;
-      color: var(--gris);
-      margin: 4px 0 18px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--linea);
-      min-height: 16px;
-    }
 
     #video-envoltorio {
       position: relative;
       max-width: 260px;
-      aspect-ratio: 1 / 1;
       margin: 0 auto 22px;
       border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 10px 26px rgba(38,34,32,0.16);
+      border: 1px solid var(--linea);
+      box-shadow: 0 8px 20px rgba(38,34,32,0.12);
     }
     #video-mascota {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      min-height: 260px;
+      object-fit: contain;
       display: block;
-      border: none;
       background: var(--hueso);
       cursor: pointer;
       transition: transform 0.15s ease, opacity 0.35s ease;
@@ -240,6 +228,7 @@
       cursor: pointer;
       text-align: center;
       padding: 0;
+      position: relative;
     }
     .btn-accion .icono {
       display: flex;
@@ -253,7 +242,7 @@
       font-size: 22px;
       margin: 0 auto 8px;
       font-style: normal;
-      transition: background 0.15s ease, transform 0.15s ease;
+      transition: background 0.15s ease, transform 0.15s ease, opacity 0.2s ease;
     }
     .btn-accion:active .icono {
       transform: scale(0.94);
@@ -267,6 +256,32 @@
       text-transform: uppercase;
       color: var(--gris);
     }
+    .insignia-cantidad {
+      position: absolute;
+      top: -2px;
+      right: 6px;
+      background: var(--naranja);
+      color: var(--blanco);
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 600;
+      font-size: 10px;
+      min-width: 17px;
+      height: 17px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+    .btn-accion.sin-existencias .icono { opacity: 0.35; }
+    .btn-accion.sin-existencias .insignia-cantidad { background: var(--gris); }
+    #inventario-vacio-aviso {
+      text-align: center;
+      font-size: 11px;
+      color: var(--gris);
+      margin: 8px 0 0;
+    }
+    #inventario-vacio-aviso[hidden] { display: none; }
 
     #mensaje-mascota {
       text-align: center;
@@ -382,6 +397,7 @@
     }
     #texto-nivel-progreso {
       display: block;
+      text-align: center;
       font-size: 10px;
       color: var(--gris);
       margin-top: 4px;
@@ -789,9 +805,12 @@
     /* ---------- Cabecera compacta: nombre + monedas ---------- */
     .cabecera-mascota {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 6px;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      text-align: center;
     }
     .cabecera-mascota h1 { margin: 0; }
     #btn-monedas, #btn-monedas-tienda {
@@ -813,32 +832,32 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 13px;
-      color: var(--gris);
-      margin-bottom: 4px;
+      margin-bottom: 14px;
       flex-wrap: wrap;
     }
-    .separador-punto::before { content: '·'; color: var(--linea); }
-    .separador-punto:empty::before { content: ''; }
-    .nivel-compacto { color: var(--tinta); font-weight: 600; }
+    .nivel-compacto { display: contents; }
 
-    #racha-mascota {
-      background: none;
-      border: none;
-      padding: 0;
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 13px;
-      color: var(--gris);
+    #racha-mascota, #nivel-mascota {
+      background: var(--hueso);
+      border: 1px solid var(--linea);
+      border-radius: 20px;
+      padding: 6px 13px;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--tinta);
       cursor: pointer;
-      transition: transform 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: transform 0.15s ease, border-color 0.2s ease;
     }
-    #racha-mascota:active { transform: scale(0.95); }
+    #racha-mascota:active, #nivel-mascota:active { transform: scale(0.94); }
+    #racha-mascota:hover, #nivel-mascota:hover { border-color: var(--naranja); }
+    #nivel-mascota .emoji-nivel { font-size: 14px; }
 
     /* ---------- Modal del calendario de racha ---------- */
-    #modal-racha {
+    #modal-racha, #modal-nivel {
       position: fixed;
       inset: 0;
       background: rgba(38,34,32,0.55);
@@ -848,8 +867,8 @@
       justify-content: center;
       padding: 20px;
     }
-    #modal-racha[hidden] { display: none; }
-    #modal-racha-caja {
+    #modal-racha[hidden], #modal-nivel[hidden] { display: none; }
+    #modal-racha-caja, #modal-nivel-caja {
       background: var(--blanco);
       width: 100%;
       max-width: 320px;
@@ -864,7 +883,7 @@
       text-align: center;
       position: relative;
     }
-    #cerrar-modal-racha {
+    #cerrar-modal-racha, #cerrar-modal-nivel {
       position: absolute;
       top: 12px;
       right: 14px;
@@ -885,6 +904,15 @@
       font-size: 40px;
       line-height: 1;
       display: block;
+    }
+    .nivel-nombre-grande {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 1.2;
+      display: block;
+      padding: 0 20px;
     }
     .racha-etiqueta-grande {
       font-size: 11px;
@@ -955,6 +983,34 @@
     .racha-cal-dia.hoy:not(.activo) {
       border: 1.5px solid var(--naranja);
     }
+
+    /* ---------- Lista de niveles (modal) ---------- */
+    .nivel-lista-envoltorio { padding: 16px 18px 20px; }
+    .nivel-lista { display: flex; flex-direction: column; gap: 6px; }
+    .nivel-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 11px;
+      border: 1px solid var(--linea);
+      background: var(--hueso);
+    }
+    .nivel-item-emoji { font-size: 18px; width: 22px; text-align: center; flex-shrink: 0; }
+    .nivel-item-texto { flex: 1; min-width: 0; }
+    .nivel-item-nombre { font-size: 13px; color: var(--tinta); font-weight: 500; display: block; }
+    .nivel-item-detalle { font-size: 10.5px; color: var(--gris); }
+
+    .nivel-item.conseguido {
+      background: var(--naranja-suave);
+      border-color: var(--naranja);
+    }
+    .nivel-item.actual {
+      background: linear-gradient(135deg, var(--naranja), #f0985a);
+      border-color: var(--naranja);
+    }
+    .nivel-item.actual .nivel-item-nombre,
+    .nivel-item.actual .nivel-item-detalle { color: var(--blanco); }
+    .nivel-item.bloqueado { opacity: 0.55; }
 
     /* ---------- Botón de ir a la tienda ---------- */
     #btn-abrir-tienda {
@@ -1165,8 +1221,7 @@
 
     <div class="linea-progreso-mascota">
       <button id="racha-mascota" type="button"></button>
-      <span class="separador-punto" id="separador-progreso"></span>
-      <span class="nivel-compacto"><span class="emoji-nivel" id="emoji-nivel"></span><span class="texto-nivel" id="texto-nivel"></span></span>
+      <span class="nivel-compacto"><button id="nivel-mascota" type="button"><span class="emoji-nivel" id="emoji-nivel"></span><span class="texto-nivel" id="texto-nivel"></span></button></span>
     </div>
     <div id="barra-nivel-fondo"><div id="barra-nivel-relleno"></div></div>
     <span id="texto-nivel-progreso"></span>
@@ -1192,11 +1247,12 @@
     </div>
 
     <div class="acciones">
-      <button class="btn-accion" type="button" id="btn-comer"><span class="icono">🍽️</span><span class="etiqueta-accion">Comer</span></button>
-      <button class="btn-accion" type="button" id="btn-dormir"><span class="icono">😴</span><span class="etiqueta-accion">Dormir</span></button>
-      <button class="btn-accion" type="button" id="btn-jugar-mascota"><span class="icono">🎾</span><span class="etiqueta-accion">Jugar</span></button>
+      <button class="btn-accion" type="button" id="btn-comer"><span class="icono">🍽️</span><span class="etiqueta-accion">Comer</span><span class="insignia-cantidad" id="insignia-comer">0</span></button>
+      <button class="btn-accion" type="button" id="btn-dormir"><span class="icono">😴</span><span class="etiqueta-accion">Dormir</span><span class="insignia-cantidad" id="insignia-dormir">0</span></button>
+      <button class="btn-accion" type="button" id="btn-jugar-mascota"><span class="icono">🎾</span><span class="etiqueta-accion">Jugar</span><span class="insignia-cantidad" id="insignia-jugar">0</span></button>
       <button class="btn-accion" type="button" id="btn-saltar"><span class="icono">🦘</span><span class="etiqueta-accion">Saltar</span></button>
     </div>
+    <p id="inventario-vacio-aviso" hidden>🛍️ Sin existencias — cómprale algo en la tienda</p>
 
     <p id="mensaje-mascota"></p>
 
@@ -1373,7 +1429,7 @@
       </div>
 
       <div class="tienda-categoria" data-tcat-contenido="mascota" hidden>
-        <p class="config-descripcion">Se aplica al instante a sus barras.</p>
+        <p class="config-descripcion">Se guardan en el inventario — el pack completo se usa ya, el resto se consume desde Comer/Dormir/Jugar.</p>
         <div class="tienda-lista" id="tienda-lista-mascota"></div>
       </div>
 
@@ -1420,6 +1476,21 @@
           <button type="button" id="racha-cal-siguiente" aria-label="Mes siguiente">›</button>
         </div>
         <div class="racha-cal-grid" id="racha-cal-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-nivel" hidden>
+    <div id="modal-nivel-caja">
+      <div class="racha-cabecera-fuego">
+        <button id="cerrar-modal-nivel" type="button" aria-label="Cerrar">✕</button>
+        <span class="racha-fuego-grande" id="nivel-emoji-grande">🌱</span>
+        <span class="nivel-nombre-grande" id="nivel-nombre-grande">Empezando</span>
+        <span class="racha-etiqueta-grande" id="nivel-etiqueta-grande"></span>
+        <p class="racha-record-linea" id="nivel-siguiente-linea"></p>
+      </div>
+      <div class="nivel-lista-envoltorio">
+        <div class="nivel-lista" id="nivel-lista"></div>
       </div>
     </div>
   </div>
@@ -1509,6 +1580,7 @@
     let rachaMaxima = 0;
     let ultimoDiaCuidado = null;
     let contadores = { comer: 0, dormir: 0, jugar: 0, saltar: 0, caricias: 0 };
+    let inventario = {}; // compartido: lo que se compra en la tienda queda aquí hasta que se usa
     let logrosDesbloqueados = [];
 
     // Economía — es PERSONAL de cada uno (usa el nombre puesto en Perfil),
@@ -1526,13 +1598,13 @@
     const RECOMPENSAS_ACCION = { comer: 3, dormir: 3, jugar: 4, saltar: 2, caricias: 1 };
 
     const ITEMS_MASCOTA = [
-      { id: 'snack', emoji: '🍕', nombre: 'Snack especial', costo: 15, efecto: { hambre: 25 } },
-      { id: 'postre', emoji: '🍰', nombre: 'Postre delicioso', costo: 28, efecto: { hambre: 40 } },
-      { id: 'siesta', emoji: '🛏️', nombre: 'Siesta cómoda', costo: 15, efecto: { sueno: 25 } },
-      { id: 'noche', emoji: '🌙', nombre: 'Noche de descanso total', costo: 28, efecto: { sueno: 40 } },
-      { id: 'ratito', emoji: '🧸', nombre: 'Ratito de juego', costo: 15, efecto: { felicidad: 25 } },
-      { id: 'tarde', emoji: '🎨', nombre: 'Tarde de diversión', costo: 28, efecto: { felicidad: 40 } },
-      { id: 'pack', emoji: '🎉', nombre: 'Pack completo', costo: 45, efecto: { hambre: 100, sueno: 100, felicidad: 100 } }
+      { id: 'snack', emoji: '🍕', nombre: 'Snack especial', costo: 15, categoria: 'comida', efecto: { hambre: 25 } },
+      { id: 'postre', emoji: '🍰', nombre: 'Postre delicioso', costo: 28, categoria: 'comida', efecto: { hambre: 40 } },
+      { id: 'siesta', emoji: '🛏️', nombre: 'Siesta cómoda', costo: 15, categoria: 'descanso', efecto: { sueno: 25 } },
+      { id: 'noche', emoji: '🌙', nombre: 'Noche de descanso total', costo: 28, categoria: 'descanso', efecto: { sueno: 40 } },
+      { id: 'ratito', emoji: '🧸', nombre: 'Ratito de juego', costo: 15, categoria: 'juego', efecto: { felicidad: 25 } },
+      { id: 'tarde', emoji: '🎨', nombre: 'Tarde de diversión', costo: 28, categoria: 'juego', efecto: { felicidad: 40 } },
+      { id: 'pack', emoji: '🎉', nombre: 'Pack completo', costo: 45, categoria: 'especial', efecto: { hambre: 100, sueno: 100, felicidad: 100 } }
     ];
 
     const ITEMS_ACCESORIOS = [
@@ -1700,9 +1772,7 @@
     }
 
     function actualizarRachaUI() {
-      rachaMascotaEl.textContent = racha > 0
-        ? `🔥 ${racha} día${racha === 1 ? '' : 's'} seguido${racha === 1 ? '' : 's'} · récord ${rachaMaxima}`
-        : '🔥 Empieza tu racha hoy';
+      rachaMascotaEl.textContent = racha > 0 ? `🔥 ${racha}` : '🔥';
     }
 
     // ---------- Calendario de racha (modal tipo Duolingo) ----------
@@ -1920,6 +1990,50 @@
       }
     }
 
+    // ---------- Modal de niveles de vínculo ----------
+    function abrirModalNivel() {
+      const total = contadores.comer + contadores.dormir + contadores.jugar + contadores.saltar + contadores.caricias;
+      const nivel = calcularNivel(total);
+      const indiceActual = NIVELES.indexOf(nivel);
+      const siguiente = NIVELES[indiceActual + 1];
+
+      document.getElementById('nivel-emoji-grande').textContent = nivel.emoji;
+      document.getElementById('nivel-nombre-grande').textContent = nivel.nombre;
+      document.getElementById('nivel-etiqueta-grande').textContent = `${total} cuidados en total`;
+      document.getElementById('nivel-siguiente-linea').textContent = siguiente
+        ? `Faltan ${siguiente.min - total} para "${siguiente.nombre}"`
+        : '¡Nivel máximo alcanzado! 💫';
+
+      const listaEl = document.getElementById('nivel-lista');
+      listaEl.innerHTML = '';
+      NIVELES.forEach((n, i) => {
+        const fila = document.createElement('div');
+        const estado = i < indiceActual ? 'conseguido' : i === indiceActual ? 'actual' : 'bloqueado';
+        fila.className = 'nivel-item ' + estado;
+        const detalle = estado === 'bloqueado'
+          ? `Faltan ${n.min - total} cuidados`
+          : `Desde ${n.min} cuidados`;
+        fila.innerHTML = `
+          <span class="nivel-item-emoji">${estado === 'bloqueado' ? '🔒' : n.emoji}</span>
+          <span class="nivel-item-texto">
+            <span class="nivel-item-nombre">${n.nombre}</span>
+            <span class="nivel-item-detalle">${detalle}</span>
+          </span>
+        `;
+        listaEl.appendChild(fila);
+      });
+
+      document.getElementById('modal-nivel').hidden = false;
+    }
+
+    document.getElementById('nivel-mascota').addEventListener('click', abrirModalNivel);
+    document.getElementById('cerrar-modal-nivel').addEventListener('click', () => {
+      document.getElementById('modal-nivel').hidden = true;
+    });
+    document.getElementById('modal-nivel').addEventListener('click', (e) => {
+      if (e.target.id === 'modal-nivel') document.getElementById('modal-nivel').hidden = true;
+    });
+
     function actualizarEstadisticasUI() {
       statsEl.comer.textContent = contadores.comer;
       statsEl.dormir.textContent = contadores.dormir;
@@ -2063,19 +2177,74 @@
       guardarEstado();
     });
 
-    // Comer: sacia el hambre
-    document.getElementById('btn-comer').addEventListener('click', () => {
-      realizarAccion({ hambre: 40 }, 'Comer.mp4?v=2', '¡Qué rico! 🍽️', 4000, 'comer');
-    });
-    // Dormir: descansa del todo, por eso es la acción más larga
-    document.getElementById('btn-dormir').addEventListener('click', () => {
-      realizarAccion({ sueno: 100 }, 'Dormir.mp4?v=2', 'Zzz... 😴', 15000, 'dormir');
-    });
-    // Jugar: sube mucho la felicidad, pero cansa y da hambre (como en la vida real)
-    document.getElementById('btn-jugar-mascota').addEventListener('click', () => {
-      realizarAccion({ felicidad: 35, sueno: -8, hambre: -5 }, 'Jugar.mp4?v=2', '¡Qué divertido! 🎾', 5000, 'jugar');
-    });
-    // Saltar: gesto rápido y divertido, cuesta un poquito de energía
+    // ---------- Inventario: Comer, Dormir y Jugar ahora necesitan tener
+    // comprado algo de esa categoría — Saltar sigue siendo siempre gratis ----------
+    const VIDEOS_ACCION = {
+      comida: { src: 'Comer.mp4?v=2', duracion: 4000, claveContador: 'comer', botonId: 'btn-comer' },
+      descanso: { src: 'Dormir.mp4?v=2', duracion: 15000, claveContador: 'dormir', botonId: 'btn-dormir' },
+      juego: { src: 'Jugar.mp4?v=2', duracion: 5000, claveContador: 'jugar', botonId: 'btn-jugar-mascota' }
+    };
+
+    // Suma cuántas unidades hay guardadas de una categoría en total
+    function unidadesEnInventario(categoria) {
+      return ITEMS_MASCOTA
+        .filter(i => i.categoria === categoria)
+        .reduce((total, i) => total + (inventario[i.id] || 0), 0);
+    }
+
+    // Busca el primer artículo de esa categoría que quede en existencias
+    function elegirArticuloDisponible(categoria) {
+      return ITEMS_MASCOTA.find(i => i.categoria === categoria && (inventario[i.id] || 0) > 0);
+    }
+
+    async function usarDeInventario(categoria, mensajePersonalizado) {
+      const articulo = elegirArticuloDisponible(categoria);
+      const info = VIDEOS_ACCION[categoria];
+      if (!articulo) {
+        mostrarMensaje('🛍️ Sin existencias — cómprale algo en la tienda');
+        return;
+      }
+
+      // Se descuenta 1 unidad de forma segura (por si el otro lo usa a la vez)
+      let exito = false;
+      await db.runTransaction(async (transaccion) => {
+        const doc = await transaccion.get(referenciaDoc);
+        const datos = doc.data() || {};
+        const inv = datos.inventario || {};
+        if ((inv[articulo.id] || 0) < 1) return;
+        inv[articulo.id] = inv[articulo.id] - 1;
+        transaccion.set(referenciaDoc, { inventario: inv }, { merge: true });
+        inventario = inv;
+        exito = true;
+      });
+
+      if (!exito) {
+        mostrarMensaje('🛍️ Sin existencias — cómprale algo en la tienda');
+        return;
+      }
+
+      actualizarBotonesAccionConInventario();
+      realizarAccion(articulo.efecto, info.src, mensajePersonalizado || `${articulo.emoji} ${articulo.nombre}`, info.duracion, info.claveContador);
+    }
+
+    document.getElementById('btn-comer').addEventListener('click', () => usarDeInventario('comida', '¡Qué rico! 🍽️'));
+    document.getElementById('btn-dormir').addEventListener('click', () => usarDeInventario('descanso', 'Zzz... 😴'));
+    document.getElementById('btn-jugar-mascota').addEventListener('click', () => usarDeInventario('juego', '¡Qué divertido! 🎾'));
+
+    function actualizarBotonesAccionConInventario() {
+      ['comida', 'descanso', 'juego'].forEach(categoria => {
+        const info = VIDEOS_ACCION[categoria];
+        const boton = document.getElementById(info.botonId);
+        const cantidad = unidadesEnInventario(categoria);
+        const insignia = boton.querySelector('.insignia-cantidad');
+        if (insignia) insignia.textContent = cantidad;
+        boton.classList.toggle('sin-existencias', cantidad === 0);
+      });
+      const todoVacio = ['comida', 'descanso', 'juego'].every(c => unidadesEnInventario(c) === 0);
+      document.getElementById('inventario-vacio-aviso').hidden = !todoVacio;
+    }
+
+
     document.getElementById('btn-saltar').addEventListener('click', () => {
       realizarAccion({ felicidad: 10, sueno: -3 }, 'Saltar.mp4?v=2', '¡Wiii! 🦘', 2500, 'saltar');
     });
@@ -2479,6 +2648,7 @@
     async function comprarItemMascota(item, precioForzado) {
       if (!referenciaUsuario || !referenciaDoc || !db) return;
       const costo = precioForzado || item.costo;
+      const esEspecial = item.categoria === 'especial'; // el pack completo se aplica ya, no se guarda
       let exito = false;
       await db.runTransaction(async (transaccion) => {
         const docUsuario = await transaccion.get(referenciaUsuario);
@@ -2492,11 +2662,21 @@
           monedas: monedasActuales - costo,
           monedasGastadasTotal: (datosUsuario.monedasGastadasTotal || 0) + costo
         };
-        const nuevaMascota = {
-          hambre: Math.min(MAX, (datosMascota.hambre || 0) + (item.efecto.hambre || 0)),
-          sueno: Math.min(MAX, (datosMascota.sueno || 0) + (item.efecto.sueno || 0)),
-          felicidad: Math.min(MAX, (datosMascota.felicidad || 0) + (item.efecto.felicidad || 0))
-        };
+
+        let nuevaMascota;
+        if (esEspecial) {
+          nuevaMascota = {
+            hambre: Math.min(MAX, (datosMascota.hambre || 0) + (item.efecto.hambre || 0)),
+            sueno: Math.min(MAX, (datosMascota.sueno || 0) + (item.efecto.sueno || 0)),
+            felicidad: Math.min(MAX, (datosMascota.felicidad || 0) + (item.efecto.felicidad || 0))
+          };
+        } else {
+          const inv = datosMascota.inventario || {};
+          inv[item.id] = (inv[item.id] || 0) + 1;
+          nuevaMascota = { inventario: inv };
+          inventario = inv;
+        }
+
         transaccion.set(referenciaUsuario, nuevoUsuario, { merge: true });
         transaccion.set(referenciaDoc, nuevaMascota, { merge: true });
         monedas = nuevoUsuario.monedas;
@@ -2505,7 +2685,10 @@
       });
       actualizarMonedasUI();
       if (exito) {
-        alert(`${item.emoji} Le encantó "${item.nombre}"`);
+        alert(esEspecial
+          ? `${item.emoji} Le encantó "${item.nombre}"`
+          : `${item.emoji} "${item.nombre}" guardado — úsalo desde los botones de Comer/Dormir/Jugar`);
+        actualizarBotonesAccionConInventario();
         revisarLogrosTienda();
       } else {
         alert('No tienes suficientes monedas todavía.');
@@ -2761,6 +2944,9 @@
           contadores = datos.contadores || { comer: 0, dormir: 0, jugar: 0, saltar: 0, caricias: 0 };
           logrosDesbloqueados = datos.logrosDesbloqueados || [];
           actualizarEstadisticasUI();
+
+          inventario = datos.inventario || {};
+          actualizarBotonesAccionConInventario();
         });
       }).then(() => {
         // Una sola vez por carga de página: cuenta el día de hoy como

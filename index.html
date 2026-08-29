@@ -1896,23 +1896,27 @@
       pantallaClave.hidden = true;
 
       // Antes de enseñar el menú, se comprueba si hay regalos sin abrir para
-      // esta persona — si los hay, se ven en grande primero
-      const nombreActual = localStorage.getItem('nombreUsuario');
-      colaRegalosGrandeIndex = [];
-      if (nombreActual && db) {
-        try {
+      // esta persona — si los hay, se ven en grande primero. Pase lo que
+      // pase aquí, si algo falla se cae siempre al menú normal, nunca se
+      // queda una pantalla en blanco.
+      try {
+        const nombreActual = localStorage.getItem('nombreUsuario');
+        colaRegalosGrandeIndex = [];
+        if (nombreActual && db) {
           const snap = await db.collection('regalosRecibidos').where('destinatario', '==', nombreActual.trim()).get();
           colaRegalosGrandeIndex = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(r => !r.abierto);
-        } catch (err) {
-          console.error('No se pudieron comprobar los regalos pendientes:', err);
         }
-      }
 
-      if (colaRegalosGrandeIndex.length) {
-        indiceRegaloGrandeActual = 0;
-        mostrarRegaloGrandeActual();
-        document.getElementById('pantalla-regalo-grande').hidden = false;
-      } else {
+        if (colaRegalosGrandeIndex.length) {
+          indiceRegaloGrandeActual = 0;
+          mostrarRegaloGrandeActual();
+          document.getElementById('pantalla-regalo-grande').hidden = false;
+        } else {
+          mostrarMenuPrincipal();
+        }
+      } catch (err) {
+        console.error('No se pudieron comprobar los regalos pendientes:', err);
+        document.getElementById('pantalla-regalo-grande').hidden = true;
         mostrarMenuPrincipal();
       }
     }
@@ -1929,8 +1933,15 @@
 
     function mostrarRegaloGrandeActual() {
       const regalo = colaRegalosGrandeIndex[indiceRegaloGrandeActual];
+      if (!regalo) {
+        // Red de seguridad: si por lo que sea no hay nada que enseñar,
+        // se pasa directo al menú en vez de dejar la pantalla vacía
+        document.getElementById('pantalla-regalo-grande').hidden = true;
+        mostrarMenuPrincipal();
+        return;
+      }
       cajaGrandeAbierta = false;
-      document.getElementById('regalo-grande-remitente').textContent = `🎁 ${regalo.remitente} te ha mandado algo`;
+      document.getElementById('regalo-grande-remitente').textContent = `🎁 ${regalo.remitente || 'Alguien'} te ha mandado algo`;
       document.getElementById('caja-regalo-grande').className = 'caja-regalo-grande';
       document.getElementById('regalo-grande-contenido').className = 'regalo-grande-contenido';
       document.getElementById('regalo-grande-contenido').innerHTML = '';
@@ -1958,8 +1969,14 @@
 
     document.getElementById('caja-regalo-grande').addEventListener('click', async () => {
       if (cajaGrandeAbierta) return;
-      cajaGrandeAbierta = true;
       const regalo = colaRegalosGrandeIndex[indiceRegaloGrandeActual];
+      if (!regalo) {
+        // Red de seguridad: si no hay nada que abrir, no se hace nada raro
+        document.getElementById('pantalla-regalo-grande').hidden = true;
+        mostrarMenuPrincipal();
+        return;
+      }
+      cajaGrandeAbierta = true;
 
       document.getElementById('caja-regalo-grande').classList.add('cg-abriendo');
       dispararParticulasRegaloGrande();
@@ -1975,7 +1992,11 @@
         document.getElementById('btn-continuar-regalo-grande').hidden = false;
       }, 550);
 
-      if (db) await db.collection('regalosRecibidos').doc(regalo.id).set({ abierto: true }, { merge: true });
+      try {
+        if (db) await db.collection('regalosRecibidos').doc(regalo.id).set({ abierto: true }, { merge: true });
+      } catch (err) {
+        console.error('No se pudo marcar el regalo como abierto:', err);
+      }
     });
 
     document.getElementById('btn-continuar-regalo-grande').addEventListener('click', () => {

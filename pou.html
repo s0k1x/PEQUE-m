@@ -158,10 +158,13 @@
       min-height: 260px;
       object-fit: contain;
       display: block;
-      border: 1px solid var(--linea);
-      background: var(--hueso);
+      border: none;
+      background: radial-gradient(ellipse at center, var(--hueso) 0%, transparent 72%);
       cursor: pointer;
       transition: transform 0.15s ease, opacity 0.35s ease;
+      -webkit-mask-image: radial-gradient(ellipse 66% 66% at 50% 46%, black 58%, transparent 90%);
+      mask-image: radial-gradient(ellipse 66% 66% at 50% 46%, black 58%, transparent 90%);
+      filter: drop-shadow(0 10px 22px rgba(38,34,32,0.18));
     }
     #accesorio-mascota {
       position: absolute;
@@ -1233,7 +1236,27 @@
       { min: 0, emoji: '🌱', nombre: 'Empezando' },
       { min: 10, emoji: '💛', nombre: 'Enamorados' },
       { min: 30, emoji: '🧡', nombre: 'Muy unidos' },
-      { min: 70, emoji: '💞', nombre: 'Alma gemela' }
+      { min: 70, emoji: '💞', nombre: 'Alma gemela' },
+      { min: 120, emoji: '💍', nombre: 'Comprometidos' },
+      { min: 180, emoji: '🏠', nombre: 'Viviendo el momento' },
+      { min: 250, emoji: '🌅', nombre: 'Compañeros de vida' },
+      { min: 330, emoji: '🔑', nombre: 'Con las llaves de su corazón' },
+      { min: 420, emoji: '📖', nombre: 'Escribiendo su historia' },
+      { min: 520, emoji: '🌌', nombre: 'Su propio universo' },
+      { min: 630, emoji: '🕰️', nombre: 'Atemporales' },
+      { min: 750, emoji: '🌊', nombre: 'Inseparables de verdad' },
+      { min: 880, emoji: '🎶', nombre: 'En sintonía total' },
+      { min: 1020, emoji: '🏆', nombre: 'Equipo imparable' },
+      { min: 1170, emoji: '🌳', nombre: 'Raíces profundas' },
+      { min: 1330, emoji: '💎', nombre: 'Vínculo irrompible' },
+      { min: 1500, emoji: '🔥', nombre: 'Llama eterna' },
+      { min: 1680, emoji: '🌠', nombre: 'Estrella fugaz compartida' },
+      { min: 1870, emoji: '🧿', nombre: 'Suerte mutua' },
+      { min: 2070, emoji: '🕊️', nombre: 'Paz en el otro' },
+      { min: 2280, emoji: '🌈', nombre: 'Después de la tormenta' },
+      { min: 2500, emoji: '👑', nombre: 'Realeza del amor' },
+      { min: 2730, emoji: '♾️', nombre: 'Para siempre' },
+      { min: 2970, emoji: '💫', nombre: 'Leyenda de amor' }
     ];
     const HITOS_RACHA = [3, 7, 14, 30, 60, 100];
 

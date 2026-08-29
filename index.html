@@ -289,12 +289,35 @@
     }
 
     /* Contraseña */
-    #pantalla-clave p:first-of-type {
+    #titulo-pantalla-clave {
       font-family: 'Cormorant Garamond', serif;
       font-size: 22px;
       font-weight: 600;
       color: var(--tinta);
       margin-bottom: 20px;
+    }
+    #btn-face-id {
+      display: block;
+      width: 100%;
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      border-radius: 6px;
+      padding: 15px 20px;
+      font-weight: 500;
+      font-size: 12.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-bottom: 18px;
+    }
+    #separador-face-id {
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gris);
+      margin: 0 0 18px;
     }
     #input-clave {
       width: 100%;
@@ -1283,7 +1306,9 @@
 
     <!-- Pantalla 2.5: contraseña para entrar al menú -->
     <section id="pantalla-clave" hidden>
-      <p>Escribe la contraseña para entrar</p>
+      <button id="btn-face-id" type="button" hidden>🔐 Desbloquear con Face ID / huella</button>
+      <p id="separador-face-id" hidden>o escribe la contraseña</p>
+      <p id="titulo-pantalla-clave">Escribe la contraseña para entrar</p>
       <input type="password" id="input-clave" placeholder="Contraseña">
       <button id="btn-entrar-clave">Entrar</button>
       <p id="mensaje-error-clave" hidden>Contraseña incorrecta, intenta de nuevo</p>
@@ -1483,6 +1508,11 @@
         <!-- Sesión -->
         <div class="config-categoria-contenido" data-cat-contenido="sesion" hidden>
           <div class="config-grupo">
+            <span class="config-titulo">🔐 Face ID / Huella</span>
+            <p class="config-descripcion" id="face-id-descripcion">Desbloquea la web con tu cara o tu huella en este dispositivo, en vez de escribir la contraseña.</p>
+            <button id="btn-face-id-config" type="button" class="config-btn-secundario">Activar</button>
+          </div>
+          <div class="config-grupo">
             <span class="config-titulo">🚪 Sesión</span>
             <p class="config-descripcion">Cierra la sesión en este dispositivo — la próxima vez pedirá la contraseña otra vez.</p>
             <button id="btn-cerrar-sesion" type="button" class="config-btn-secundario">Cerrar sesión</button>
@@ -1668,19 +1698,131 @@
     const inputClave = document.getElementById('input-clave');
     const btnEntrarClave = document.getElementById('btn-entrar-clave');
     const mensajeErrorClave = document.getElementById('mensaje-error-clave');
+    const btnFaceId = document.getElementById('btn-face-id');
+    const separadorFaceId = document.getElementById('separador-face-id');
     const CONTRASENA_MENU = 'Peque2';
+
+    // Se llama tanto si se acierta la contraseña como si Face ID/huella funciona
+    function desbloquearMenu() {
+      mensajeErrorClave.hidden = true;
+      inputClave.value = '';
+      pantallaClave.hidden = true;
+      contenido.hidden = false;
+      mascotaWidget.hidden = false;
+      sessionStorage.setItem('claveOk', 'true');
+      document.body.classList.remove('pantalla-centrada');
+    }
 
     btnEntrarClave.addEventListener('click', () => {
       if (inputClave.value === CONTRASENA_MENU) {
-        mensajeErrorClave.hidden = true;
-        inputClave.value = '';
-        pantallaClave.hidden = true;
-        contenido.hidden = false;
-        mascotaWidget.hidden = false;
-        sessionStorage.setItem('claveOk', 'true');
-        document.body.classList.remove('pantalla-centrada');
+        desbloquearMenu();
       } else {
         mensajeErrorClave.hidden = false;
+      }
+    });
+
+    // ---------- Face ID / Huella (WebAuthn) ----------
+    // Usa la huella/cara de verdad del teléfono (a través del propio sistema
+    // operativo) — no hay servidor propio verificando nada, pero el "candado"
+    // real es que Face ID/huella tiene que tener éxito para que esto siga.
+    function biometriaDisponible() {
+      return !!(window.PublicKeyCredential && navigator.credentials);
+    }
+
+    async function registrarBiometria() {
+      if (!biometriaDisponible()) { alert('Tu navegador no soporta Face ID/huella aquí.'); return; }
+      try {
+        const challenge = crypto.getRandomValues(new Uint8Array(32));
+        const idUsuario = crypto.getRandomValues(new Uint8Array(16));
+        const credencial = await navigator.credentials.create({
+          publicKey: {
+            challenge,
+            rp: { name: 'Nuestro Corazón' },
+            user: { id: idUsuario, name: 'pequee', displayName: 'Pequee' },
+            pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+            authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+            timeout: 60000
+          }
+        });
+        if (!credencial) return;
+        const idBase64 = btoa(String.fromCharCode(...new Uint8Array(credencial.rawId)));
+        localStorage.setItem('credencialBiometrica', idBase64);
+        actualizarBotonFaceIdConfig();
+        actualizarBotonFaceIdPantallaClave();
+        alert('¡Listo! Ya puedes desbloquear con Face ID / huella.');
+      } catch (err) {
+        console.error(err);
+        alert('No se pudo activar Face ID/huella en este dispositivo.');
+      }
+    }
+
+    function desactivarBiometria() {
+      localStorage.removeItem('credencialBiometrica');
+      actualizarBotonFaceIdConfig();
+      actualizarBotonFaceIdPantallaClave();
+    }
+
+    async function desbloquearConBiometria() {
+      const idBase64 = localStorage.getItem('credencialBiometrica');
+      if (!idBase64 || !biometriaDisponible()) return false;
+      try {
+        const rawId = Uint8Array.from(atob(idBase64), c => c.charCodeAt(0));
+        const challenge = crypto.getRandomValues(new Uint8Array(32));
+        const validacion = await navigator.credentials.get({
+          publicKey: {
+            challenge,
+            allowCredentials: [{ id: rawId, type: 'public-key' }],
+            userVerification: 'required',
+            timeout: 60000
+          }
+        });
+        return !!validacion;
+      } catch (err) {
+        console.error(err);
+        return false;
+      }
+    }
+
+    btnFaceId.addEventListener('click', async () => {
+      btnFaceId.textContent = 'Comprobando...';
+      const ok = await desbloquearConBiometria();
+      if (ok) {
+        desbloquearMenu();
+      } else {
+        btnFaceId.textContent = '🔐 Desbloquear con Face ID / huella';
+        mensajeErrorClave.textContent = 'No se pudo verificar. Prueba de nuevo o usa la contraseña.';
+        mensajeErrorClave.hidden = false;
+      }
+    });
+
+    function actualizarBotonFaceIdPantallaClave() {
+      const activo = biometriaDisponible() && !!localStorage.getItem('credencialBiometrica');
+      btnFaceId.hidden = !activo;
+      separadorFaceId.hidden = !activo;
+    }
+    actualizarBotonFaceIdPantallaClave();
+
+    // Botón dentro de Configuración → Sesión, para activar/desactivar
+    const btnFaceIdConfig = document.getElementById('btn-face-id-config');
+    const faceIdDescripcion = document.getElementById('face-id-descripcion');
+
+    function actualizarBotonFaceIdConfig() {
+      if (!biometriaDisponible()) {
+        btnFaceIdConfig.disabled = true;
+        btnFaceIdConfig.textContent = 'No disponible aquí';
+        faceIdDescripcion.textContent = 'Tu navegador no soporta Face ID/huella en esta web.';
+        return;
+      }
+      const activo = !!localStorage.getItem('credencialBiometrica');
+      btnFaceIdConfig.textContent = activo ? 'Desactivar' : 'Activar';
+    }
+    actualizarBotonFaceIdConfig();
+
+    btnFaceIdConfig.addEventListener('click', () => {
+      if (localStorage.getItem('credencialBiometrica')) {
+        desactivarBiometria();
+      } else {
+        registrarBiometria();
       }
     });
 

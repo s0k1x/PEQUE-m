@@ -1721,6 +1721,14 @@
       }
     });
 
+    // Entra sola en cuanto se escribe la contraseña correcta, sin tener que
+    // tocar "Entrar"
+    inputClave.addEventListener('input', () => {
+      if (inputClave.value === CONTRASENA_MENU) {
+        desbloquearMenu();
+      }
+    });
+
     // ---------- Face ID / Huella (WebAuthn) ----------
     // Usa la huella/cara de verdad del teléfono (a través del propio sistema
     // operativo) — no hay servidor propio verificando nada, pero el "candado"
@@ -1764,7 +1772,8 @@
 
     async function desbloquearConBiometria() {
       const idBase64 = localStorage.getItem('credencialBiometrica');
-      if (!idBase64 || !biometriaDisponible()) return false;
+      if (!idBase64) return { ok: false, error: 'No hay Face ID/huella activado en este dispositivo.' };
+      if (!biometriaDisponible()) return { ok: false, error: 'Este navegador no soporta Face ID/huella aquí.' };
       try {
         const rawId = Uint8Array.from(atob(idBase64), c => c.charCodeAt(0));
         const challenge = crypto.getRandomValues(new Uint8Array(32));
@@ -1776,21 +1785,21 @@
             timeout: 60000
           }
         });
-        return !!validacion;
+        return { ok: !!validacion, error: null };
       } catch (err) {
         console.error(err);
-        return false;
+        return { ok: false, error: `${err.name}: ${err.message}` };
       }
     }
 
     btnFaceId.addEventListener('click', async () => {
       btnFaceId.textContent = 'Comprobando...';
-      const ok = await desbloquearConBiometria();
-      if (ok) {
+      const resultado = await desbloquearConBiometria();
+      if (resultado.ok) {
         desbloquearMenu();
       } else {
         btnFaceId.textContent = '🔐 Desbloquear con Face ID / huella';
-        mensajeErrorClave.textContent = 'No se pudo verificar. Prueba de nuevo o usa la contraseña.';
+        mensajeErrorClave.textContent = 'No se pudo verificar: ' + resultado.error;
         mensajeErrorClave.hidden = false;
       }
     });

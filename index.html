@@ -333,6 +333,167 @@
     }
     #input-clave:focus { outline: none; }
 
+    /* ---------- Pantalla grande de regalo (tras la contraseña) ---------- */
+    #pantalla-regalo-grande { text-align: center; }
+    #regalo-grande-remitente {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 20px;
+      color: var(--tinta);
+      margin: 0 0 26px;
+    }
+
+    #regalo-grande-escenario {
+      position: relative;
+      width: 100%;
+      height: 260px;
+      margin-bottom: 10px;
+    }
+
+    .caja-regalo-grande {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 170px;
+      height: 170px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .caja-regalo-grande:active .cg-cuerpo { transform: scale(0.97); }
+    .caja-regalo-grande.cg-escondida { opacity: 0; transform: scale(0.8) translateY(10px); pointer-events: none; }
+
+    .cg-cuerpo {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 115px;
+      border-radius: 8px;
+      background: linear-gradient(160deg, #d68c4a, #a8632a);
+      box-shadow: 0 18px 36px rgba(0,0,0,0.4), 0 0 30px rgba(232,112,58,0.25);
+      overflow: hidden;
+      transition: transform 0.15s ease;
+    }
+    .cg-cinta-v {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 50%;
+      width: 24px;
+      margin-left: -12px;
+      background: var(--naranja-suave);
+    }
+    .cg-cinta-h {
+      position: absolute;
+      left: 0; right: 0;
+      top: 0;
+      height: 24px;
+      background: var(--naranja-suave);
+    }
+    .cg-tapa {
+      position: absolute;
+      left: -5px; right: -5px;
+      top: 40px;
+      height: 30px;
+      border-radius: 8px 8px 4px 4px;
+      background: linear-gradient(160deg, #e29d5c, #b6702f);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.35);
+      transform-origin: 50% 100%;
+      transition: transform 0.55s cubic-bezier(.4,-0.2,.6,1.3), opacity 0.5s ease 0.15s;
+    }
+    .cg-lazo {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      width: 40px;
+      height: 26px;
+      margin-left: -20px;
+      transition: transform 0.5s ease, opacity 0.4s ease 0.1s;
+    }
+    .cg-lazo::before, .cg-lazo::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 20px;
+      height: 24px;
+      background: var(--naranja-suave);
+      border-radius: 50% 50% 50% 0;
+      box-shadow: inset 0 0 0 2px rgba(168,99,42,0.35);
+    }
+    .cg-lazo::before { left: 0; transform: rotate(-25deg); }
+    .cg-lazo::after { right: 0; transform: rotate(25deg) scaleX(-1); }
+
+    .caja-regalo-grande.cg-abriendo .cg-tapa { transform: translateY(-80px) rotate(-50deg); opacity: 0; }
+    .caja-regalo-grande.cg-abriendo .cg-lazo { transform: translateY(-80px) scale(0.7); opacity: 0; }
+    .caja-regalo-grande.cg-abriendo .cg-cuerpo { animation: temblarCajaGrande 0.35s ease; }
+    @keyframes temblarCajaGrande {
+      0%, 100% { transform: translateX(0) rotate(0); }
+      25% { transform: translateX(-4px) rotate(-2deg); }
+      75% { transform: translateX(4px) rotate(2deg); }
+    }
+
+    .particulas-regalo-grande { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+    .particula-regalo-grande {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--naranja-suave);
+      box-shadow: 0 0 10px 1px rgba(246,221,201,0.9);
+      opacity: 0;
+    }
+    .particula-regalo-grande.pg-disparada { animation: dispararParticulaGrande 1s cubic-bezier(.2,.7,.4,1) forwards; }
+    @keyframes dispararParticulaGrande {
+      0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0.4); }
+    }
+
+    .regalo-grande-contenido {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.85);
+      transition: opacity 0.9s ease, transform 0.9s cubic-bezier(.2,.8,.3,1.15);
+    }
+    .regalo-grande-contenido.rg-visible { opacity: 1; transform: scale(1); }
+    .regalo-grande-emoji { font-size: 64px; margin-bottom: 10px; }
+    .regalo-grande-nombre {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 23px;
+      color: var(--tinta);
+      text-align: center;
+      padding: 0 10px;
+    }
+
+    #regalo-grande-contador {
+      font-size: 11px;
+      color: var(--gris);
+      letter-spacing: 0.5px;
+      margin: 4px 0 20px;
+    }
+
+    #btn-continuar-regalo-grande {
+      width: 100%;
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      border-radius: 6px;
+      padding: 15px 20px;
+      font-weight: 500;
+      font-size: 12.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    #btn-continuar-regalo-grande[hidden] { display: none; }
+
     /* Menú principal */
     #menu-principal { counter-reset: opcion; }
     #btn-notificaciones {
@@ -1314,6 +1475,29 @@
       <p id="mensaje-error-clave" hidden>Contraseña incorrecta, intenta de nuevo</p>
     </section>
 
+    <!-- Pantalla de regalo grande: aparece justo después de la contraseña si hay algo sin abrir -->
+    <section id="pantalla-regalo-grande" hidden>
+      <p id="regalo-grande-remitente"></p>
+
+      <div id="regalo-grande-escenario">
+        <div class="particulas-regalo-grande" id="particulas-regalo-grande"></div>
+
+        <button class="caja-regalo-grande" id="caja-regalo-grande" aria-label="Abrir regalo">
+          <span class="cg-tapa"></span>
+          <span class="cg-cuerpo">
+            <span class="cg-cinta-v"></span>
+            <span class="cg-cinta-h"></span>
+          </span>
+          <span class="cg-lazo"></span>
+        </button>
+
+        <div class="regalo-grande-contenido" id="regalo-grande-contenido"></div>
+      </div>
+
+      <p id="regalo-grande-contador"></p>
+      <button id="btn-continuar-regalo-grande" type="button" hidden>Continuar</button>
+    </section>
+
     <!-- Pantalla 3: página principal con 4 opciones -->
     <section id="contenido" hidden>
 
@@ -1703,15 +1887,105 @@
     const CONTRASENA_MENU = 'Peque2';
 
     // Se llama tanto si se acierta la contraseña como si Face ID/huella funciona
-    function desbloquearMenu() {
+    async function desbloquearMenu() {
       mensajeErrorClave.hidden = true;
       inputClave.value = '';
-      pantallaClave.hidden = true;
-      contenido.hidden = false;
-      mascotaWidget.hidden = false;
       sessionStorage.setItem('claveOk', 'true');
       document.body.classList.remove('pantalla-centrada');
+      pantallaClave.hidden = true;
+
+      // Antes de enseñar el menú, se comprueba si hay regalos sin abrir para
+      // esta persona — si los hay, se ven en grande primero
+      const nombreActual = localStorage.getItem('nombreUsuario');
+      colaRegalosGrandeIndex = [];
+      if (nombreActual && db) {
+        try {
+          const snap = await db.collection('regalosRecibidos').where('destinatario', '==', nombreActual.trim()).get();
+          colaRegalosGrandeIndex = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(r => !r.abierto);
+        } catch (err) {
+          console.error('No se pudieron comprobar los regalos pendientes:', err);
+        }
+      }
+
+      if (colaRegalosGrandeIndex.length) {
+        indiceRegaloGrandeActual = 0;
+        mostrarRegaloGrandeActual();
+        document.getElementById('pantalla-regalo-grande').hidden = false;
+      } else {
+        mostrarMenuPrincipal();
+      }
     }
+
+    function mostrarMenuPrincipal() {
+      contenido.hidden = false;
+      mascotaWidget.hidden = false;
+    }
+
+    // ---------- Pantalla grande de regalo ----------
+    let colaRegalosGrandeIndex = [];
+    let indiceRegaloGrandeActual = 0;
+    let cajaGrandeAbierta = false;
+
+    function mostrarRegaloGrandeActual() {
+      const regalo = colaRegalosGrandeIndex[indiceRegaloGrandeActual];
+      cajaGrandeAbierta = false;
+      document.getElementById('regalo-grande-remitente').textContent = `🎁 ${regalo.remitente} te ha mandado algo`;
+      document.getElementById('caja-regalo-grande').className = 'caja-regalo-grande';
+      document.getElementById('regalo-grande-contenido').className = 'regalo-grande-contenido';
+      document.getElementById('regalo-grande-contenido').innerHTML = '';
+      document.getElementById('particulas-regalo-grande').innerHTML = '';
+      document.getElementById('btn-continuar-regalo-grande').hidden = true;
+      document.getElementById('regalo-grande-contador').textContent = colaRegalosGrandeIndex.length > 1
+        ? `Regalo ${indiceRegaloGrandeActual + 1} de ${colaRegalosGrandeIndex.length}`
+        : '';
+    }
+
+    function dispararParticulasRegaloGrande() {
+      const contenedor = document.getElementById('particulas-regalo-grande');
+      for (let i = 0; i < 22; i++) {
+        const p = document.createElement('div');
+        p.className = 'particula-regalo-grande';
+        const angulo = (Math.PI * 2 * i) / 22 + Math.random() * 0.3;
+        const distancia = 70 + Math.random() * 55;
+        p.style.setProperty('--px', Math.cos(angulo) * distancia + 'px');
+        p.style.setProperty('--py', Math.sin(angulo) * distancia + 'px');
+        contenedor.appendChild(p);
+        requestAnimationFrame(() => p.classList.add('pg-disparada'));
+        setTimeout(() => p.remove(), 1100);
+      }
+    }
+
+    document.getElementById('caja-regalo-grande').addEventListener('click', async () => {
+      if (cajaGrandeAbierta) return;
+      cajaGrandeAbierta = true;
+      const regalo = colaRegalosGrandeIndex[indiceRegaloGrandeActual];
+
+      document.getElementById('caja-regalo-grande').classList.add('cg-abriendo');
+      dispararParticulasRegaloGrande();
+
+      setTimeout(() => {
+        document.getElementById('caja-regalo-grande').classList.add('cg-escondida');
+        const contenidoEl = document.getElementById('regalo-grande-contenido');
+        contenidoEl.innerHTML = `
+          <span class="regalo-grande-emoji">${regalo.emoji}</span>
+          <span class="regalo-grande-nombre">${regalo.nombreRegalo}</span>
+        `;
+        contenidoEl.classList.add('rg-visible');
+        document.getElementById('btn-continuar-regalo-grande').hidden = false;
+      }, 550);
+
+      if (db) await db.collection('regalosRecibidos').doc(regalo.id).set({ abierto: true }, { merge: true });
+    });
+
+    document.getElementById('btn-continuar-regalo-grande').addEventListener('click', () => {
+      indiceRegaloGrandeActual += 1;
+      if (indiceRegaloGrandeActual < colaRegalosGrandeIndex.length) {
+        mostrarRegaloGrandeActual();
+      } else {
+        document.getElementById('pantalla-regalo-grande').hidden = true;
+        mostrarMenuPrincipal();
+      }
+    });
 
     btnEntrarClave.addEventListener('click', () => {
       if (inputClave.value === CONTRASENA_MENU) {

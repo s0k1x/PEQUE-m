@@ -642,6 +642,138 @@
     .separador-punto:empty::before { content: ''; }
     .nivel-compacto { color: var(--tinta); font-weight: 600; }
 
+    #racha-mascota {
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 13px;
+      color: var(--gris);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    #racha-mascota:active { transform: scale(0.95); }
+
+    /* ---------- Modal del calendario de racha ---------- */
+    #modal-racha {
+      position: fixed;
+      inset: 0;
+      background: rgba(38,34,32,0.55);
+      z-index: 998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #modal-racha[hidden] { display: none; }
+    #modal-racha-caja {
+      background: var(--blanco);
+      width: 100%;
+      max-width: 320px;
+      max-height: 88vh;
+      overflow-y: auto;
+      border: 1px solid var(--linea);
+    }
+    .racha-cabecera-fuego {
+      background: linear-gradient(160deg, var(--naranja), #f0985a);
+      color: var(--blanco);
+      padding: 26px 22px 20px;
+      text-align: center;
+      position: relative;
+    }
+    #cerrar-modal-racha {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: var(--blanco);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .racha-fuego-grande { font-size: 40px; display: block; margin-bottom: 2px; }
+    .racha-numero-grande {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 40px;
+      line-height: 1;
+      display: block;
+    }
+    .racha-etiqueta-grande {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: 0.9;
+      margin-top: 2px;
+    }
+    .racha-record-linea {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-top: 10px;
+    }
+
+    .racha-calendario { padding: 18px 20px 22px; }
+    .racha-cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .racha-cal-nav button {
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .racha-cal-mes {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--tinta);
+      text-transform: capitalize;
+    }
+    .racha-cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+    .racha-cal-dia-nombre {
+      font-size: 9.5px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--gris);
+      padding-bottom: 4px;
+    }
+    .racha-cal-dia {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--tinta);
+      border-radius: 50%;
+    }
+    .racha-cal-dia.vacio { visibility: hidden; }
+    .racha-cal-dia.activo {
+      background: linear-gradient(160deg, var(--naranja), #f0985a);
+      color: var(--blanco);
+      font-weight: 600;
+    }
+    .racha-cal-dia.hoy:not(.activo) {
+      border: 1.5px solid var(--naranja);
+    }
+
     /* ---------- Botón de ir a la tienda ---------- */
     #btn-abrir-tienda {
       display: block;
@@ -849,7 +981,7 @@
     </div>
 
     <div class="linea-progreso-mascota">
-      <span id="racha-mascota"></span>
+      <button id="racha-mascota" type="button"></button>
       <span class="separador-punto" id="separador-progreso"></span>
       <span class="nivel-compacto"><span class="emoji-nivel" id="emoji-nivel"></span><span class="texto-nivel" id="texto-nivel"></span></span>
     </div>
@@ -1086,6 +1218,26 @@
       <p id="tienda-selector-titulo">¿Para quién es?</p>
       <div id="tienda-selector-lista"></div>
       <button id="tienda-selector-cancelar" type="button" class="config-btn-secundario">Cancelar</button>
+    </div>
+  </div>
+
+  <div id="modal-racha" hidden>
+    <div id="modal-racha-caja">
+      <div class="racha-cabecera-fuego">
+        <button id="cerrar-modal-racha" type="button" aria-label="Cerrar">✕</button>
+        <span class="racha-fuego-grande">🔥</span>
+        <span class="racha-numero-grande" id="racha-numero-grande">0</span>
+        <span class="racha-etiqueta-grande">días de racha</span>
+        <p class="racha-record-linea" id="racha-record-linea"></p>
+      </div>
+      <div class="racha-calendario">
+        <div class="racha-cal-nav">
+          <button type="button" id="racha-cal-anterior" aria-label="Mes anterior">‹</button>
+          <span class="racha-cal-mes" id="racha-cal-mes"></span>
+          <button type="button" id="racha-cal-siguiente" aria-label="Mes siguiente">›</button>
+        </div>
+        <div class="racha-cal-grid" id="racha-cal-grid"></div>
+      </div>
     </div>
   </div>
 
@@ -1345,6 +1497,82 @@
         ? `🔥 ${racha} día${racha === 1 ? '' : 's'} seguido${racha === 1 ? '' : 's'} · récord ${rachaMaxima}`
         : '🔥 Empieza tu racha hoy';
     }
+
+    // ---------- Calendario de racha (modal tipo Duolingo) ----------
+    const MESES_ES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    const DIAS_SEMANA_ES = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
+    let mesCalendarioMostrado = new Date();
+
+    // Como la racha son siempre días consecutivos que terminan en
+    // "ultimoDiaCuidado", no hace falta guardar un historial: se calcula solo
+    function fechaEnRachaActiva(fecha) {
+      if (!ultimoDiaCuidado || racha <= 0) return false;
+      const fechaStr = fechaAString(fecha);
+      const inicio = new Date(ultimoDiaCuidado + 'T00:00:00');
+      inicio.setDate(inicio.getDate() - (racha - 1));
+      const inicioStr = fechaAString(inicio);
+      return fechaStr >= inicioStr && fechaStr <= ultimoDiaCuidado;
+    }
+
+    function renderizarCalendarioRacha() {
+      const anio = mesCalendarioMostrado.getFullYear();
+      const mes = mesCalendarioMostrado.getMonth();
+      document.getElementById('racha-cal-mes').textContent = `${MESES_ES[mes]} de ${anio}`;
+
+      const grid = document.getElementById('racha-cal-grid');
+      grid.innerHTML = '';
+      DIAS_SEMANA_ES.forEach(nombreDia => {
+        const el = document.createElement('div');
+        el.className = 'racha-cal-dia-nombre';
+        el.textContent = nombreDia;
+        grid.appendChild(el);
+      });
+
+      const primerDiaSemana = new Date(anio, mes, 1).getDay();
+      const diasEnMes = new Date(anio, mes + 1, 0).getDate();
+      const hoyStr = fechaAString(new Date());
+
+      for (let i = 0; i < primerDiaSemana; i++) {
+        const vacio = document.createElement('div');
+        vacio.className = 'racha-cal-dia vacio';
+        grid.appendChild(vacio);
+      }
+
+      for (let dia = 1; dia <= diasEnMes; dia++) {
+        const fecha = new Date(anio, mes, dia);
+        const celda = document.createElement('div');
+        celda.className = 'racha-cal-dia';
+        if (fechaEnRachaActiva(fecha)) celda.classList.add('activo');
+        if (fechaAString(fecha) === hoyStr) celda.classList.add('hoy');
+        celda.textContent = dia;
+        grid.appendChild(celda);
+      }
+    }
+
+    function abrirModalRacha() {
+      document.getElementById('racha-numero-grande').textContent = racha;
+      document.getElementById('racha-record-linea').textContent = `Récord: ${rachaMaxima} día${rachaMaxima === 1 ? '' : 's'}`;
+      mesCalendarioMostrado = ultimoDiaCuidado ? new Date(ultimoDiaCuidado + 'T00:00:00') : new Date();
+      mesCalendarioMostrado.setDate(1);
+      renderizarCalendarioRacha();
+      document.getElementById('modal-racha').hidden = false;
+    }
+
+    rachaMascotaEl.addEventListener('click', abrirModalRacha);
+    document.getElementById('cerrar-modal-racha').addEventListener('click', () => {
+      document.getElementById('modal-racha').hidden = true;
+    });
+    document.getElementById('modal-racha').addEventListener('click', (e) => {
+      if (e.target.id === 'modal-racha') document.getElementById('modal-racha').hidden = true;
+    });
+    document.getElementById('racha-cal-anterior').addEventListener('click', () => {
+      mesCalendarioMostrado.setMonth(mesCalendarioMostrado.getMonth() - 1);
+      renderizarCalendarioRacha();
+    });
+    document.getElementById('racha-cal-siguiente').addEventListener('click', () => {
+      mesCalendarioMostrado.setMonth(mesCalendarioMostrado.getMonth() + 1);
+      renderizarCalendarioRacha();
+    });
 
     function actualizarMonedasUI() {
       valorMonedas.textContent = monedas;

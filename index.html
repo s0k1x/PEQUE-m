@@ -572,6 +572,14 @@
       color: var(--gris);
       text-transform: uppercase;
     }
+    .info-subida {
+      display: block;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.3px;
+      color: var(--gris);
+      margin: 4px 0 10px;
+    }
     .flecha-acordeon {
       margin-left: auto;
       color: var(--naranja);
@@ -846,6 +854,8 @@
       text-decoration: line-through;
       color: var(--gris);
     }
+    .meta-texto-wrapper { flex: 1; min-width: 0; }
+    .meta-texto-wrapper .info-subida { margin: 2px 0 0; }
 
     /* Citas */
     #form-cita {
@@ -2402,6 +2412,27 @@
       return timestamp.toDate().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
     }
 
+    // Igual que formatearFecha pero con la hora incluida, ej: "12 ago 2026, 14:30"
+    function formatearFechaHora(timestamp) {
+      if (!timestamp || !timestamp.toDate) return '';
+      const fecha = timestamp.toDate();
+      const soloFecha = fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+      const soloHora = fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+      return `${soloFecha}, ${soloHora}`;
+    }
+
+    // Línea pequeña de "quién lo subió y cuándo", reutilizada en cartas/fotos/citas/metas
+    function crearInfoSubida(autor, timestamp) {
+      const span = document.createElement('span');
+      span.className = 'info-subida';
+      const partes = [];
+      if (autor) partes.push(autor);
+      const fechaHora = formatearFechaHora(timestamp);
+      if (fechaHora) partes.push(fechaHora);
+      span.textContent = partes.join(' · ');
+      return span;
+    }
+
     async function procesarImagen(archivo) {
       const dataUrlOriginal = await new Promise(resolve => {
         const lector = new FileReader();
@@ -2487,6 +2518,8 @@
         contenido.className = 'carta-contenido';
         contenido.style.color = carta.color;
         contenido.style.fontSize = carta.tamano;
+
+        contenido.appendChild(crearInfoSubida(carta.autor, carta.creado));
 
         const parrafo = document.createElement('p');
         parrafo.textContent = carta.texto;
@@ -2829,7 +2862,7 @@
 
       const fecha = document.createElement('span');
       fecha.className = 'media-fecha';
-      fecha.textContent = formatearFecha(item.creado);
+      fecha.textContent = [item.autor, formatearFechaHora(item.creado)].filter(Boolean).join(' · ');
 
       if (esVideo) {
         const video = document.createElement('video');
@@ -2923,6 +2956,11 @@
         const span = document.createElement('span');
         span.textContent = meta.texto;
 
+        const textoWrapper = document.createElement('div');
+        textoWrapper.className = 'meta-texto-wrapper';
+        textoWrapper.appendChild(span);
+        textoWrapper.appendChild(crearInfoSubida(meta.autor, meta.creado));
+
         const btnEliminar = document.createElement('button');
         btnEliminar.className = 'btn-x';
         btnEliminar.textContent = '✕';
@@ -2931,7 +2969,7 @@
         });
 
         li.appendChild(checkbox);
-        li.appendChild(span);
+        li.appendChild(textoWrapper);
         li.appendChild(btnEliminar);
         listaMetas.appendChild(li);
       });
@@ -3034,6 +3072,8 @@
 
         const contenido = document.createElement('div');
         contenido.className = 'cita-contenido';
+
+        contenido.appendChild(crearInfoSubida(cita.autor, cita.creado));
 
         const parrafo = document.createElement('p');
         parrafo.textContent = cita.descripcion;

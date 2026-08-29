@@ -480,188 +480,6 @@
       border-color: var(--naranja);
     }
 
-    #btn-regalo-recibido {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      background: var(--naranja);
-      border: none;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      font-size: 17px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2;
-      box-shadow: 0 0 0 0 rgba(232,112,58,0.55);
-      animation: pulsoRegalo 1.6s ease-in-out infinite;
-    }
-    #btn-regalo-recibido[hidden] { display: none; }
-    @keyframes pulsoRegalo {
-      0% { box-shadow: 0 0 0 0 rgba(232,112,58,0.5); }
-      70% { box-shadow: 0 0 0 10px rgba(232,112,58,0); }
-      100% { box-shadow: 0 0 0 0 rgba(232,112,58,0); }
-    }
-
-    /* ---------- Modal de abrir un regalo recibido ---------- */
-    #modal-regalo-recibido {
-      position: fixed;
-      inset: 0;
-      background: rgba(38,34,32,0.65);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    #modal-regalo-recibido[hidden] { display: none; }
-    #modal-regalo-caja {
-      background: var(--blanco);
-      width: 100%;
-      max-width: 300px;
-      padding: 26px 22px;
-      text-align: center;
-      border: 1px solid var(--linea);
-    }
-    #regalo-recibido-remitente {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 17px;
-      color: var(--tinta);
-      margin: 0 0 20px;
-    }
-
-    .regalo-recibido-escenario {
-      position: relative;
-      width: 100%;
-      height: 200px;
-      margin-bottom: 18px;
-    }
-
-    .caja-regalo {
-      position: absolute;
-      inset: 0;
-      margin: auto;
-      width: 130px;
-      height: 130px;
-      background: none;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-    .caja-regalo:active .caja-cuerpo { transform: scale(0.97); }
-    .caja-regalo.escondida { opacity: 0; transform: scale(0.8) translateY(10px); pointer-events: none; }
-
-    .caja-cuerpo {
-      position: absolute;
-      left: 0; right: 0; bottom: 0;
-      height: 88px;
-      border-radius: 6px;
-      background: linear-gradient(160deg, #d68c4a, #a8632a);
-      box-shadow: 0 14px 28px rgba(0,0,0,0.4), 0 0 24px rgba(238,168,102,0.2);
-      overflow: hidden;
-      transition: transform 0.15s ease;
-    }
-    .caja-cinta-v {
-      position: absolute;
-      top: 0; bottom: 0;
-      left: 50%;
-      width: 18px;
-      margin-left: -9px;
-      background: var(--naranja-suave);
-    }
-    .caja-cinta-h {
-      position: absolute;
-      left: 0; right: 0;
-      top: 0;
-      height: 18px;
-      background: var(--naranja-suave);
-    }
-    .caja-tapa {
-      position: absolute;
-      left: -4px; right: -4px;
-      top: 30px;
-      height: 22px;
-      border-radius: 6px 6px 3px 3px;
-      background: linear-gradient(160deg, #e29d5c, #b6702f);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.35);
-      transform-origin: 50% 100%;
-      transition: transform 0.55s cubic-bezier(.4,-0.2,.6,1.3), opacity 0.5s ease 0.15s;
-    }
-    .caja-lazo {
-      position: absolute;
-      top: 4px;
-      left: 50%;
-      width: 30px;
-      height: 20px;
-      margin-left: -15px;
-      transition: transform 0.5s ease, opacity 0.4s ease 0.1s;
-    }
-    .caja-lazo::before, .caja-lazo::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      width: 15px;
-      height: 18px;
-      background: var(--naranja-suave);
-      border-radius: 50% 50% 50% 0;
-      box-shadow: inset 0 0 0 2px rgba(168,99,42,0.35);
-    }
-    .caja-lazo::before { left: 0; transform: rotate(-25deg); }
-    .caja-lazo::after { right: 0; transform: rotate(25deg) scaleX(-1); }
-
-    .caja-regalo.abriendo .caja-tapa { transform: translateY(-60px) rotate(-50deg); opacity: 0; }
-    .caja-regalo.abriendo .caja-lazo { transform: translateY(-60px) scale(0.7); opacity: 0; }
-    .caja-regalo.abriendo .caja-cuerpo { animation: temblarCajaRecibido 0.35s ease; }
-    @keyframes temblarCajaRecibido {
-      0%, 100% { transform: translateX(0) rotate(0); }
-      25% { transform: translateX(-3px) rotate(-2deg); }
-      75% { transform: translateX(3px) rotate(2deg); }
-    }
-
-    .particulas-regalo { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
-    .particula-regalo {
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--naranja-suave);
-      box-shadow: 0 0 8px 1px rgba(246,221,201,0.9);
-      opacity: 0;
-    }
-    .particula-regalo.disparada { animation: dispararParticulaRecibido 0.9s cubic-bezier(.2,.7,.4,1) forwards; }
-    @keyframes dispararParticulaRecibido {
-      0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1); }
-      100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0.4); }
-    }
-
-    .regalo-recibido-contenido {
-      position: absolute;
-      inset: 0;
-      margin: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transform: scale(0.85);
-      transition: opacity 0.9s ease, transform 0.9s cubic-bezier(.2,.8,.3,1.15);
-      pointer-events: none;
-    }
-    .regalo-recibido-contenido.visible { opacity: 1; transform: scale(1); }
-    .regalo-recibido-emoji-grande { font-size: 52px; margin-bottom: 8px; }
-    .regalo-recibido-nombre {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 600;
-      font-size: 19px;
-      color: var(--tinta);
-      text-align: center;
-    }
-
     .config-categorias {
       display: flex;
       flex-wrap: wrap;
@@ -1074,6 +892,14 @@
     .tienda-item-info { display: flex; align-items: center; gap: 10px; }
     .tienda-item-emoji { font-size: 20px; }
     .tienda-item-nombre { font-size: 13px; color: var(--tinta); font-weight: 500; }
+    .tienda-item-frase {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 12px;
+      color: var(--naranja);
+      margin: 1px 0;
+    }
     .tienda-item-detalle { display: block; font-size: 10.5px; color: var(--gris); }
     .tienda-item-btn {
       background: var(--naranja);
@@ -1212,7 +1038,6 @@
   <div class="contenedor">
     <a href="index.html" class="volver-link">‹ Volver</a>
     <button id="btn-ajustes-flotante" type="button" aria-label="Configuración">⚙️</button>
-    <button id="btn-regalo-recibido" type="button" hidden aria-label="Tienes un regalo">🎁</button>
 
     <div id="vista-mascota">
     <div class="cabecera-mascota">
@@ -1416,6 +1241,11 @@
           <button id="btn-ruleta" type="button" class="tienda-btn-ruleta">Girar la ruleta</button>
         </div>
         <div class="tienda-seccion">
+          <span class="config-titulo">🔍 Buscar monedas</span>
+          <p class="config-descripcion" id="buscar-descripcion">Busca por ahí cada cierto tiempo — nunca sabes cuánto vas a encontrar.</p>
+          <button id="btn-buscar-monedas" type="button" class="tienda-btn-ruleta">Buscar monedas</button>
+        </div>
+        <div class="tienda-seccion">
           <span class="config-titulo">💰 Formas de ganar monedas</span>
           <ul class="tienda-guia-ganar">
             <li>Entrar a la web cada día: <strong>+15 🪙</strong></li>
@@ -1424,6 +1254,7 @@
             <li>Saltar: <strong>+2 🪙</strong></li>
             <li>Acariciar: <strong>+1 🪙</strong></li>
             <li>Ruleta diaria: <strong>hasta +40 🪙</strong></li>
+            <li>Buscar monedas: <strong>cada 20 min, hasta +12 🪙</strong></li>
             <li>Logros: <strong>recompensa única</strong></li>
           </ul>
         </div>
@@ -1496,29 +1327,6 @@
     </div>
   </div>
 
-  <div id="modal-regalo-recibido" hidden>
-    <div id="modal-regalo-caja">
-      <p id="regalo-recibido-remitente"></p>
-
-      <div class="regalo-recibido-escenario">
-        <div class="particulas-regalo" id="particulas-regalo-recibido"></div>
-
-        <button class="caja-regalo" id="caja-regalo-recibido" aria-label="Abrir regalo">
-          <span class="caja-tapa"></span>
-          <span class="caja-cuerpo">
-            <span class="caja-cinta-v"></span>
-            <span class="caja-cinta-h"></span>
-          </span>
-          <span class="caja-lazo"></span>
-        </button>
-
-        <div class="regalo-recibido-contenido" id="regalo-recibido-contenido"></div>
-      </div>
-
-      <button id="btn-cerrar-regalo-recibido" type="button" class="config-btn-secundario">Cerrar</button>
-    </div>
-  </div>
-
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -1587,10 +1395,10 @@
     // Economía — es PERSONAL de cada uno (usa el nombre puesto en Perfil),
     // vive en su propio documento, no en el de la mascota compartida
     let referenciaUsuario = null;
-    let colaRegalosRecibidos = [];
     let monedas = 0;
     let ultimoGiroRuleta = null;
     let ultimoBonoDiario = null;
+    let ultimaBusquedaMonedas = null;
     let regalosEnviados = 0;
     let monedasGastadasTotal = 0;
     let logrosTiendaConseguidos = [];
@@ -1642,30 +1450,30 @@
     ];
 
     const ITEMS_REGALO = [
-      { id: 'girasol', emoji: '🌻', nombre: 'Un girasol', costo: 12 },
-      { id: 'caramelos', emoji: '🍬', nombre: 'Caramelos', costo: 15 },
-      { id: 'rosa', emoji: '🌹', nombre: 'Una rosa', costo: 15 },
-      { id: 'calcetines', emoji: '🧦', nombre: 'Calcetines divertidos', costo: 18 },
-      { id: 'chocolates', emoji: '🍫', nombre: 'Chocolates', costo: 20 },
-      { id: 'cancion', emoji: '🎵', nombre: 'Una canción dedicada', costo: 22 },
-      { id: 'carta', emoji: '💌', nombre: 'Carta sorpresa', costo: 25 },
-      { id: 'cuidado', emoji: '🧴', nombre: 'Set de cuidado', costo: 28 },
-      { id: 'cafe', emoji: '☕', nombre: 'Invitación a un café', costo: 30 },
-      { id: 'libro', emoji: '📖', nombre: 'Un libro', costo: 32 },
-      { id: 'peluche', emoji: '🧸', nombre: 'Peluche', costo: 35 },
-      { id: 'cine', emoji: '🎬', nombre: 'Noche de cine', costo: 40 },
-      { id: 'desayuno', emoji: '🍩', nombre: 'Desayuno sorpresa', costo: 45 },
-      { id: 'picnic', emoji: '🧺', nombre: 'Picnic romántico', costo: 50 },
-      { id: 'cena', emoji: '🍽️', nombre: 'Cena especial', costo: 55 },
-      { id: 'ramo', emoji: '💐', nombre: 'Ramo de flores', costo: 60 },
-      { id: 'clase', emoji: '🎨', nombre: 'Clase de algo nuevo juntos', costo: 65 },
-      { id: 'ropa', emoji: '👗', nombre: 'Algo para vestir', costo: 75 },
-      { id: 'especial', emoji: '💎', nombre: 'Algo muy especial', costo: 90 },
-      { id: 'hobby', emoji: '🎮', nombre: 'Algo de tu hobby favorito', costo: 95 },
-      { id: 'aventura', emoji: '🚗', nombre: 'Aventura de un día', costo: 130 },
-      { id: 'spa-dia', emoji: '🏖️', nombre: 'Día de spa', costo: 110 },
-      { id: 'escapada', emoji: '✈️', nombre: 'Una escapada sorpresa', costo: 150 },
-      { id: 'anillo-dedo', emoji: '💍', nombre: 'Algo para el dedo...', costo: 200 }
+      { id: 'girasol', emoji: '🌻', nombre: 'Un girasol', detalle: 'Para que sonría al verlo', costo: 12 },
+      { id: 'caramelos', emoji: '🍬', nombre: 'Caramelos', detalle: 'Un dulce detalle sin motivo', costo: 15 },
+      { id: 'rosa', emoji: '🌹', nombre: 'Una rosa', detalle: 'El clásico que nunca falla', costo: 15 },
+      { id: 'calcetines', emoji: '🧦', nombre: 'Calcetines divertidos', detalle: 'Algo tierno para el día a día', costo: 18 },
+      { id: 'chocolates', emoji: '🍫', nombre: 'Chocolates', detalle: 'Porque sí, sin más', costo: 20 },
+      { id: 'cancion', emoji: '🎵', nombre: 'Una canción dedicada', detalle: 'Esa que le recuerda a ti', costo: 22 },
+      { id: 'carta', emoji: '💌', nombre: 'Carta sorpresa', detalle: 'Unas palabras solo para ella', costo: 25 },
+      { id: 'cuidado', emoji: '🧴', nombre: 'Set de cuidado', detalle: 'Un ratito para mimarse', costo: 28 },
+      { id: 'cafe', emoji: '☕', nombre: 'Invitación a un café', detalle: 'Charlar tranquilos un rato', costo: 30 },
+      { id: 'libro', emoji: '📖', nombre: 'Un libro', detalle: 'Para perderse en otra historia', costo: 32 },
+      { id: 'peluche', emoji: '🧸', nombre: 'Peluche', detalle: 'Algo que abrazar cuando no estés', costo: 35 },
+      { id: 'cine', emoji: '🎬', nombre: 'Noche de cine', detalle: 'Manta, palomitas y tú', costo: 40 },
+      { id: 'desayuno', emoji: '🍩', nombre: 'Desayuno sorpresa', detalle: 'Empezar el día con cariño', costo: 45 },
+      { id: 'picnic', emoji: '🧺', nombre: 'Picnic romántico', detalle: 'Al aire libre, los dos', costo: 50 },
+      { id: 'cena', emoji: '🍽️', nombre: 'Cena especial', detalle: 'Una mesa solo para vosotros', costo: 55 },
+      { id: 'ramo', emoji: '💐', nombre: 'Ramo de flores', detalle: 'Para llenar de color su día', costo: 60 },
+      { id: 'clase', emoji: '🎨', nombre: 'Clase de algo nuevo juntos', detalle: 'Aprender algo nuevo en pareja', costo: 65 },
+      { id: 'ropa', emoji: '👗', nombre: 'Algo para vestir', detalle: 'Un capricho que le sienta bien', costo: 75 },
+      { id: 'especial', emoji: '💎', nombre: 'Algo muy especial', detalle: 'Un gesto grande, sin explicaciones', costo: 90 },
+      { id: 'hobby', emoji: '🎮', nombre: 'Algo de tu hobby favorito', detalle: 'Lo que más le gusta hacer', costo: 95 },
+      { id: 'spa-dia', emoji: '🏖️', nombre: 'Día de spa', detalle: 'Un día entero para desconectar', costo: 110 },
+      { id: 'aventura', emoji: '🚗', nombre: 'Aventura de un día', detalle: 'Salir a descubrir algo juntos', costo: 130 },
+      { id: 'escapada', emoji: '✈️', nombre: 'Una escapada sorpresa', detalle: 'Un viaje corto, solo para vosotros', costo: 150 },
+      { id: 'anillo-dedo', emoji: '💍', nombre: 'Algo para el dedo...', detalle: 'Ya sabes lo que es 👀', costo: 200 }
     ];
 
     // Logros: recompensa única de monedas al conseguir el hito por primera vez
@@ -2573,6 +2381,62 @@
       }, 600);
     });
 
+    // ---------- Buscar monedas (cada 20 minutos, cantidad al azar) ----------
+    const MINUTOS_ENFRIAMIENTO_BUSQUEDA = 20;
+    const btnBuscarMonedas = document.getElementById('btn-buscar-monedas');
+    const buscarDescripcion = document.getElementById('buscar-descripcion');
+    let intervaloBusquedaMonedas = null;
+
+    function minutosRestantesBusqueda() {
+      if (!ultimaBusquedaMonedas) return 0;
+      const pasados = (Date.now() - ultimaBusquedaMonedas.toDate().getTime()) / (1000 * 60);
+      return Math.max(0, Math.ceil(MINUTOS_ENFRIAMIENTO_BUSQUEDA - pasados));
+    }
+
+    function actualizarBotonBuscarMonedas() {
+      const restantes = minutosRestantesBusqueda();
+      const enEspera = restantes > 0;
+      btnBuscarMonedas.disabled = enEspera;
+      btnBuscarMonedas.textContent = enEspera ? `Vuelve en ${restantes} min` : 'Buscar monedas';
+      buscarDescripcion.textContent = enEspera
+        ? 'Todavía no ha pasado suficiente tiempo desde la última vez.'
+        : 'Busca por ahí cada cierto tiempo — nunca sabes cuánto vas a encontrar.';
+    }
+
+    btnBuscarMonedas.addEventListener('click', async () => {
+      if (!referenciaUsuario || !db || btnBuscarMonedas.disabled) return;
+      btnBuscarMonedas.classList.add('girando');
+
+      let premio = 0;
+      await db.runTransaction(async (transaccion) => {
+        const doc = await transaccion.get(referenciaUsuario);
+        const datos = doc.data() || {};
+        const ultimo = datos.ultimaBusquedaMonedas || null;
+        const pasados = ultimo ? (Date.now() - ultimo.toDate().getTime()) / (1000 * 60) : Infinity;
+        if (pasados < MINUTOS_ENFRIAMIENTO_BUSQUEDA) return; // todavía en espera
+
+        premio = [2, 3, 4, 5, 6, 8, 12][Math.floor(Math.random() * 7)];
+        const ahora = firebase.firestore.Timestamp.now();
+        transaccion.set(referenciaUsuario, {
+          monedas: (datos.monedas || 0) + premio,
+          ultimaBusquedaMonedas: ahora
+        }, { merge: true });
+        monedas = (datos.monedas || 0) + premio;
+        ultimaBusquedaMonedas = ahora;
+      });
+
+      setTimeout(() => {
+        btnBuscarMonedas.classList.remove('girando');
+        actualizarMonedasUI();
+        actualizarBotonBuscarMonedas();
+        if (premio > 0) mostrarMensaje(`🔍 ¡Encontraste ${premio} 🪙!`);
+      }, 600);
+    });
+
+    // Refresca la cuenta atrás cada 30 segundos, para que el botón se
+    // reactive solo sin tener que recargar la página
+    intervaloBusquedaMonedas = setInterval(actualizarBotonBuscarMonedas, 30000);
+
     // ---------- Tienda: renderizado de artículos ----------
     const listaMascotaEl = document.getElementById('tienda-lista-mascota');
     const listaAccesoriosEl = document.getElementById('tienda-lista-accesorios');
@@ -2592,6 +2456,7 @@
           <span class="tienda-item-emoji">${item.emoji}</span>
           <span>
             <span class="tienda-item-nombre">${item.nombre}</span>
+            ${item.detalle ? `<span class="tienda-item-frase">${item.detalle}</span>` : ''}
             <span class="tienda-item-detalle">${precioMostrado}</span>
           </span>
         </div>
@@ -2837,73 +2702,6 @@
       return localStorage.getItem('nombreUsuario') || 'Alguien';
     }
 
-    // ---------- Abrir un regalo recibido (con la cajita animada) ----------
-    const modalRegaloRecibido = document.getElementById('modal-regalo-recibido');
-    const cajaRegaloRecibido = document.getElementById('caja-regalo-recibido');
-    const remitenteRegaloRecibido = document.getElementById('regalo-recibido-remitente');
-    const contenidoRegaloRecibido = document.getElementById('regalo-recibido-contenido');
-    const particulasRegaloRecibido = document.getElementById('particulas-regalo-recibido');
-    let regaloActualAbriendose = null;
-    let cajaRecibidaAbierta = false;
-
-    function dispararParticulasRegaloRecibido() {
-      for (let i = 0; i < 16; i++) {
-        const p = document.createElement('div');
-        p.className = 'particula-regalo';
-        const angulo = (Math.PI * 2 * i) / 16 + Math.random() * 0.3;
-        const distancia = 55 + Math.random() * 40;
-        p.style.setProperty('--px', Math.cos(angulo) * distancia + 'px');
-        p.style.setProperty('--py', Math.sin(angulo) * distancia + 'px');
-        particulasRegaloRecibido.appendChild(p);
-        requestAnimationFrame(() => p.classList.add('disparada'));
-        setTimeout(() => p.remove(), 1000);
-      }
-    }
-
-    function mostrarSiguienteRegaloRecibido() {
-      if (!colaRegalosRecibidos.length) return;
-      regaloActualAbriendose = colaRegalosRecibidos[0];
-      cajaRecibidaAbierta = false;
-
-      remitenteRegaloRecibido.textContent = `🎁 ${regaloActualAbriendose.remitente} te ha mandado algo`;
-      cajaRegaloRecibido.className = 'caja-regalo';
-      contenidoRegaloRecibido.className = 'regalo-recibido-contenido';
-      contenidoRegaloRecibido.innerHTML = '';
-      particulasRegaloRecibido.innerHTML = '';
-
-      modalRegaloRecibido.hidden = false;
-    }
-
-    document.getElementById('btn-regalo-recibido').addEventListener('click', mostrarSiguienteRegaloRecibido);
-
-    cajaRegaloRecibido.addEventListener('click', async () => {
-      if (cajaRecibidaAbierta || !regaloActualAbriendose) return;
-      cajaRecibidaAbierta = true;
-
-      cajaRegaloRecibido.classList.add('abriendo');
-      dispararParticulasRegaloRecibido();
-
-      setTimeout(() => {
-        cajaRegaloRecibido.classList.add('escondida');
-        contenidoRegaloRecibido.innerHTML = `
-          <span class="regalo-recibido-emoji-grande">${regaloActualAbriendose.emoji}</span>
-          <span class="regalo-recibido-nombre">${regaloActualAbriendose.nombreRegalo}</span>
-        `;
-        contenidoRegaloRecibido.classList.add('visible');
-      }, 500);
-
-      // Se marca como abierto en la base de datos (así ya no cuenta como pendiente)
-      if (db) await db.collection('regalosRecibidos').doc(regaloActualAbriendose.id).set({ abierto: true }, { merge: true });
-    });
-
-    document.getElementById('btn-cerrar-regalo-recibido').addEventListener('click', () => {
-      modalRegaloRecibido.hidden = true;
-      // Si quedan más regalos por abrir, se enseña el siguiente
-      setTimeout(() => {
-        if (colaRegalosRecibidos.length) mostrarSiguienteRegaloRecibido();
-      }, 300);
-    });
-
     // ---------- Abrir y cerrar la tienda ----------
     function abrirTienda() {
       if (!referenciaUsuario) {
@@ -2914,6 +2712,7 @@
       document.getElementById('vista-tienda').hidden = false;
       renderizarTienda();
       actualizarBotonRuleta();
+      actualizarBotonBuscarMonedas();
     }
     document.getElementById('btn-abrir-tienda').addEventListener('click', abrirTienda);
     document.getElementById('btn-monedas').addEventListener('click', abrirTienda);
@@ -3020,26 +2819,18 @@
             monedas = datos.monedas || 0;
             ultimoGiroRuleta = datos.ultimoGiroRuleta || null;
             ultimoBonoDiario = datos.ultimoBonoDiario || null;
+            ultimaBusquedaMonedas = datos.ultimaBusquedaMonedas || null;
             regalosEnviados = datos.regalosEnviados || 0;
             monedasGastadasTotal = datos.monedasGastadasTotal || 0;
             logrosTiendaConseguidos = datos.logrosTiendaConseguidos || [];
             actualizarMonedasUI();
             actualizarBotonRuleta();
+            actualizarBotonBuscarMonedas();
             revisarLogrosTienda();
           });
         }).then(() => {
           registrarBonoDiarioPersonal();
         });
-
-        // Escucha en tiempo real los regalos que le han mandado, y avisa con
-        // el ícono flotante si hay alguno sin abrir
-        db.collection('regalosRecibidos').where('destinatario', '==', nombreParaEconomia.trim())
-          .onSnapshot(snap => {
-            colaRegalosRecibidos = snap.docs
-              .map(d => ({ id: d.id, ...d.data() }))
-              .filter(r => !r.abierto);
-            document.getElementById('btn-regalo-recibido').hidden = colaRegalosRecibidos.length === 0;
-          });
       } else {
         // Todavía no ha puesto su nombre — sin identidad no hay dónde guardar
         // sus propias monedas, así que se avisa y se desactiva la tienda

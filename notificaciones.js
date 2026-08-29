@@ -196,7 +196,6 @@ async function revisarContenido() {
   const refCursor = db.collection('notificaciones').doc('cursor');
   const docCursor = await refCursor.get();
   const cursores = docCursor.exists ? docCursor.data() : {};
-  const nuevosCursores = {};
 
   for (const coleccion of COLECCIONES_CONTENIDO) {
     const ultimoCursor = cursores[coleccion] ? cursores[coleccion].toDate() : null;
@@ -206,7 +205,9 @@ async function revisarContenido() {
       // partida, sin avisar de todo lo que ya existía antes.
       const snapshotInicial = await db.collection(coleccion).orderBy('creado', 'desc').limit(1).get();
       if (!snapshotInicial.empty) {
-        nuevosCursores[coleccion] = snapshotInicial.docs[0].data().creado;
+        const primerCursor = snapshotInicial.docs[0].data().creado;
+        await refCursor.set({ [coleccion]: primerCursor }, { merge: true });
+        cursores[coleccion] = primerCursor;
       }
       continue;
     }
@@ -218,6 +219,9 @@ async function revisarContenido() {
 
     if (nuevos.empty) continue;
 
+    // Se guarda el cursor de ESTA colección justo después de procesarla,
+    // no al final de las 4 — así, si otra colección falla luego, esta ya
+    // queda a salvo de reenviarse duplicada.
     for (const doc of nuevos.docs) {
       const item = doc.data();
       const mensaje = construirMensajeContenido(coleccion, item);
@@ -225,12 +229,8 @@ async function revisarContenido() {
         await enviarATodos('contenido', mensaje.titulo, mensaje.cuerpo, mensaje.url, item.autor);
         console.log(`Aviso de ${coleccion} enviado:`, mensaje.cuerpo);
       }
-      nuevosCursores[coleccion] = item.creado;
+      await refCursor.set({ [coleccion]: item.creado }, { merge: true });
     }
-  }
-
-  if (Object.keys(nuevosCursores).length > 0) {
-    await refCursor.set(nuevosCursores, { merge: true });
   }
 }
 
@@ -286,11 +286,26 @@ async function revisarMensajesManuales() {
   }
 }
 
+// ---------- Orquestación ----------
+// Cada tarea corre en su propio try/catch: si una falla, las demás se
+// ejecutan igual en esta misma vuelta (antes, un error en la primera
+// tarea cancelaba las tres siguientes).
 async function main() {
-  await revisarMascota();
-  await revisarRecordatorioHorario();
-  await revisarContenido();
-  await revisarMensajesManuales();
+  const tareas = [revisarMascota, revisarRecordatorioHorario, revisarContenido, revisarMensajesManuales];
+
+  let huboFallo = false;
+  for (const tarea of tareas) {
+    try {
+      await tarea();
+    } catch (err) {
+      huboFallo = true;
+      console.error(`Fallo en ${tarea.name}:`, err);
+    }
+  }
+
+  // Si alguna tarea falló, se marca la ejecución como fallida (para que se
+  // vea en GitHub Actions), pero ya se ejecutaron todas las demás antes.
+  if (huboFallo) process.exit(1);
 }
 
 main().catch(err => {

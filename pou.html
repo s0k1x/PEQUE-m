@@ -1598,34 +1598,73 @@
     const RECOMPENSAS_ACCION = { comer: 3, dormir: 3, jugar: 4, saltar: 2, caricias: 1 };
 
     const ITEMS_MASCOTA = [
+      // Comida — de barato a lujoso
+      { id: 'manzana', emoji: '🍎', nombre: 'Manzana', costo: 8, categoria: 'comida', efecto: { hambre: 15 } },
       { id: 'snack', emoji: '🍕', nombre: 'Snack especial', costo: 15, categoria: 'comida', efecto: { hambre: 25 } },
+      { id: 'hamburguesa', emoji: '🍔', nombre: 'Hamburguesa', costo: 22, categoria: 'comida', efecto: { hambre: 32 } },
       { id: 'postre', emoji: '🍰', nombre: 'Postre delicioso', costo: 28, categoria: 'comida', efecto: { hambre: 40 } },
+      { id: 'bento', emoji: '🍱', nombre: 'Bento gourmet', costo: 38, categoria: 'comida', efecto: { hambre: 55 } },
+      { id: 'banquete', emoji: '🥘', nombre: 'Banquete real', costo: 55, categoria: 'comida', efecto: { hambre: 75 } },
+      // Descanso — de barato a lujoso
+      { id: 'sofa', emoji: '🛋️', nombre: 'Ratito en el sofá', costo: 10, categoria: 'descanso', efecto: { sueno: 15 } },
       { id: 'siesta', emoji: '🛏️', nombre: 'Siesta cómoda', costo: 15, categoria: 'descanso', efecto: { sueno: 25 } },
       { id: 'noche', emoji: '🌙', nombre: 'Noche de descanso total', costo: 28, categoria: 'descanso', efecto: { sueno: 40 } },
+      { id: 'spa', emoji: '🧖', nombre: 'Spa relajante', costo: 38, categoria: 'descanso', efecto: { sueno: 55 } },
+      { id: 'retiro', emoji: '🏝️', nombre: 'Retiro de descanso', costo: 55, categoria: 'descanso', efecto: { sueno: 75 } },
+      // Juego — de barato a lujoso
+      { id: 'yoyo', emoji: '🪀', nombre: 'Yo-yo', costo: 10, categoria: 'juego', efecto: { felicidad: 15 } },
       { id: 'ratito', emoji: '🧸', nombre: 'Ratito de juego', costo: 15, categoria: 'juego', efecto: { felicidad: 25 } },
       { id: 'tarde', emoji: '🎨', nombre: 'Tarde de diversión', costo: 28, categoria: 'juego', efecto: { felicidad: 40 } },
+      { id: 'feria', emoji: '🎡', nombre: 'Día de feria', costo: 38, categoria: 'juego', efecto: { felicidad: 55 } },
+      { id: 'fiesta', emoji: '🎪', nombre: 'Fiesta sorpresa', costo: 55, categoria: 'juego', efecto: { felicidad: 75 } },
+      // Especial — se aplica ya, no va al inventario
       { id: 'pack', emoji: '🎉', nombre: 'Pack completo', costo: 45, categoria: 'especial', efecto: { hambre: 100, sueno: 100, felicidad: 100 } }
     ];
 
     const ITEMS_ACCESORIOS = [
       { id: 'sombrero', emoji: '🎩', nombre: 'Sombrero de copa', costo: 30 },
       { id: 'mariposa', emoji: '🦋', nombre: 'Alitas de mariposa', costo: 30 },
+      { id: 'gafas', emoji: '🕶️', nombre: 'Gafas de sol', costo: 25 },
+      { id: 'lazo', emoji: '🎀', nombre: 'Lazo elegante', costo: 25 },
+      { id: 'bufanda-invierno', emoji: '🧣', nombre: 'Bufanda de invierno', costo: 30 },
+      { id: 'flor-oreja', emoji: '🌸', nombre: 'Flor en la oreja', costo: 30 },
       { id: 'bufanda-arcoiris', emoji: '🌈', nombre: 'Bufanda arcoíris', costo: 35 },
       { id: 'estrella', emoji: '⭐', nombre: 'Estrellita brillante', costo: 35 },
+      { id: 'pamela', emoji: '👒', nombre: 'Pamela de verano', costo: 40 },
+      { id: 'auriculares', emoji: '🎧', nombre: 'Auriculares', costo: 40 },
+      { id: 'birrete', emoji: '🎓', nombre: 'Birrete de graduación', costo: 40 },
+      { id: 'unicornio', emoji: '🦄', nombre: 'Cuerno de unicornio', costo: 45 },
+      { id: 'antifaz', emoji: '🥽', nombre: 'Antifaz de superhéroe', costo: 45 },
       { id: 'corona', emoji: '👑', nombre: 'Corona real', costo: 50 },
-      { id: 'guitarra', emoji: '🎸', nombre: 'Guitarra mini', costo: 50 }
+      { id: 'guitarra', emoji: '🎸', nombre: 'Guitarra mini', costo: 50 },
+      { id: 'anillo', emoji: '💍', nombre: 'Anillo brillante', costo: 55 }
     ];
 
     const ITEMS_REGALO = [
+      { id: 'girasol', emoji: '🌻', nombre: 'Un girasol', costo: 12 },
+      { id: 'caramelos', emoji: '🍬', nombre: 'Caramelos', costo: 15 },
       { id: 'rosa', emoji: '🌹', nombre: 'Una rosa', costo: 15 },
+      { id: 'calcetines', emoji: '🧦', nombre: 'Calcetines divertidos', costo: 18 },
       { id: 'chocolates', emoji: '🍫', nombre: 'Chocolates', costo: 20 },
+      { id: 'cancion', emoji: '🎵', nombre: 'Una canción dedicada', costo: 22 },
       { id: 'carta', emoji: '💌', nombre: 'Carta sorpresa', costo: 25 },
+      { id: 'cuidado', emoji: '🧴', nombre: 'Set de cuidado', costo: 28 },
       { id: 'cafe', emoji: '☕', nombre: 'Invitación a un café', costo: 30 },
+      { id: 'libro', emoji: '📖', nombre: 'Un libro', costo: 32 },
+      { id: 'peluche', emoji: '🧸', nombre: 'Peluche', costo: 35 },
       { id: 'cine', emoji: '🎬', nombre: 'Noche de cine', costo: 40 },
+      { id: 'desayuno', emoji: '🍩', nombre: 'Desayuno sorpresa', costo: 45 },
+      { id: 'picnic', emoji: '🧺', nombre: 'Picnic romántico', costo: 50 },
       { id: 'cena', emoji: '🍽️', nombre: 'Cena especial', costo: 55 },
       { id: 'ramo', emoji: '💐', nombre: 'Ramo de flores', costo: 60 },
+      { id: 'clase', emoji: '🎨', nombre: 'Clase de algo nuevo juntos', costo: 65 },
+      { id: 'ropa', emoji: '👗', nombre: 'Algo para vestir', costo: 75 },
       { id: 'especial', emoji: '💎', nombre: 'Algo muy especial', costo: 90 },
-      { id: 'escapada', emoji: '✈️', nombre: 'Una escapada sorpresa', costo: 150 }
+      { id: 'hobby', emoji: '🎮', nombre: 'Algo de tu hobby favorito', costo: 95 },
+      { id: 'aventura', emoji: '🚗', nombre: 'Aventura de un día', costo: 130 },
+      { id: 'spa-dia', emoji: '🏖️', nombre: 'Día de spa', costo: 110 },
+      { id: 'escapada', emoji: '✈️', nombre: 'Una escapada sorpresa', costo: 150 },
+      { id: 'anillo-dedo', emoji: '💍', nombre: 'Algo para el dedo...', costo: 200 }
     ];
 
     // Logros: recompensa única de monedas al conseguir el hito por primera vez

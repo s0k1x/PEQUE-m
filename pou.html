@@ -601,6 +601,236 @@
 
     .contenedor.texto-grande { zoom: 1.14; }
 
+    /* ---------- Cabecera compacta: nombre + monedas ---------- */
+    .cabecera-mascota {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .cabecera-mascota h1 { margin: 0; }
+    #btn-monedas, #btn-monedas-tienda {
+      background: var(--naranja-suave);
+      color: #7a4a1f;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    #btn-monedas-tienda { cursor: default; }
+
+    /* ---------- Racha + nivel en una fila compacta ---------- */
+    .linea-progreso-mascota {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 13px;
+      color: var(--gris);
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+    .separador-punto::before { content: '·'; color: var(--linea); }
+    .separador-punto:empty::before { content: ''; }
+    .nivel-compacto { color: var(--tinta); font-weight: 600; }
+
+    /* ---------- Botón de ir a la tienda ---------- */
+    #btn-abrir-tienda {
+      display: block;
+      width: 100%;
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      padding: 13px 18px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      font-size: 11.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 18px;
+    }
+
+    /* ---------- Tienda ---------- */
+    .tienda-seccion {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--linea);
+    }
+    .tienda-btn-ruleta {
+      display: block;
+      width: 100%;
+      background: linear-gradient(135deg, var(--naranja), #f0985a);
+      color: var(--blanco);
+      border: none;
+      padding: 13px 18px;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 600;
+      font-size: 11.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .tienda-btn-ruleta:disabled {
+      background: var(--linea);
+      color: var(--gris);
+      cursor: default;
+    }
+    .tienda-btn-ruleta.girando { animation: girarBoton 0.6s ease; }
+    @keyframes girarBoton {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .tienda-lista { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .tienda-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--linea);
+      background: var(--hueso);
+    }
+    .tienda-item-info { display: flex; align-items: center; gap: 10px; }
+    .tienda-item-emoji { font-size: 20px; }
+    .tienda-item-nombre { font-size: 13px; color: var(--tinta); font-weight: 500; }
+    .tienda-item-detalle { display: block; font-size: 10.5px; color: var(--gris); }
+    .tienda-item-btn {
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      padding: 7px 12px;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .tienda-item-btn:disabled {
+      background: var(--linea);
+      color: var(--gris);
+      cursor: default;
+    }
+    .tienda-item.logro-conseguido {
+      background: var(--naranja-suave);
+      border-color: var(--naranja);
+    }
+    .tienda-item-btn.logro-hecho {
+      background: none;
+      color: var(--naranja);
+      border: 1px solid var(--naranja);
+    }
+
+    /* ---------- Pestañas dentro de la tienda ---------- */
+    .tienda-pestanas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin: 14px 0 6px;
+    }
+    .tienda-pestana {
+      background: none;
+      border: 1px solid var(--linea);
+      color: var(--gris);
+      font-size: 10.5px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-family: 'Work Sans', sans-serif;
+    }
+    .tienda-pestana.activa {
+      background: var(--tinta);
+      color: var(--blanco);
+      border-color: var(--tinta);
+    }
+    .tienda-categoria[hidden] { display: none; }
+
+    /* ---------- Oferta del día ---------- */
+    .oferta-dia {
+      background: linear-gradient(135deg, #fff4e8, var(--naranja-suave));
+      border: 1px solid var(--naranja);
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    .oferta-dia[hidden] { display: none; }
+    .oferta-dia-etiqueta {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #a85a1f;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .oferta-dia-contenido .tienda-item {
+      background: rgba(255,255,255,0.6);
+      border-color: rgba(168,90,31,0.3);
+    }
+    .oferta-dia-precio-tachado {
+      text-decoration: line-through;
+      opacity: 0.6;
+      margin-right: 4px;
+    }
+
+    /* ---------- Guía de cómo ganar monedas ---------- */
+    .tienda-guia-ganar {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+      font-size: 12.5px;
+      color: var(--tinta);
+    }
+    .tienda-guia-ganar li {
+      padding: 7px 0;
+      border-bottom: 1px solid var(--linea);
+      display: flex;
+      justify-content: space-between;
+    }
+    .tienda-guia-ganar li:last-child { border-bottom: none; }
+
+    /* ---------- Selector de destinatario (para los regalos) ---------- */
+    #tienda-selector-destinatario {
+      position: fixed;
+      inset: 0;
+      background: rgba(38,34,32,0.6);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    #tienda-selector-destinatario[hidden] { display: none; }
+    #tienda-selector-caja {
+      background: var(--blanco);
+      width: 100%;
+      max-width: 300px;
+      padding: 22px;
+      border: 1px solid var(--linea);
+    }
+    #tienda-selector-titulo {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 18px;
+      margin: 0 0 14px;
+    }
+    #tienda-selector-lista { display: flex; flex-direction: column; gap: 2px; margin-bottom: 14px; }
+    .tienda-selector-opcion {
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 10px 4px;
+      font-size: 14px;
+      color: var(--tinta);
+      cursor: pointer;
+      border-bottom: 1px solid var(--linea);
+    }
+    .tienda-selector-opcion:active { background: var(--hueso); }
+
   </style>
 </head>
 <body>
@@ -610,16 +840,20 @@
     <button id="btn-ajustes-flotante" type="button" aria-label="Configuración">⚙️</button>
 
     <div id="vista-mascota">
-    <h1 id="texto-nombre">Tu mascota</h1>
-
-    <div id="nivel-vinculo">
-      <span class="emoji-nivel" id="emoji-nivel"></span><span class="texto-nivel" id="texto-nivel"></span>
-      <div id="barra-nivel-fondo"><div id="barra-nivel-relleno"></div></div>
-      <span id="texto-nivel-progreso"></span>
+    <div class="cabecera-mascota">
+      <h1 id="texto-nombre">Tu mascota</h1>
+      <button id="btn-monedas" type="button">🪙 <span id="valor-monedas">0</span></button>
     </div>
 
+    <div class="linea-progreso-mascota">
+      <span id="racha-mascota"></span>
+      <span class="separador-punto" id="separador-progreso"></span>
+      <span class="nivel-compacto"><span class="emoji-nivel" id="emoji-nivel"></span><span class="texto-nivel" id="texto-nivel"></span></span>
+    </div>
+    <div id="barra-nivel-fondo"><div id="barra-nivel-relleno"></div></div>
+    <span id="texto-nivel-progreso"></span>
+
     <p id="animo-mascota"></p>
-    <p id="racha-mascota"></p>
 
     <div id="video-envoltorio">
       <video id="video-mascota" src="Quieto.mp4?v=2" autoplay muted loop playsinline preload="auto"></video>
@@ -648,14 +882,7 @@
 
     <p id="mensaje-mascota"></p>
 
-    <div class="estadisticas">
-      <div class="estadistica"><span class="numero-estadistica" id="stat-comer">0</span><span class="etiqueta-estadistica">Comidas</span></div>
-      <div class="estadistica"><span class="numero-estadistica" id="stat-dormir">0</span><span class="etiqueta-estadistica">Siestas</span></div>
-      <div class="estadistica"><span class="numero-estadistica" id="stat-jugar">0</span><span class="etiqueta-estadistica">Juegos</span></div>
-      <div class="estadistica"><span class="numero-estadistica" id="stat-saltar">0</span><span class="etiqueta-estadistica">Saltos</span></div>
-      <div class="estadistica"><span class="numero-estadistica" id="stat-caricias">0</span><span class="etiqueta-estadistica">Caricias</span></div>
-      <div class="estadistica"><span class="numero-estadistica" id="stat-total">0</span><span class="etiqueta-estadistica">En total</span></div>
-    </div>
+    <button id="btn-abrir-tienda" type="button">🛍️ Ir a la tienda</button>
     </div>
 
     <div id="vista-configuracion" hidden>
@@ -663,6 +890,7 @@
 
       <div class="config-categorias" id="config-categorias">
         <button type="button" class="config-cat-btn activa" data-cat="mascota">🐾 Mascota</button>
+        <button type="button" class="config-cat-btn" data-cat="estadisticas">📊 Estadísticas</button>
         <button type="button" class="config-cat-btn" data-cat="apariencia">🎨 Apariencia</button>
         <button type="button" class="config-cat-btn" data-cat="avisos">🔔 Avisos</button>
         <button type="button" class="config-cat-btn" data-cat="accesibilidad">♿ Accesibilidad</button>
@@ -721,6 +949,18 @@
       </div>
 
       <!-- Apariencia -->
+      <!-- Estadísticas -->
+      <div class="config-categoria-contenido" data-cat-contenido="estadisticas" hidden>
+        <div class="estadisticas">
+          <div class="estadistica"><span class="numero-estadistica" id="stat-comer">0</span><span class="etiqueta-estadistica">Comidas</span></div>
+          <div class="estadistica"><span class="numero-estadistica" id="stat-dormir">0</span><span class="etiqueta-estadistica">Siestas</span></div>
+          <div class="estadistica"><span class="numero-estadistica" id="stat-jugar">0</span><span class="etiqueta-estadistica">Juegos</span></div>
+          <div class="estadistica"><span class="numero-estadistica" id="stat-saltar">0</span><span class="etiqueta-estadistica">Saltos</span></div>
+          <div class="estadistica"><span class="numero-estadistica" id="stat-caricias">0</span><span class="etiqueta-estadistica">Caricias</span></div>
+          <div class="estadistica"><span class="numero-estadistica" id="stat-total">0</span><span class="etiqueta-estadistica">En total</span></div>
+        </div>
+      </div>
+
       <div class="config-categoria-contenido" data-cat-contenido="apariencia" hidden>
         <div class="config-grupo">
           <span class="config-titulo">🎨 Color de acento</span>
@@ -773,6 +1013,76 @@
       </div>
 
       <button id="btn-volver-mascota" type="button" class="config-btn-secundario" style="margin-top:20px">‹ Volver a la mascota</button>
+    </div>
+
+    <div id="vista-tienda" hidden>
+      <div class="cabecera-mascota">
+        <h1>Tienda 🛍️</h1>
+        <button id="btn-monedas-tienda" type="button" disabled>🪙 <span id="valor-monedas-tienda">0</span></button>
+      </div>
+
+      <div id="oferta-dia" class="oferta-dia" hidden>
+        <span class="oferta-dia-etiqueta">⚡ Oferta del día</span>
+        <div class="oferta-dia-contenido" id="oferta-dia-contenido"></div>
+      </div>
+
+      <div class="tienda-pestanas" id="tienda-pestanas">
+        <button type="button" class="tienda-pestana activa" data-tcat="ganar">🎡 Ganar</button>
+        <button type="button" class="tienda-pestana" data-tcat="mascota">🐾 Mascota</button>
+        <button type="button" class="tienda-pestana" data-tcat="accesorios">🎀 Accesorios</button>
+        <button type="button" class="tienda-pestana" data-tcat="regalos">🎁 Regalos</button>
+        <button type="button" class="tienda-pestana" data-tcat="logros">🏆 Logros</button>
+      </div>
+
+      <div class="tienda-categoria" data-tcat-contenido="ganar">
+        <div class="tienda-seccion">
+          <span class="config-titulo">🎡 Ruleta diaria</span>
+          <p class="config-descripcion" id="ruleta-descripcion">Gira una vez al día y gana monedas gratis.</p>
+          <button id="btn-ruleta" type="button" class="tienda-btn-ruleta">Girar la ruleta</button>
+        </div>
+        <div class="tienda-seccion">
+          <span class="config-titulo">💰 Formas de ganar monedas</span>
+          <ul class="tienda-guia-ganar">
+            <li>Entrar a la web cada día: <strong>+15 🪙</strong></li>
+            <li>Comer / Dormir: <strong>+3 🪙</strong></li>
+            <li>Jugar: <strong>+4 🪙</strong></li>
+            <li>Saltar: <strong>+2 🪙</strong></li>
+            <li>Acariciar: <strong>+1 🪙</strong></li>
+            <li>Ruleta diaria: <strong>hasta +40 🪙</strong></li>
+            <li>Logros: <strong>recompensa única</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tienda-categoria" data-tcat-contenido="mascota" hidden>
+        <p class="config-descripcion">Se aplica al instante a sus barras.</p>
+        <div class="tienda-lista" id="tienda-lista-mascota"></div>
+      </div>
+
+      <div class="tienda-categoria" data-tcat-contenido="accesorios" hidden>
+        <p class="config-descripcion">Se equipa al instante al comprarlo.</p>
+        <div class="tienda-lista" id="tienda-lista-accesorios"></div>
+      </div>
+
+      <div class="tienda-categoria" data-tcat-contenido="regalos" hidden>
+        <p class="config-descripcion">Le llega como una notificación de verdad.</p>
+        <div class="tienda-lista" id="tienda-lista-regalos"></div>
+      </div>
+
+      <div class="tienda-categoria" data-tcat-contenido="logros" hidden>
+        <p class="config-descripcion">Recompensas de una sola vez, por hitos conseguidos.</p>
+        <div class="tienda-lista" id="tienda-lista-logros"></div>
+      </div>
+
+      <button id="btn-volver-tienda" type="button" class="config-btn-secundario" style="margin-top:12px">‹ Volver a la mascota</button>
+    </div>
+  </div>
+
+  <div id="tienda-selector-destinatario" hidden>
+    <div id="tienda-selector-caja">
+      <p id="tienda-selector-titulo">¿Para quién es?</p>
+      <div id="tienda-selector-lista"></div>
+      <button id="tienda-selector-cancelar" type="button" class="config-btn-secundario">Cancelar</button>
     </div>
   </div>
 
@@ -840,6 +1150,60 @@
     let contadores = { comer: 0, dormir: 0, jugar: 0, saltar: 0, caricias: 0 };
     let logrosDesbloqueados = [];
 
+    // Economía — es PERSONAL de cada uno (usa el nombre puesto en Perfil),
+    // vive en su propio documento, no en el de la mascota compartida
+    let referenciaUsuario = null;
+    let monedas = 0;
+    let ultimoGiroRuleta = null;
+    let ultimoBonoDiario = null;
+    let regalosEnviados = 0;
+    let monedasGastadasTotal = 0;
+    let logrosTiendaConseguidos = [];
+    const MONEDAS_BONO_DIARIO = 15;
+
+    const RECOMPENSAS_ACCION = { comer: 3, dormir: 3, jugar: 4, saltar: 2, caricias: 1 };
+
+    const ITEMS_MASCOTA = [
+      { id: 'snack', emoji: '🍕', nombre: 'Snack especial', costo: 15, efecto: { hambre: 25 } },
+      { id: 'postre', emoji: '🍰', nombre: 'Postre delicioso', costo: 28, efecto: { hambre: 40 } },
+      { id: 'siesta', emoji: '🛏️', nombre: 'Siesta cómoda', costo: 15, efecto: { sueno: 25 } },
+      { id: 'noche', emoji: '🌙', nombre: 'Noche de descanso total', costo: 28, efecto: { sueno: 40 } },
+      { id: 'ratito', emoji: '🧸', nombre: 'Ratito de juego', costo: 15, efecto: { felicidad: 25 } },
+      { id: 'tarde', emoji: '🎨', nombre: 'Tarde de diversión', costo: 28, efecto: { felicidad: 40 } },
+      { id: 'pack', emoji: '🎉', nombre: 'Pack completo', costo: 45, efecto: { hambre: 100, sueno: 100, felicidad: 100 } }
+    ];
+
+    const ITEMS_ACCESORIOS = [
+      { id: 'sombrero', emoji: '🎩', nombre: 'Sombrero de copa', costo: 30 },
+      { id: 'mariposa', emoji: '🦋', nombre: 'Alitas de mariposa', costo: 30 },
+      { id: 'bufanda-arcoiris', emoji: '🌈', nombre: 'Bufanda arcoíris', costo: 35 },
+      { id: 'estrella', emoji: '⭐', nombre: 'Estrellita brillante', costo: 35 },
+      { id: 'corona', emoji: '👑', nombre: 'Corona real', costo: 50 },
+      { id: 'guitarra', emoji: '🎸', nombre: 'Guitarra mini', costo: 50 }
+    ];
+
+    const ITEMS_REGALO = [
+      { id: 'rosa', emoji: '🌹', nombre: 'Una rosa', costo: 15 },
+      { id: 'chocolates', emoji: '🍫', nombre: 'Chocolates', costo: 20 },
+      { id: 'carta', emoji: '💌', nombre: 'Carta sorpresa', costo: 25 },
+      { id: 'cafe', emoji: '☕', nombre: 'Invitación a un café', costo: 30 },
+      { id: 'cine', emoji: '🎬', nombre: 'Noche de cine', costo: 40 },
+      { id: 'cena', emoji: '🍽️', nombre: 'Cena especial', costo: 55 },
+      { id: 'ramo', emoji: '💐', nombre: 'Ramo de flores', costo: 60 },
+      { id: 'especial', emoji: '💎', nombre: 'Algo muy especial', costo: 90 },
+      { id: 'escapada', emoji: '✈️', nombre: 'Una escapada sorpresa', costo: 150 }
+    ];
+
+    // Logros: recompensa única de monedas al conseguir el hito por primera vez
+    const LOGROS = [
+      { id: 'primera-compra', emoji: '🥇', nombre: 'Primera compra', descripcion: 'Compra cualquier cosa en la tienda', recompensa: 10, comprobar: () => monedasGastadasTotal > 0 },
+      { id: 'racha-7', emoji: '🔥', nombre: 'Una semana seguida', descripcion: 'Consigue una racha de 7 días', recompensa: 25, comprobar: () => racha >= 7 },
+      { id: 'racha-30', emoji: '🔥', nombre: 'Un mes seguido', descripcion: 'Consigue una racha de 30 días', recompensa: 100, comprobar: () => racha >= 30 },
+      { id: 'alma-gemela', emoji: '💞', nombre: 'Alma gemela', descripcion: 'Llega al nivel de vínculo máximo', recompensa: 50, comprobar: () => (contadores.comer + contadores.dormir + contadores.jugar + contadores.saltar + contadores.caricias) >= 70 },
+      { id: 'cinco-regalos', emoji: '🎁', nombre: 'Generoso/a', descripcion: 'Envía 5 regalos', recompensa: 40, comprobar: () => regalosEnviados >= 5 },
+      { id: 'gran-comprador', emoji: '💰', nombre: 'Gran comprador/a', descripcion: 'Gasta 200 monedas en total', recompensa: 50, comprobar: () => monedasGastadasTotal >= 200 }
+    ];
+
     const contenedorEl = document.querySelector('.contenedor');
     const FONDOS = ['crema', 'blanco', 'negro', 'menta', 'cielo', 'lavanda', 'coral', 'durazno', 'perla'];
     const textoNombre = document.getElementById('texto-nombre');
@@ -847,6 +1211,8 @@
     const btnGuardarNombreMascotaConfig = document.getElementById('btn-guardar-nombre-mascota-config');
     const rachaMascotaEl = document.getElementById('racha-mascota');
     const accesorioEl = document.getElementById('accesorio-mascota');
+    const valorMonedas = document.getElementById('valor-monedas');
+    const valorMonedasTienda = document.getElementById('valor-monedas-tienda');
 
     const emojiNivel = document.getElementById('emoji-nivel');
     const textoNivel = document.getElementById('texto-nivel');
@@ -953,15 +1319,27 @@
 
     function actualizarRachaUI() {
       rachaMascotaEl.textContent = racha > 0
-        ? `🔥 ${racha} día${racha === 1 ? '' : 's'} seguido${racha === 1 ? '' : 's'} de cuidado · récord ${rachaMaxima}`
-        : '';
+        ? `🔥 ${racha} día${racha === 1 ? '' : 's'} seguido${racha === 1 ? '' : 's'} · récord ${rachaMaxima}`
+        : '🔥 Empieza tu racha hoy';
+    }
+
+    function actualizarMonedasUI() {
+      valorMonedas.textContent = monedas;
+      valorMonedasTienda.textContent = monedas;
+      document.querySelectorAll('.tienda-item-btn[data-costo]').forEach(boton => {
+        boton.disabled = monedas < Number(boton.dataset.costo);
+      });
     }
 
     // Cuenta el día de hoy como "cuidado". Usa una transacción para leer y escribir
     // el valor REAL que hay en el servidor en ese mismo instante — así no importa
     // si el teléfono llevaba un rato abierto sin refrescar, siempre se compara
     // contra el dato de verdad, no contra lo que el teléfono cree que es.
-    async function registrarCuidadoHoy() {
+    // Cuenta el día de hoy como "visitado" — la racha ahora sube por entrar
+    // a la web cada día, no por realizar una acción concreta. Además da un
+    // bonito de monedas la primera vez del día. Usa una transacción para leer
+    // y escribir el valor REAL del servidor en ese mismo instante.
+    async function registrarVisitaHoy() {
       if (!referenciaDoc || !db) return;
       const hoy = fechaAString(new Date());
       const ayer = new Date();
@@ -1002,6 +1380,42 @@
 
       actualizarRachaUI();
       revisarLogroRacha();
+    }
+
+    // Bono diario de monedas, PERSONAL — cada uno lo gana en su propio
+    // documento la primera vez que entra a la web ese día
+    async function registrarBonoDiarioPersonal() {
+      if (!referenciaUsuario || !db) return;
+      const hoy = fechaAString(new Date());
+      let ganoBono = false;
+
+      try {
+        await db.runTransaction(async (transaccion) => {
+          const doc = await transaccion.get(referenciaUsuario);
+          const datos = doc.exists ? doc.data() : {};
+          if ((datos.ultimoBonoDiario || null) === hoy) {
+            monedas = datos.monedas || monedas;
+            ultimoBonoDiario = hoy;
+            return;
+          }
+
+          const nuevasMonedas = (datos.monedas || 0) + MONEDAS_BONO_DIARIO;
+          transaccion.set(referenciaUsuario, {
+            monedas: nuevasMonedas,
+            ultimoBonoDiario: hoy
+          }, { merge: true });
+
+          monedas = nuevasMonedas;
+          ultimoBonoDiario = hoy;
+          ganoBono = true;
+        });
+      } catch (err) {
+        console.error('No se pudo dar el bono diario:', err);
+        return;
+      }
+
+      actualizarMonedasUI();
+      if (ganoBono) mostrarMensaje(`+${MONEDAS_BONO_DIARIO} 🪙 por entrar hoy`);
     }
 
     function mostrarLogro(texto) {
@@ -1112,7 +1526,7 @@
 
       if (claveContador) contadores[claveContador] = (contadores[claveContador] || 0) + 1;
       actualizarEstadisticasUI();
-      await registrarCuidadoHoy();
+      if (claveContador && RECOMPENSAS_ACCION[claveContador]) ganarMonedas(RECOMPENSAS_ACCION[claveContador]);
       guardarEstado();
     }
 
@@ -1187,7 +1601,7 @@
       mostrarMensaje('¡Le encanta que la acaricies! 🥰');
       contadores.caricias = (contadores.caricias || 0) + 1;
       actualizarEstadisticasUI();
-      await registrarCuidadoHoy();
+      ganarMonedas(RECOMPENSAS_ACCION.caricias);
       guardarEstado();
     });
 
@@ -1420,6 +1834,343 @@
       location.href = 'index.html';
     });
 
+    // ---------- Economía: ganar y gastar monedas (documento personal) ----------
+    function ganarMonedas(cantidad) {
+      if (!referenciaUsuario) return; // sin nombre puesto, no hay dónde guardar sus monedas
+      monedas += cantidad;
+      actualizarMonedasUI();
+      referenciaUsuario.set({ monedas: firebase.firestore.FieldValue.increment(cantidad) }, { merge: true });
+    }
+
+    // Resta monedas de forma segura (comprueba el saldo real del servidor en
+    // el momento, para que dos compras a la vez no dejen el saldo en negativo)
+    async function gastarMonedas(costo) {
+      if (!referenciaUsuario || !db) return false;
+      let exito = false;
+      await db.runTransaction(async (transaccion) => {
+        const doc = await transaccion.get(referenciaUsuario);
+        const datos = doc.data() || {};
+        const actuales = datos.monedas || 0;
+        if (actuales < costo) return;
+        transaccion.set(referenciaUsuario, {
+          monedas: actuales - costo,
+          monedasGastadasTotal: (datos.monedasGastadasTotal || 0) + costo
+        }, { merge: true });
+        exito = true;
+        monedas = actuales - costo;
+        monedasGastadasTotal = (datos.monedasGastadasTotal || 0) + costo;
+      });
+      actualizarMonedasUI();
+      if (exito) revisarLogrosTienda();
+      return exito;
+    }
+
+    // ---------- Ruleta diaria ----------
+    const btnRuleta = document.getElementById('btn-ruleta');
+    const ruletaDescripcion = document.getElementById('ruleta-descripcion');
+
+    function actualizarBotonRuleta() {
+      const hoy = fechaAString(new Date());
+      const yaGiro = ultimoGiroRuleta === hoy;
+      btnRuleta.disabled = yaGiro;
+      btnRuleta.textContent = yaGiro ? 'Ya has girado hoy' : 'Girar la ruleta';
+      ruletaDescripcion.textContent = yaGiro
+        ? 'Vuelve mañana para girar otra vez.'
+        : 'Gira una vez al día y gana monedas gratis.';
+    }
+
+    btnRuleta.addEventListener('click', async () => {
+      if (!referenciaUsuario || !db || btnRuleta.disabled) return;
+      const hoy = fechaAString(new Date());
+      btnRuleta.classList.add('girando');
+
+      let premio = 0;
+      await db.runTransaction(async (transaccion) => {
+        const doc = await transaccion.get(referenciaUsuario);
+        const datos = doc.data() || {};
+        if ((datos.ultimoGiroRuleta || null) === hoy) return; // ya giró hoy
+        premio = [5, 10, 10, 15, 20, 25, 40][Math.floor(Math.random() * 7)];
+        transaccion.set(referenciaUsuario, {
+          monedas: (datos.monedas || 0) + premio,
+          ultimoGiroRuleta: hoy
+        }, { merge: true });
+        monedas = (datos.monedas || 0) + premio;
+        ultimoGiroRuleta = hoy;
+      });
+
+      setTimeout(() => {
+        btnRuleta.classList.remove('girando');
+        actualizarMonedasUI();
+        actualizarBotonRuleta();
+        if (premio > 0) mostrarMensaje(`¡Ganaste ${premio} 🪙!`);
+      }, 600);
+    });
+
+    // ---------- Tienda: renderizado de artículos ----------
+    const listaMascotaEl = document.getElementById('tienda-lista-mascota');
+    const listaAccesoriosEl = document.getElementById('tienda-lista-accesorios');
+    const listaRegalosEl = document.getElementById('tienda-lista-regalos');
+    const listaLogrosEl = document.getElementById('tienda-lista-logros');
+    const ofertaDiaEl = document.getElementById('oferta-dia');
+    const ofertaDiaContenidoEl = document.getElementById('oferta-dia-contenido');
+
+    function crearFilaTienda(item, textoBoton, alComprar, precioEspecial) {
+      const fila = document.createElement('div');
+      fila.className = 'tienda-item';
+      const precioMostrado = precioEspecial
+        ? `<span class="oferta-dia-precio-tachado">${item.costo}</span>${precioEspecial} 🪙`
+        : `${item.costo} 🪙`;
+      fila.innerHTML = `
+        <div class="tienda-item-info">
+          <span class="tienda-item-emoji">${item.emoji}</span>
+          <span>
+            <span class="tienda-item-nombre">${item.nombre}</span>
+            <span class="tienda-item-detalle">${precioMostrado}</span>
+          </span>
+        </div>
+        <button type="button" class="tienda-item-btn" data-costo="${precioEspecial || item.costo}">${textoBoton}</button>
+      `;
+      fila.querySelector('.tienda-item-btn').addEventListener('click', alComprar);
+      return fila;
+    }
+
+    // La oferta del día se calcula a partir de la fecha, así que es la misma
+    // para los dos durante todo el día, y cambia sola a la mañana siguiente
+    function obtenerOfertaDelDia() {
+      const todos = [...ITEMS_MASCOTA, ...ITEMS_ACCESORIOS, ...ITEMS_REGALO];
+      const hoy = fechaAString(new Date());
+      let hash = 0;
+      for (let i = 0; i < hoy.length; i++) hash = (hash * 31 + hoy.charCodeAt(i)) >>> 0;
+      const item = todos[hash % todos.length];
+      const precioOferta = Math.max(5, Math.round(item.costo * 0.6));
+      const categoria = ITEMS_MASCOTA.includes(item) ? 'mascota' : ITEMS_ACCESORIOS.includes(item) ? 'accesorio' : 'regalo';
+      return { item, precioOferta, categoria };
+    }
+
+    function renderizarOfertaDelDia() {
+      const { item, precioOferta, categoria } = obtenerOfertaDelDia();
+      ofertaDiaContenidoEl.innerHTML = '';
+      const accion = categoria === 'mascota' ? () => comprarItemMascota(item, precioOferta)
+        : categoria === 'accesorio' ? () => comprarAccesorioPremium(item, precioOferta)
+        : () => iniciarCompraRegalo(item, precioOferta);
+      const textoBoton = categoria === 'regalo' ? 'Regalar' : 'Comprar';
+      ofertaDiaContenidoEl.appendChild(crearFilaTienda(item, textoBoton, accion, precioOferta));
+      ofertaDiaEl.hidden = false;
+    }
+
+    function renderizarTienda() {
+      listaMascotaEl.innerHTML = '';
+      ITEMS_MASCOTA.forEach(item => {
+        listaMascotaEl.appendChild(crearFilaTienda(item, 'Comprar', () => comprarItemMascota(item)));
+      });
+
+      listaAccesoriosEl.innerHTML = '';
+      ITEMS_ACCESORIOS.forEach(item => {
+        listaAccesoriosEl.appendChild(crearFilaTienda(item, 'Equipar', () => comprarAccesorioPremium(item)));
+      });
+
+      listaRegalosEl.innerHTML = '';
+      ITEMS_REGALO.forEach(item => {
+        listaRegalosEl.appendChild(crearFilaTienda(item, 'Regalar', () => iniciarCompraRegalo(item)));
+      });
+
+      renderizarLogros();
+      renderizarOfertaDelDia();
+      actualizarMonedasUI();
+    }
+
+    function renderizarLogros() {
+      listaLogrosEl.innerHTML = '';
+      LOGROS.forEach(logro => {
+        const conseguido = logrosTiendaConseguidos.includes(logro.id);
+        const fila = document.createElement('div');
+        fila.className = 'tienda-item' + (conseguido ? ' logro-conseguido' : '');
+        fila.innerHTML = `
+          <div class="tienda-item-info">
+            <span class="tienda-item-emoji">${logro.emoji}</span>
+            <span>
+              <span class="tienda-item-nombre">${logro.nombre}</span>
+              <span class="tienda-item-detalle">${logro.descripcion} · +${logro.recompensa} 🪙</span>
+            </span>
+          </div>
+          <button type="button" class="tienda-item-btn${conseguido ? ' logro-hecho' : ''}" disabled>${conseguido ? '✓ Hecho' : 'Pendiente'}</button>
+        `;
+        listaLogrosEl.appendChild(fila);
+      });
+    }
+
+    // Comprueba todos los logros y da la recompensa la primera vez que se cumplen
+    async function revisarLogrosTienda() {
+      if (!referenciaUsuario || !db) return;
+      const nuevos = LOGROS.filter(l => !logrosTiendaConseguidos.includes(l.id) && l.comprobar());
+      if (!nuevos.length) return;
+
+      for (const logro of nuevos) {
+        logrosTiendaConseguidos.push(logro.id);
+        monedas += logro.recompensa;
+        mostrarLogro(`${logro.emoji} Logro conseguido: "${logro.nombre}" (+${logro.recompensa} 🪙)`);
+      }
+      actualizarMonedasUI();
+      renderizarLogros();
+      referenciaUsuario.set({
+        logrosTiendaConseguidos,
+        monedas: firebase.firestore.FieldValue.increment(nuevos.reduce((s, l) => s + l.recompensa, 0))
+      }, { merge: true });
+    }
+
+    async function comprarItemMascota(item, precioForzado) {
+      if (!referenciaUsuario || !referenciaDoc || !db) return;
+      const costo = precioForzado || item.costo;
+      let exito = false;
+      await db.runTransaction(async (transaccion) => {
+        const docUsuario = await transaccion.get(referenciaUsuario);
+        const docMascota = await transaccion.get(referenciaDoc);
+        const datosUsuario = docUsuario.data() || {};
+        const datosMascota = docMascota.data() || {};
+        const monedasActuales = datosUsuario.monedas || 0;
+        if (monedasActuales < costo) return;
+
+        const nuevoUsuario = {
+          monedas: monedasActuales - costo,
+          monedasGastadasTotal: (datosUsuario.monedasGastadasTotal || 0) + costo
+        };
+        const nuevaMascota = {
+          hambre: Math.min(MAX, (datosMascota.hambre || 0) + (item.efecto.hambre || 0)),
+          sueno: Math.min(MAX, (datosMascota.sueno || 0) + (item.efecto.sueno || 0)),
+          felicidad: Math.min(MAX, (datosMascota.felicidad || 0) + (item.efecto.felicidad || 0))
+        };
+        transaccion.set(referenciaUsuario, nuevoUsuario, { merge: true });
+        transaccion.set(referenciaDoc, nuevaMascota, { merge: true });
+        monedas = nuevoUsuario.monedas;
+        monedasGastadasTotal = nuevoUsuario.monedasGastadasTotal;
+        exito = true;
+      });
+      actualizarMonedasUI();
+      if (exito) {
+        alert(`${item.emoji} Le encantó "${item.nombre}"`);
+        revisarLogrosTienda();
+      } else {
+        alert('No tienes suficientes monedas todavía.');
+      }
+    }
+
+    async function comprarAccesorioPremium(item, precioForzado) {
+      if (!referenciaUsuario || !referenciaDoc || !db) return;
+      const costo = precioForzado || item.costo;
+      const exito = await gastarMonedas(costo);
+      if (!exito) { alert('No tienes suficientes monedas todavía.'); return; }
+
+      accesorioElegido = item.emoji;
+      aplicarAccesorio(accesorioElegido);
+      referenciaDoc.set({ accesorio: accesorioElegido }, { merge: true });
+
+      alert(`${item.emoji} "${item.nombre}" equipado`);
+      revisarLogrosTienda();
+    }
+
+    // ---------- Selector de a quién regalar (personas registradas) ----------
+    const selectorDestinatario = document.getElementById('tienda-selector-destinatario');
+    const selectorLista = document.getElementById('tienda-selector-lista');
+    const selectorCancelar = document.getElementById('tienda-selector-cancelar');
+
+    async function elegirDestinatarioTienda() {
+      if (!db) return null;
+      const snap = await db.collection('usuarios').get();
+      const nombres = snap.docs.map(d => d.data().nombre).filter(Boolean);
+
+      selectorLista.innerHTML = '';
+      if (!nombres.length) {
+        selectorLista.innerHTML = '<p class="config-descripcion">Todavía nadie ha puesto su nombre en index.html → Configuración → Perfil.</p>';
+      } else {
+        nombres.forEach(nombre => {
+          const boton = document.createElement('button');
+          boton.type = 'button';
+          boton.className = 'tienda-selector-opcion';
+          boton.textContent = nombre;
+          selectorLista.appendChild(boton);
+        });
+      }
+
+      selectorDestinatario.hidden = false;
+
+      return new Promise(resolve => {
+        function alElegir(e) {
+          const boton = e.target.closest('.tienda-selector-opcion');
+          if (!boton) return;
+          limpiar();
+          resolve(boton.textContent);
+        }
+        function alCancelar() {
+          limpiar();
+          resolve(null);
+        }
+        function limpiar() {
+          selectorDestinatario.hidden = true;
+          selectorLista.removeEventListener('click', alElegir);
+          selectorCancelar.removeEventListener('click', alCancelar);
+        }
+        selectorLista.addEventListener('click', alElegir);
+        selectorCancelar.addEventListener('click', alCancelar);
+      });
+    }
+
+    async function iniciarCompraRegalo(item, precioForzado) {
+      const destinatario = await elegirDestinatarioTienda();
+      if (!destinatario) return;
+
+      const costo = precioForzado || item.costo;
+      const exito = await gastarMonedas(costo);
+      if (!exito) { alert('No tienes suficientes monedas todavía.'); return; }
+
+      await db.collection('mensajesManual').add({
+        destinatarios: [destinatario],
+        remitente: obtenerNombreUsuarioLocal(),
+        tipo: 'regalo',
+        texto: `${item.emoji} Te ha regalado: ${item.nombre}`,
+        enviado: false,
+        creado: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      regalosEnviados += 1;
+      referenciaUsuario.set({ regalosEnviados: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+
+      alert(`¡Listo! El regalo para ${destinatario} está en camino 🎉`);
+      revisarLogrosTienda();
+    }
+
+    function obtenerNombreUsuarioLocal() {
+      return localStorage.getItem('nombreUsuario') || 'Alguien';
+    }
+
+    // ---------- Abrir y cerrar la tienda ----------
+    function abrirTienda() {
+      if (!referenciaUsuario) {
+        alert('Antes de usar la tienda, pon tu nombre en index.html → Configuración → Perfil — así tus monedas son solo tuyas.');
+        return;
+      }
+      vistaMascota.hidden = true;
+      document.getElementById('vista-tienda').hidden = false;
+      renderizarTienda();
+      actualizarBotonRuleta();
+    }
+    document.getElementById('btn-abrir-tienda').addEventListener('click', abrirTienda);
+    document.getElementById('btn-monedas').addEventListener('click', abrirTienda);
+    document.getElementById('btn-volver-tienda').addEventListener('click', () => {
+      document.getElementById('vista-tienda').hidden = true;
+      vistaMascota.hidden = false;
+    });
+
+    // Navegación por pestañas dentro de la tienda
+    document.querySelectorAll('.tienda-pestana').forEach(pestana => {
+      pestana.addEventListener('click', () => {
+        document.querySelectorAll('.tienda-pestana').forEach(p => p.classList.remove('activa'));
+        pestana.classList.add('activa');
+        document.querySelectorAll('.tienda-categoria').forEach(cat => {
+          cat.hidden = cat.dataset.tcatContenido !== pestana.dataset.tcat;
+        });
+      });
+    });
+
     if (db) {
       referenciaDoc = db.collection('mascota').doc('estado');
 
@@ -1472,10 +2223,54 @@
           logrosDesbloqueados = datos.logrosDesbloqueados || [];
           actualizarEstadisticasUI();
         });
+      }).then(() => {
+        // Una sola vez por carga de página: cuenta el día de hoy como
+        // "visitado" para la racha compartida
+        registrarVisitaHoy();
       });
 
       // Cada minuto, vuelve a calcular el decaimiento y lo guarda (así avanza aunque no toques nada)
       setInterval(guardarEstado, 60000);
+
+      // ---------- Documento personal (economía: monedas, ruleta, logros) ----------
+      const nombreParaEconomia = localStorage.getItem('nombreUsuario');
+      if (nombreParaEconomia) {
+        const idUsuario = nombreParaEconomia.trim().toLowerCase();
+        referenciaUsuario = db.collection('usuarios').doc(idUsuario);
+
+        referenciaUsuario.get().then(doc => {
+          if (!doc.exists) {
+            // Por si alguien llega aquí sin haber pasado antes por index.html
+            return referenciaUsuario.set({
+              nombre: nombreParaEconomia.trim(),
+              monedas: 0,
+              unido: firebase.firestore.FieldValue.serverTimestamp(),
+              ultimaVez: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+          }
+        }).then(() => {
+          referenciaUsuario.onSnapshot(doc => {
+            if (!doc.exists) return;
+            const datos = doc.data();
+            monedas = datos.monedas || 0;
+            ultimoGiroRuleta = datos.ultimoGiroRuleta || null;
+            ultimoBonoDiario = datos.ultimoBonoDiario || null;
+            regalosEnviados = datos.regalosEnviados || 0;
+            monedasGastadasTotal = datos.monedasGastadasTotal || 0;
+            logrosTiendaConseguidos = datos.logrosTiendaConseguidos || [];
+            actualizarMonedasUI();
+            actualizarBotonRuleta();
+            revisarLogrosTienda();
+          });
+        }).then(() => {
+          registrarBonoDiarioPersonal();
+        });
+      } else {
+        // Todavía no ha puesto su nombre — sin identidad no hay dónde guardar
+        // sus propias monedas, así que se avisa y se desactiva la tienda
+        valorMonedas.textContent = '–';
+        document.getElementById('btn-monedas').title = 'Pon tu nombre en index.html → Configuración → Perfil para tener tus propias monedas';
+      }
     } else {
       mostrarMensaje('No se pudo conectar. Revisa tu conexión.');
     }

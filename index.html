@@ -11,21 +11,33 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --blanco: #ffffff;
-      --hueso: #fbf8f4;
-      --marfil: #f4ede3;
-      --tinta: #262220;
-      --gris: #948c82;
-      --naranja: #e8703a;
-      --naranja-suave: #f6ddc9;
-      --linea: #ece4d8;
+      --blanco: #fffdfc;
+      --hueso: #fbf3f1;
+      --marfil: #f6e5e0;
+      --tinta: #2a1f22;
+      --gris: #9a848a;
+      --naranja: #b8395f;
+      --naranja-suave: #f3d6de;
+      --linea: #efdedd;
+      /* Nuevos tokens — solo se añaden, no sustituyen a los de arriba */
+      --naranja-fuerte: #8f2c49;
+      --naranja-brillo: #e8899f;
+      --burdeos: #6b1f37;
+      --dorado: #c99a4a;
+      --dorado-suave: #f0e0bd;
+      --sombra-calida: 42, 31, 34;
+      --sombra-suave: 0 2px 8px rgba(var(--sombra-calida), 0.06);
+      --sombra-media: 0 8px 24px rgba(var(--sombra-calida), 0.09);
+      --sombra-fuerte: 0 16px 40px rgba(var(--sombra-calida), 0.14);
+      --radio-card: 14px;
+      --radio-chip: 999px;
     }
 
     * { box-sizing: border-box; }
 
     /* Feedback táctil sutil y consistente en todos los botones */
     button {
-      transition: transform 0.12s ease, opacity 0.12s ease;
+      transition: transform 0.15s cubic-bezier(.34,1.4,.64,1), opacity 0.12s ease, box-shadow 0.2s ease;
     }
     button:active {
       transform: scale(0.97);
@@ -38,9 +50,17 @@
       outline-offset: 2px;
     }
 
+    /* Scrollbar fina y a juego con la paleta, en vez de la gris por defecto */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--naranja-suave); border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--naranja); }
+
     body {
       margin: 0;
-      background: radial-gradient(ellipse at top, #fffdfb 0%, var(--hueso) 60%);
+      background:
+        radial-gradient(ellipse 60% 40% at 85% 95%, rgba(107,31,55,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at top, #fffdfb 0%, var(--hueso) 60%);
       font-family: 'Work Sans', sans-serif;
       color: var(--tinta);
       padding: 28px 16px 60px;
@@ -48,6 +68,16 @@
       position: relative;
       overflow-x: hidden;
       touch-action: manipulation;
+    }
+    /* Textura de grano muy sutil sobre toda la web, para que no se sienta plana */
+    .grano-global {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
     }
     /* Centra la tarjeta verticalmente solo en la pantalla de bienvenida y la de contraseña */
     body.pantalla-centrada {
@@ -75,9 +105,17 @@
     }
     .mancha-fondo.b {
       width: 240px; height: 240px;
-      background: #ffe9d6;
+      background: var(--dorado-suave);
       bottom: 8%; left: -90px;
       animation: flotarB 26s ease-in-out infinite;
+    }
+    /* Tercera mancha, más tenue, para dar aún más profundidad atmosférica */
+    .mancha-fondo.c {
+      width: 200px; height: 200px;
+      background: var(--naranja-brillo);
+      opacity: 0.16;
+      top: 45%; right: -70px;
+      animation: flotarA 30s ease-in-out infinite reverse;
     }
     @keyframes flotarA {
       0%, 100% { transform: translate(0, 0) scale(1); }
@@ -94,13 +132,13 @@
     .contenedor {
       max-width: 420px;
       margin: 0 auto;
-      background: var(--blanco);
+      background: linear-gradient(175deg, var(--blanco) 0%, var(--blanco) 70%, var(--hueso) 100%);
       border: 1px solid var(--linea);
-      border-radius: 10px;
+      border-radius: var(--radio-card);
       padding: 38px 26px;
       position: relative;
       z-index: 1;
-      box-shadow: 0 1px 2px rgba(38,34,32,0.04);
+      box-shadow: var(--sombra-media), 0 1px 2px rgba(38,34,32,0.04);
     }
     .contenedor::before {
       content: '';
@@ -120,10 +158,21 @@
       font-family: 'Cormorant Garamond', serif;
       font-weight: 600;
       font-size: 26px;
+      letter-spacing: 0.2px;
       color: var(--tinta);
       margin: 0 0 22px;
       padding-bottom: 12px;
       border-bottom: 1px solid var(--linea);
+      position: relative;
+    }
+    h2::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: -1px;
+      width: 34px;
+      height: 2px;
+      background: var(--naranja);
+      border-radius: 2px;
     }
     h3 {
       font-family: 'Cormorant Garamond', serif;
@@ -159,7 +208,7 @@
     #btn-guardar-carta, #btn-subir-multimedia, #btn-agregar-meta {
       display: block;
       width: 100%;
-      background: var(--naranja);
+      background: linear-gradient(135deg, var(--naranja-brillo), var(--naranja) 55%, var(--naranja-fuerte));
       color: var(--blanco);
       border: none;
       border-radius: 6px;
@@ -169,6 +218,7 @@
       letter-spacing: 2px;
       text-transform: uppercase;
       margin-top: 8px;
+      box-shadow: 0 6px 18px rgba(143,44,73,0.28);
     }
 
     #btn-cancelar-carta, #btn-cancelar-multimedia {
@@ -392,7 +442,7 @@
       height: 115px;
       border-radius: 8px;
       background: linear-gradient(160deg, #d68c4a, #a8632a);
-      box-shadow: 0 18px 36px rgba(0,0,0,0.4), 0 0 30px rgba(232,112,58,0.25);
+      box-shadow: 0 18px 36px rgba(0,0,0,0.4), 0 0 30px rgba(184,57,95,0.25);
       overflow: hidden;
       transition: transform 0.15s ease;
     }
@@ -662,7 +712,9 @@
     .btn-opcion:last-child { border-bottom: none; }
     .btn-opcion:hover, .btn-opcion:active {
       padding-left: 6px;
+      padding-right: 6px;
       color: var(--naranja);
+      background: linear-gradient(90deg, var(--naranja-suave) 0%, transparent 70%);
     }
     .btn-opcion::after {
       content: '0' counter(opcion);
@@ -1544,8 +1596,10 @@
 </head>
 <body class="pantalla-centrada">
 
+  <div class="grano-global"></div>
   <div class="mancha-fondo a"></div>
   <div class="mancha-fondo b"></div>
+  <div class="mancha-fondo c"></div>
 
   <div class="contenedor">
 

@@ -538,6 +538,70 @@
       margin: 0 auto 10px;
     }
 
+    .rp-nav-paginas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .rp-nav-paginas button {
+      background: rgba(38,34,32,0.06);
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 15px;
+      color: inherit;
+      cursor: pointer;
+    }
+    .rp-nav-puntos { display: flex; gap: 5px; }
+    .rp-nav-puntos span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(38,34,32,0.2);
+      display: inline-block;
+    }
+    .rp-nav-puntos span.activo { background: var(--naranja); }
+
+    #rp-responder {
+      margin-top: 18px;
+      width: 100%;
+      max-width: 260px;
+    }
+    #rp-responder-input {
+      width: 100%;
+      border: none;
+      border-bottom: 1.5px solid currentColor;
+      background: transparent;
+      color: inherit;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 13px;
+      padding: 6px 2px;
+      margin-bottom: 8px;
+    }
+    #rp-responder-input:focus { outline: none; }
+    #rp-responder-btn {
+      width: 100%;
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 11.5px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    #rp-responder-confirmacion {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 14px;
+      margin: 0;
+    }
+
     #regalo-grande-contador {
       font-size: 11px;
       color: var(--gris);
@@ -2513,7 +2577,9 @@
         } else if (adj.tipo === 'video') {
           videoHtml = `<video src="${src}" class="regalo-personalizado-video" controls playsinline></video>`;
         } else if (adj.tipo === 'audio') {
-          audioHtml = `<audio src="${src}" class="regalo-personalizado-audio" controls></audio>`;
+          audioHtml = adj.musicaFondo
+            ? `<audio src="${src}" class="regalo-personalizado-audio" controls autoplay loop></audio>`
+            : `<audio src="${src}" class="regalo-personalizado-audio" controls></audio>`;
         }
       }
 
@@ -2623,14 +2689,81 @@
             new Promise(resolve => setTimeout(resolve, 550))
           ]);
 
+          const paginas = (regalo.paginas && regalo.paginas.length) ? regalo.paginas : [regalo.mensaje || ''];
+
           caja.classList.add('cg-escondida');
           contenidoEl.innerHTML = `
             <span class="regalo-grande-emoji">${regalo.emoji || '💝'}</span>
             ${contenidoAdjuntos}
-            <span class="regalo-grande-nombre">${regalo.mensaje}</span>
+            <span class="regalo-grande-nombre" id="rp-pagina-texto"></span>
+            ${paginas.length > 1 ? `
+              <div class="rp-nav-paginas">
+                <button type="button" id="rp-pagina-anterior" aria-label="Página anterior">‹</button>
+                <span class="rp-nav-puntos" id="rp-nav-puntos"></span>
+                <button type="button" id="rp-pagina-siguiente" aria-label="Página siguiente">›</button>
+              </div>
+            ` : ''}
+            ${regalo.permitirRespuesta !== false ? `
+              <div id="rp-responder">
+                <input type="text" id="rp-responder-input" maxlength="200" placeholder="Respóndele con algo cortito...">
+                <button type="button" id="rp-responder-btn">Enviar respuesta 💬</button>
+                <p id="rp-responder-confirmacion" hidden>¡Enviado! 💌</p>
+              </div>
+            ` : ''}
           `;
           contenidoEl.classList.add('rg-visible');
           btnContinuar.hidden = false;
+
+          // ---------- Navegación entre páginas del mensaje ----------
+          let paginaActual = 0;
+          const spanTexto = document.getElementById('rp-pagina-texto');
+          const puntosEl = document.getElementById('rp-nav-puntos');
+          function mostrarPagina() {
+            spanTexto.textContent = paginas[paginaActual];
+            if (puntosEl) {
+              puntosEl.innerHTML = paginas.map((_, i) => `<span class="${i === paginaActual ? 'activo' : ''}"></span>`).join('');
+            }
+          }
+          mostrarPagina();
+          const btnAnteriorPagina = document.getElementById('rp-pagina-anterior');
+          const btnSiguientePagina = document.getElementById('rp-pagina-siguiente');
+          if (btnAnteriorPagina) {
+            btnAnteriorPagina.addEventListener('click', () => {
+              paginaActual = (paginaActual - 1 + paginas.length) % paginas.length;
+              mostrarPagina();
+            });
+            btnSiguientePagina.addEventListener('click', () => {
+              paginaActual = (paginaActual + 1) % paginas.length;
+              mostrarPagina();
+            });
+          }
+
+          // ---------- Responder con un mensaje corto ----------
+          const btnResponder = document.getElementById('rp-responder-btn');
+          if (btnResponder) {
+            btnResponder.addEventListener('click', async () => {
+              const inputRespuesta = document.getElementById('rp-responder-input');
+              const texto = inputRespuesta.value.trim();
+              if (!texto || !regalo.remitente || !db) return;
+              btnResponder.disabled = true;
+              try {
+                await db.collection('mensajesManual').add({
+                  destinatarios: [regalo.remitente],
+                  remitente: nombreActual.trim(),
+                  tipo: 'regalo',
+                  texto: `💬 Te respondió a tu regalo: "${texto}"`,
+                  enviado: false,
+                  creado: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                inputRespuesta.hidden = true;
+                btnResponder.hidden = true;
+                document.getElementById('rp-responder-confirmacion').hidden = false;
+              } catch (err) {
+                console.error('No se pudo enviar la respuesta:', err);
+                btnResponder.disabled = false;
+              }
+            });
+          }
 
           try {
             await db.collection('regalosRecibidos').doc(regalo.id).set({ abierto: true }, { merge: true });

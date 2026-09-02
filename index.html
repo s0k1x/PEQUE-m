@@ -335,19 +335,40 @@
 
     /* ---------- Pantalla grande de regalo (tras la contraseña) ---------- */
     #pantalla-regalo-grande { text-align: center; }
-    #regalo-grande-remitente, #regalo-personalizado-remitente {
+    #regalo-grande-remitente {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-size: 20px;
       color: var(--tinta);
       margin: 0 0 26px;
     }
+    #regalo-personalizado-remitente {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 20px;
+      color: inherit;
+      margin: 0 0 26px;
+    }
 
-    #regalo-grande-escenario, #regalo-personalizado-escenario {
+    #regalo-grande-escenario {
       position: relative;
       width: 100%;
       height: 260px;
       margin-bottom: 10px;
+    }
+    #regalo-personalizado-escenario {
+      position: relative;
+      width: 100%;
+      min-height: 260px;
+      margin-bottom: 10px;
+    }
+    /* Una vez revelado, el contenido personalizado deja de estar centrado
+       en posición absoluta (que exige una altura fija) y pasa a fluir con
+       normalidad, porque puede haber varias fotos + video + audio + texto */
+    #regalo-personalizado-contenido.rg-visible {
+      position: static;
+      inset: auto;
+      margin: 14px auto 0;
     }
 
     .caja-regalo-grande {
@@ -468,9 +489,38 @@
       font-style: italic;
       font-weight: 600;
       font-size: 23px;
-      color: var(--tinta);
+      color: inherit;
       text-align: center;
       padding: 0 10px;
+    }
+
+    .regalo-personalizado-galeria {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .regalo-personalizado-galeria img {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.22);
+    }
+    .regalo-personalizado-video {
+      display: block;
+      width: 100%;
+      max-width: 260px;
+      margin: 0 auto 10px;
+      border-radius: 8px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.22);
+    }
+    .regalo-personalizado-audio {
+      display: block;
+      width: 100%;
+      max-width: 260px;
+      margin: 0 auto 10px;
     }
 
     #regalo-grande-contador {
@@ -2338,6 +2388,51 @@
     // ---------- Regalo personalizado: se comprueba ANTES que nada más ----------
     // Usa el nombre guardado en localStorage, que existe independientemente
     // de si ya se puso la contraseña o no
+    const FONDOS_RP_INDEX = {
+      crema: { fondo: '#fbf8f4', texto: '#262220' },
+      rosa: { fondo: '#fbe4e4', texto: '#262220' },
+      lavanda: { fondo: '#ece4f6', texto: '#262220' },
+      menta: { fondo: '#e2f4ea', texto: '#262220' },
+      cielo: { fondo: '#e3eefb', texto: '#262220' },
+      durazno: { fondo: '#fbe8d9', texto: '#262220' },
+      negro: { fondo: '#1c1a18', texto: '#f4ede3' }
+    };
+
+    // Si un adjunto se guardó partido en fragmentos, los vuelve a unir
+    // (leyendo cada trozo por su ID directo, sin necesitar índices especiales)
+    async function cargarAdjuntoRP(regaloId, adjunto, indice) {
+      if (!adjunto.fragmentado) return adjunto.src;
+      const total = adjunto.totalFragmentos;
+      const partes = await Promise.all(
+        Array.from({ length: total }, (_, i) =>
+          db.collection('regalosRecibidos').doc(regaloId).collection('fragmentos').doc(`${indice}-${i}`).get()
+        )
+      );
+      return partes.map(d => d.data().data).join('');
+    }
+
+    async function construirContenidoAdjuntosRP(regalo) {
+      const adjuntos = regalo.adjuntos || [];
+      const fotosHtml = [];
+      let videoHtml = '';
+      let audioHtml = '';
+
+      for (let i = 0; i < adjuntos.length; i++) {
+        const adj = adjuntos[i];
+        const src = await cargarAdjuntoRP(regalo.id, adj, i);
+        if (adj.tipo === 'foto') {
+          fotosHtml.push(`<img src="${src}" alt="">`);
+        } else if (adj.tipo === 'video') {
+          videoHtml = `<video src="${src}" class="regalo-personalizado-video" controls playsinline></video>`;
+        } else if (adj.tipo === 'audio') {
+          audioHtml = `<audio src="${src}" class="regalo-personalizado-audio" controls></audio>`;
+        }
+      }
+
+      return (fotosHtml.length ? `<div class="regalo-personalizado-galeria">${fotosHtml.join('')}</div>` : '')
+        + videoHtml + audioHtml;
+    }
+
     async function comprobarRegaloPersonalizadoPrevio() {
       mensajeInicial.hidden = true; // se oculta ya, para que no parpadee mientras se consulta Firestore
       const nombreActual = localStorage.getItem('nombreUsuario');
@@ -2352,20 +2447,49 @@
         if (!pendientes.length) { iniciarFlujoNormal(); return; }
 
         const regalo = pendientes[0];
-        mensajeInicial.hidden = true;
-        document.getElementById('regalo-personalizado-remitente').textContent = `💝 ${regalo.remitente || 'Alguien'} te ha escrito algo`;
+        const pantalla = document.getElementById('pantalla-regalo-personalizado-previo');
+        const tema = FONDOS_RP_INDEX[regalo.fondo] || FONDOS_RP_INDEX.crema;
+        pantalla.style.background = tema.fondo;
+        pantalla.style.color = tema.texto;
+
+        document.getElementById('regalo-personalizado-remitente').textContent = regalo.titulo
+          ? `${regalo.emoji || '💝'} "${regalo.titulo}" — de ${regalo.remitente || 'Alguien'}`
+          : `${regalo.emoji || '💝'} ${regalo.remitente || 'Alguien'} te ha escrito algo`;
 
         const caja = document.getElementById('caja-regalo-personalizado');
         const contenidoEl = document.getElementById('regalo-personalizado-contenido');
         const particulasEl = document.getElementById('particulas-regalo-personalizado');
         const btnContinuar = document.getElementById('btn-continuar-regalo-personalizado');
         caja.className = 'caja-regalo-grande';
+        caja.hidden = false;
         contenidoEl.className = 'regalo-grande-contenido';
         contenidoEl.innerHTML = '';
         particulasEl.innerHTML = '';
         btnContinuar.hidden = true;
 
-        document.getElementById('pantalla-regalo-personalizado-previo').hidden = false;
+        pantalla.hidden = false;
+
+        // Si tiene fecha de apertura y todavía no ha llegado, se queda
+        // bloqueado — se puede seguir usando la web con normalidad, pero
+        // este regalo en concreto no se puede abrir hasta esa fecha
+        const fechaLimite = regalo.fechaApertura ? new Date(regalo.fechaApertura) : null;
+        const bloqueado = fechaLimite && new Date() < fechaLimite;
+
+        if (bloqueado) {
+          caja.hidden = true;
+          const fechaTexto = fechaLimite.toLocaleString('es-ES', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+          contenidoEl.innerHTML = `
+            <span class="regalo-grande-emoji">🔒</span>
+            <span class="regalo-grande-nombre">Podrás abrirlo el ${fechaTexto}</span>
+          `;
+          contenidoEl.classList.add('rg-visible');
+          btnContinuar.hidden = false;
+          btnContinuar.addEventListener('click', () => {
+            pantalla.hidden = true;
+            iniciarFlujoNormal();
+          }, { once: true });
+          return;
+        }
 
         let abierta = false;
         caja.addEventListener('click', async function alAbrir() {
@@ -2385,15 +2509,21 @@
             setTimeout(() => p.remove(), 1100);
           }
 
-          setTimeout(() => {
-            caja.classList.add('cg-escondida');
-            contenidoEl.innerHTML = `
-              <span class="regalo-grande-emoji">💝</span>
-              <span class="regalo-grande-nombre">${regalo.mensaje}</span>
-            `;
-            contenidoEl.classList.add('rg-visible');
-            btnContinuar.hidden = false;
-          }, 550);
+          // Se cargan las fotos/video/audio (puede tardar un poco si son
+          // grandes) al mismo tiempo que se desarrolla la animación
+          const [contenidoAdjuntos] = await Promise.all([
+            construirContenidoAdjuntosRP(regalo),
+            new Promise(resolve => setTimeout(resolve, 550))
+          ]);
+
+          caja.classList.add('cg-escondida');
+          contenidoEl.innerHTML = `
+            <span class="regalo-grande-emoji">${regalo.emoji || '💝'}</span>
+            ${contenidoAdjuntos}
+            <span class="regalo-grande-nombre">${regalo.mensaje}</span>
+          `;
+          contenidoEl.classList.add('rg-visible');
+          btnContinuar.hidden = false;
 
           try {
             await db.collection('regalosRecibidos').doc(regalo.id).set({ abierto: true }, { merge: true });
@@ -2403,7 +2533,7 @@
         }, { once: true });
 
         btnContinuar.addEventListener('click', () => {
-          document.getElementById('pantalla-regalo-personalizado-previo').hidden = true;
+          pantalla.hidden = true;
           iniciarFlujoNormal();
         }, { once: true });
       } catch (err) {

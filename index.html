@@ -12,20 +12,20 @@
   <style>
     :root {
       --blanco: #ffffff;
-      --hueso: #faf7f9;
-      --marfil: #f2e6ee;
-      --tinta: #170d13;
-      --gris: #8b7684;
-      --naranja: #d6006f;
-      --naranja-suave: #f5cfe0;
-      --linea: #ecdfe8;
+      --hueso: #fff8f6;
+      --marfil: #ffece6;
+      --tinta: #1c1414;
+      --gris: #93807c;
+      --naranja: #ff6b5b;
+      --naranja-suave: #ffd9ce;
+      --linea: #ffe4dc;
       /* Nuevos tokens — solo se añaden, no sustituyen a los de arriba */
-      --naranja-fuerte: #a10056;
-      --naranja-brillo: #ff4fa3;
-      --burdeos: #5c0030;
-      --dorado: #b8923f;
-      --dorado-suave: #ece0bd;
-      --sombra-calida: 23, 13, 19;
+      --naranja-fuerte: #e8452f;
+      --naranja-brillo: #ff9478;
+      --burdeos: #a8241a;
+      --dorado: #0f9488;
+      --dorado-suave: #cceae6;
+      --sombra-calida: 28, 20, 20;
       --sombra-suave: 0 2px 8px rgba(var(--sombra-calida), 0.07);
       --sombra-media: 0 8px 24px rgba(var(--sombra-calida), 0.11);
       --sombra-fuerte: 0 16px 40px rgba(var(--sombra-calida), 0.16);
@@ -59,7 +59,7 @@
     body {
       margin: 0;
       background:
-        radial-gradient(ellipse 60% 40% at 85% 95%, rgba(92,0,48,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 85% 95%, rgba(168,36,26,0.06) 0%, transparent 60%),
         radial-gradient(ellipse at top, #fffdfb 0%, var(--hueso) 60%);
       font-family: 'Poppins', sans-serif;
       color: var(--tinta);
@@ -218,7 +218,7 @@
       letter-spacing: 2px;
       text-transform: uppercase;
       margin-top: 8px;
-      box-shadow: 0 6px 18px rgba(161,0,86,0.28);
+      box-shadow: 0 6px 18px rgba(232,69,47,0.28);
     }
 
     #btn-cancelar-carta, #btn-cancelar-multimedia {
@@ -442,7 +442,7 @@
       height: 115px;
       border-radius: 8px;
       background: linear-gradient(160deg, #d68c4a, #a8632a);
-      box-shadow: 0 18px 36px rgba(0,0,0,0.4), 0 0 30px rgba(214,0,111,0.25);
+      box-shadow: 0 18px 36px rgba(0,0,0,0.4), 0 0 30px rgba(255,107,91,0.25);
       overflow: hidden;
       transition: transform 0.15s ease;
     }
@@ -676,7 +676,12 @@
     #pantalla-regalo-personalizado-previo { text-align: center; }
 
     /* Menú principal */
-    #menu-principal { counter-reset: opcion; }
+    #menu-principal { }
+    .grid-menu {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
     #btn-notificaciones {
       display: block;
       background: none;
@@ -693,37 +698,43 @@
       color: var(--naranja);
     }
     .btn-opcion {
-      counter-increment: opcion;
       display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      width: 100%;
-      background: none;
-      border: none;
-      border-bottom: 1px solid var(--linea);
-      padding: 18px 0;
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--tinta);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--hueso);
+      border: 1.5px solid var(--linea);
+      border-radius: 6px;
+      padding: 20px 16px;
       text-align: left;
-      transition: padding-left 0.2s ease, color 0.2s ease;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
     }
-    .btn-opcion:last-child { border-bottom: none; }
     .btn-opcion:hover, .btn-opcion:active {
-      padding-left: 6px;
-      padding-right: 6px;
-      color: var(--naranja);
-      background: linear-gradient(90deg, var(--naranja-suave) 0%, transparent 70%);
+      transform: translateY(-2px);
+      border-color: var(--naranja);
+      background: linear-gradient(160deg, var(--naranja-suave) 0%, var(--hueso) 75%);
     }
-    .btn-opcion::after {
-      content: '0' counter(opcion);
-      font-family: 'Poppins', sans-serif;
-      font-size: 10.5px;
-      color: var(--naranja);
-      letter-spacing: 1.5px;
-      font-weight: 500;
+    .opcion-icono {
+      font-size: 26px;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--blanco);
+      border-radius: 50%;
+      box-shadow: var(--sombra-suave);
     }
+    .opcion-texto {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--tinta);
+      line-height: 1.2;
+    }
+    /* La sorpresa ocupa las dos columnas, para destacarla del resto */
+    #btn-sorpresa { grid-column: span 2; flex-direction: row; align-items: center; }
+    #btn-sorpresa .opcion-icono { flex-shrink: 0; }
 
     /* Cartas */
     .carta {
@@ -746,6 +757,55 @@
       padding: 0;
       cursor: pointer;
     }
+    #lista-cartas-controles {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    #buscador-cartas {
+      flex: 1;
+      border: 1.5px solid var(--linea);
+      border-radius: 6px;
+      background: var(--hueso);
+      padding: 10px 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      color: var(--tinta);
+    }
+    #buscador-cartas:focus { outline: none; border-color: var(--naranja); }
+    #btn-filtro-favoritas {
+      flex-shrink: 0;
+      background: var(--hueso);
+      border: 1.5px solid var(--linea);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 11.5px;
+      color: var(--gris);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #btn-filtro-favoritas.activo {
+      border-color: var(--dorado);
+      background: var(--dorado-suave);
+      color: var(--tinta);
+    }
+    .btn-favorita-carta {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--linea);
+      padding: 0 4px;
+    }
+    .btn-favorita-carta.marcada { color: var(--dorado); }
+    #sin-resultados-cartas {
+      text-align: center;
+      color: var(--gris);
+      font-size: 13px;
+      padding: 20px 0;
+    }
+    #sin-resultados-cartas[hidden] { display: none; }
     .carta-fecha {
       font-family: 'Poppins', sans-serif;
       font-style: normal;
@@ -1019,18 +1079,29 @@
       list-style: none;
       padding: 0;
       margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
     #lista-metas li {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 13px 0;
-      border-bottom: 1px solid var(--linea);
+      padding: 14px 16px;
+      border: 1.5px solid var(--linea);
+      border-radius: 6px;
+      background: var(--hueso);
       font-size: 14px;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
     }
+    #lista-metas li:active { transform: scale(0.99); }
     #lista-metas input[type="checkbox"] {
       accent-color: var(--naranja);
-      width: 16px; height: 16px;
+      width: 18px; height: 18px;
+    }
+    #lista-metas li.completada {
+      background: var(--dorado-suave);
+      border-color: var(--dorado);
     }
     #lista-metas li.completada span {
       text-decoration: line-through;
@@ -1751,7 +1822,13 @@
           <button id="btn-cancelar-carta">Cancelar</button>
         </div>
 
+        <div id="lista-cartas-controles">
+          <input type="text" id="buscador-cartas" placeholder="🔍 Buscar en las cartas...">
+          <button type="button" id="btn-filtro-favoritas">⭐ Solo favoritas</button>
+        </div>
+
         <div id="lista-cartas"></div>
+        <p id="sin-resultados-cartas" hidden>No hay cartas que coincidan con la búsqueda.</p>
 
         <button class="btn-volver">Volver</button>
       </div>
@@ -3052,8 +3129,12 @@
       });
     });
 
-    function renderizarCartas(cartas) {
+    let todasLasCartas = []; // se guarda para poder filtrar sin volver a consultar Firestore
+    let filtroSoloFavoritasCartas = false;
+
+    function pintarCartas(cartas) {
       listaCartas.innerHTML = '';
+      document.getElementById('sin-resultados-cartas').hidden = cartas.length > 0;
 
       cartas.forEach(carta => {
         const contenedor = document.createElement('div');
@@ -3084,6 +3165,14 @@
         const acciones = document.createElement('div');
         acciones.className = 'carta-acciones';
 
+        const btnFavorita = document.createElement('button');
+        btnFavorita.className = 'btn-favorita-carta' + (carta.favorita ? ' marcada' : '');
+        btnFavorita.textContent = carta.favorita ? '★' : '☆';
+        btnFavorita.setAttribute('aria-label', 'Marcar como favorita');
+        btnFavorita.addEventListener('click', () => {
+          db.collection('cartas').doc(carta.id).update({ favorita: !carta.favorita });
+        });
+
         const btnEditar = document.createElement('button');
         btnEditar.className = 'btn-mini';
         btnEditar.textContent = 'Editar';
@@ -3103,6 +3192,7 @@
           db.collection('cartas').doc(carta.id).delete();
         });
 
+        acciones.appendChild(btnFavorita);
         acciones.appendChild(btnEditar);
         acciones.appendChild(btnEliminar);
         contenido.appendChild(acciones);
@@ -3116,6 +3206,30 @@
         listaCartas.appendChild(contenedor);
       });
     }
+
+    function aplicarFiltrosCartas() {
+      const termino = (document.getElementById('buscador-cartas').value || '').trim().toLowerCase();
+      let filtradas = todasLasCartas;
+      if (filtroSoloFavoritasCartas) filtradas = filtradas.filter(c => c.favorita);
+      if (termino) {
+        filtradas = filtradas.filter(c =>
+          (c.titulo || '').toLowerCase().includes(termino) || (c.texto || '').toLowerCase().includes(termino)
+        );
+      }
+      pintarCartas(filtradas);
+    }
+
+    function renderizarCartas(cartas) {
+      todasLasCartas = cartas;
+      aplicarFiltrosCartas();
+    }
+
+    document.getElementById('buscador-cartas').addEventListener('input', aplicarFiltrosCartas);
+    document.getElementById('btn-filtro-favoritas').addEventListener('click', function () {
+      filtroSoloFavoritasCartas = !filtroSoloFavoritasCartas;
+      this.classList.toggle('activo', filtroSoloFavoritasCartas);
+      aplicarFiltrosCartas();
+    });
 
     if (db) {
       db.collection('cartas').orderBy('creado').onSnapshot(snapshot => {

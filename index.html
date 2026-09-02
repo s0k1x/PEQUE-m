@@ -335,7 +335,7 @@
 
     /* ---------- Pantalla grande de regalo (tras la contraseña) ---------- */
     #pantalla-regalo-grande { text-align: center; }
-    #regalo-grande-remitente {
+    #regalo-grande-remitente, #regalo-personalizado-remitente {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-size: 20px;
@@ -343,7 +343,7 @@
       margin: 0 0 26px;
     }
 
-    #regalo-grande-escenario {
+    #regalo-grande-escenario, #regalo-personalizado-escenario {
       position: relative;
       width: 100%;
       height: 260px;
@@ -480,7 +480,7 @@
       margin: 4px 0 20px;
     }
 
-    #btn-continuar-regalo-grande {
+    #btn-continuar-regalo-grande, #btn-continuar-regalo-personalizado {
       width: 100%;
       background: var(--naranja);
       color: var(--blanco);
@@ -493,7 +493,8 @@
       text-transform: uppercase;
       cursor: pointer;
     }
-    #btn-continuar-regalo-grande[hidden] { display: none; }
+    #btn-continuar-regalo-grande[hidden], #btn-continuar-regalo-personalizado[hidden] { display: none; }
+    #pantalla-regalo-personalizado-previo { text-align: center; }
 
     /* Menú principal */
     #menu-principal { counter-reset: opcion; }
@@ -1421,6 +1422,28 @@
 
     <audio id="cancion-fondo" src="MC%2520Bruninho%2520e%2520Vitinho%2520Ferrari%2520-%2520Sou%2520Favela%2520(GR6%2520Filmes)%2520DJ%2520DG%2520e%2520Batida%25CC%2583o%2520Stronda.mp3" loop></audio>
 
+    <!-- Pantalla 0: regalo personalizado — aparece antes que nada más, incluso antes de la contraseña -->
+    <section id="pantalla-regalo-personalizado-previo" hidden>
+      <p id="regalo-personalizado-remitente"></p>
+
+      <div id="regalo-personalizado-escenario">
+        <div class="particulas-regalo-grande" id="particulas-regalo-personalizado"></div>
+
+        <button class="caja-regalo-grande" id="caja-regalo-personalizado" aria-label="Abrir regalo">
+          <span class="cg-tapa"></span>
+          <span class="cg-cuerpo">
+            <span class="cg-cinta-v"></span>
+            <span class="cg-cinta-h"></span>
+          </span>
+          <span class="cg-lazo"></span>
+        </button>
+
+        <div class="regalo-grande-contenido" id="regalo-personalizado-contenido"></div>
+      </div>
+
+      <button id="btn-continuar-regalo-personalizado" type="button" hidden>Continuar</button>
+    </section>
+
     <!-- Pantalla 1: mensaje inicial -->
     <section id="mensaje-inicial">
       <p>Holaa pequee, espero que te guste esto que hice para ti :) Pero antes... tienes que responder bien estas 5 preguntitas para poder abrirlo.</p>
@@ -2289,22 +2312,107 @@
     const cancionFondo = document.getElementById('cancion-fondo');
     cancionFondo.volume = 0.25;
 
-    // Si ya se puso la contraseña en esta misma sesión (ej. al volver de pou.html), saltar directo al menú
-    if (sessionStorage.getItem('claveOk') === 'true') {
-      mensajeInicial.hidden = true;
-      cuestionario.hidden = true;
-      pantallaClave.hidden = true;
-      contenido.hidden = false;
-      mascotaWidget.hidden = false;
-      document.body.classList.remove('pantalla-centrada');
+    // Decide qué pantalla tocaba mostrar en un principio (mensaje inicial,
+    // cuestionario, o pasar directo a la contraseña / al menú)
+    function iniciarFlujoNormal() {
+      // Si ya se puso la contraseña en esta misma sesión (ej. al volver de pou.html), saltar directo al menú
+      if (sessionStorage.getItem('claveOk') === 'true') {
+        mensajeInicial.hidden = true;
+        cuestionario.hidden = true;
+        pantallaClave.hidden = true;
+        contenido.hidden = false;
+        mascotaWidget.hidden = false;
+        document.body.classList.remove('pantalla-centrada');
+      }
+      // Si ya completó el cuestionario antes en este dispositivo, saltar directo a la contraseña
+      // (sigue siendo una de las pantallas centradas, así que no se quita la clase aquí)
+      else if (localStorage.getItem('cuestionarioCompletado') === 'true') {
+        mensajeInicial.hidden = true;
+        cuestionario.hidden = true;
+        pantallaClave.hidden = false;
+      } else {
+        mensajeInicial.hidden = false;
+      }
     }
-    // Si ya completó el cuestionario antes en este dispositivo, saltar directo a la contraseña
-    // (sigue siendo una de las pantallas centradas, así que no se quita la clase aquí)
-    else if (localStorage.getItem('cuestionarioCompletado') === 'true') {
-      mensajeInicial.hidden = true;
-      cuestionario.hidden = true;
-      pantallaClave.hidden = false;
+
+    // ---------- Regalo personalizado: se comprueba ANTES que nada más ----------
+    // Usa el nombre guardado en localStorage, que existe independientemente
+    // de si ya se puso la contraseña o no
+    async function comprobarRegaloPersonalizadoPrevio() {
+      mensajeInicial.hidden = true; // se oculta ya, para que no parpadee mientras se consulta Firestore
+      const nombreActual = localStorage.getItem('nombreUsuario');
+      if (!nombreActual || !db) { iniciarFlujoNormal(); return; }
+
+      try {
+        const snap = await db.collection('regalosRecibidos').where('destinatario', '==', nombreActual.trim()).get();
+        const pendientes = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .filter(r => !r.abierto && r.personalizado);
+
+        if (!pendientes.length) { iniciarFlujoNormal(); return; }
+
+        const regalo = pendientes[0];
+        mensajeInicial.hidden = true;
+        document.getElementById('regalo-personalizado-remitente').textContent = `💝 ${regalo.remitente || 'Alguien'} te ha escrito algo`;
+
+        const caja = document.getElementById('caja-regalo-personalizado');
+        const contenidoEl = document.getElementById('regalo-personalizado-contenido');
+        const particulasEl = document.getElementById('particulas-regalo-personalizado');
+        const btnContinuar = document.getElementById('btn-continuar-regalo-personalizado');
+        caja.className = 'caja-regalo-grande';
+        contenidoEl.className = 'regalo-grande-contenido';
+        contenidoEl.innerHTML = '';
+        particulasEl.innerHTML = '';
+        btnContinuar.hidden = true;
+
+        document.getElementById('pantalla-regalo-personalizado-previo').hidden = false;
+
+        let abierta = false;
+        caja.addEventListener('click', async function alAbrir() {
+          if (abierta) return;
+          abierta = true;
+          caja.classList.add('cg-abriendo');
+
+          for (let i = 0; i < 22; i++) {
+            const p = document.createElement('div');
+            p.className = 'particula-regalo-grande';
+            const angulo = (Math.PI * 2 * i) / 22 + Math.random() * 0.3;
+            const distancia = 70 + Math.random() * 55;
+            p.style.setProperty('--px', Math.cos(angulo) * distancia + 'px');
+            p.style.setProperty('--py', Math.sin(angulo) * distancia + 'px');
+            particulasEl.appendChild(p);
+            requestAnimationFrame(() => p.classList.add('pg-disparada'));
+            setTimeout(() => p.remove(), 1100);
+          }
+
+          setTimeout(() => {
+            caja.classList.add('cg-escondida');
+            contenidoEl.innerHTML = `
+              <span class="regalo-grande-emoji">💝</span>
+              <span class="regalo-grande-nombre">${regalo.mensaje}</span>
+            `;
+            contenidoEl.classList.add('rg-visible');
+            btnContinuar.hidden = false;
+          }, 550);
+
+          try {
+            await db.collection('regalosRecibidos').doc(regalo.id).set({ abierto: true }, { merge: true });
+          } catch (err) {
+            console.error('No se pudo marcar el regalo personalizado como abierto:', err);
+          }
+        }, { once: true });
+
+        btnContinuar.addEventListener('click', () => {
+          document.getElementById('pantalla-regalo-personalizado-previo').hidden = true;
+          iniciarFlujoNormal();
+        }, { once: true });
+      } catch (err) {
+        console.error('No se pudo comprobar el regalo personalizado:', err);
+        iniciarFlujoNormal();
+      }
     }
+
+    comprobarRegaloPersonalizadoPrevio();
 
     btnComenzar.addEventListener('click', () => {
       mensajeInicial.hidden = true;
@@ -4175,4 +4283,3 @@ tamaño texto: ${localStorage.getItem('tamanoTexto') || 'normal'}`;
 
 </body>
 </html>
-

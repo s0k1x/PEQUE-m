@@ -1189,9 +1189,40 @@
     }
     #rp-titulo:focus, #rp-fecha:focus { outline: none; border-color: var(--naranja); }
 
-    #texto-personalizado-input {
+    #rp-preview {
+      background: var(--hueso);
+      border: 1px solid var(--linea);
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    #rp-preview-emoji { display: block; font-size: 32px; margin-bottom: 4px; }
+    #rp-preview-titulo {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--tinta);
+      margin-bottom: 4px;
+    }
+    #rp-preview-titulo:empty { display: none; }
+    #rp-preview-texto {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 13px;
+      color: var(--tinta);
+      margin: 0;
+      word-break: break-word;
+    }
+
+    .rp-pagina {
+      position: relative;
+      margin-bottom: 8px;
+    }
+    .rp-pagina textarea {
       width: 100%;
-      min-height: 90px;
+      min-height: 70px;
       border: 1px solid var(--linea);
       background: var(--hueso);
       padding: 10px;
@@ -1199,15 +1230,36 @@
       font-size: 13.5px;
       color: var(--tinta);
       resize: vertical;
-      margin-bottom: 4px;
     }
-    #texto-personalizado-input:focus { outline: none; border-color: var(--naranja); }
-    #texto-personalizado-contador {
-      display: block;
-      text-align: right;
-      font-size: 10px;
+    .rp-pagina textarea:focus { outline: none; border-color: var(--naranja); }
+    .rp-pagina-pie {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2px;
+    }
+    .rp-pagina-numero { font-size: 10px; color: var(--gris); }
+    .rp-pagina-contador { font-size: 10px; color: var(--gris); }
+    .rp-pagina-quitar {
+      background: none;
+      border: none;
       color: var(--gris);
+      font-size: 11px;
+      cursor: pointer;
+      text-decoration: underline;
     }
+    #rp-anadir-pagina { width: 100%; margin-bottom: 6px; }
+
+    #rp-musica-fondo-etiqueta, #rp-permitir-respuesta-etiqueta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--tinta);
+      margin-top: 8px;
+      cursor: pointer;
+    }
+    #rp-musica-fondo-etiqueta[hidden] { display: none; }
 
     #rp-fotos-etiqueta, #rp-video-etiqueta, #rp-audio-etiqueta {
       display: block;
@@ -1591,15 +1643,21 @@
     <div id="modal-texto-personalizado-caja">
       <p id="texto-personalizado-titulo">Crea tu regalo personalizado</p>
 
+      <div id="rp-preview">
+        <span id="rp-preview-emoji">💝</span>
+        <span id="rp-preview-titulo"></span>
+        <p id="rp-preview-texto">Así se verá...</p>
+      </div>
+
       <span class="rp-etiqueta">Elige un ícono</span>
       <div class="rp-emojis" id="rp-emojis"></div>
 
       <span class="rp-etiqueta">Título (opcional)</span>
       <input type="text" id="rp-titulo" maxlength="40" placeholder="Un título bonito...">
 
-      <span class="rp-etiqueta">Tu mensaje</span>
-      <textarea id="texto-personalizado-input" maxlength="500" placeholder="Lo que quieras decirle..."></textarea>
-      <span id="texto-personalizado-contador">0 / 500</span>
+      <span class="rp-etiqueta">Tu mensaje (puedes añadir varias páginas)</span>
+      <div id="rp-paginas"></div>
+      <button type="button" id="rp-anadir-pagina" class="config-btn-secundario">+ Añadir otra página</button>
 
       <span class="rp-etiqueta">Fotos (hasta 4, opcional)</span>
       <label id="rp-fotos-etiqueta" for="rp-fotos">📷 Añadir fotos</label>
@@ -1621,6 +1679,10 @@
         <span id="rp-audio-nombre"></span>
         <button type="button" id="rp-audio-quitar" aria-label="Quitar audio">✕</button>
       </div>
+      <label id="rp-musica-fondo-etiqueta" hidden>
+        <input type="checkbox" id="rp-musica-fondo">
+        🔁 Usarlo como música de fondo en bucle, en vez de un audio suelto
+      </label>
 
       <p id="rp-procesando" hidden>Preparando los archivos, un momento...</p>
 
@@ -1638,6 +1700,11 @@
 
       <span class="rp-etiqueta">Sonido al abrir</span>
       <div class="rp-opciones" id="rp-sonidos"></div>
+
+      <label id="rp-permitir-respuesta-etiqueta">
+        <input type="checkbox" id="rp-permitir-respuesta" checked>
+        💬 Dejar que te responda con un mensaje corto
+      </label>
 
       <span class="rp-etiqueta">¿Bloquearlo hasta una fecha? (opcional)</span>
       <input type="datetime-local" id="rp-fecha">
@@ -3222,8 +3289,12 @@
     ];
 
     const modalTextoPersonalizado = document.getElementById('modal-texto-personalizado');
-    const inputTextoPersonalizado = document.getElementById('texto-personalizado-input');
-    const contadorTextoPersonalizado = document.getElementById('texto-personalizado-contador');
+    const contenedorPaginasRP = document.getElementById('rp-paginas');
+    const btnAnadirPaginaRP = document.getElementById('rp-anadir-pagina');
+    const previewEmojiRP = document.getElementById('rp-preview-emoji');
+    const previewTituloRP = document.getElementById('rp-preview-titulo');
+    const previewTextoRP = document.getElementById('rp-preview-texto');
+    const previewCajaRP = document.getElementById('rp-preview');
     const inputTituloRP = document.getElementById('rp-titulo');
     const inputFotosRP = document.getElementById('rp-fotos');
     const gridFotosRP = document.getElementById('rp-fotos-grid');
@@ -3235,6 +3306,9 @@
     const vistaAudioRP = document.getElementById('rp-audio-vista');
     const nombreAudioRP = document.getElementById('rp-audio-nombre');
     const btnQuitarAudioRP = document.getElementById('rp-audio-quitar');
+    const etiquetaMusicaFondoRP = document.getElementById('rp-musica-fondo-etiqueta');
+    const checkMusicaFondoRP = document.getElementById('rp-musica-fondo');
+    const checkPermitirRespuestaRP = document.getElementById('rp-permitir-respuesta');
     const avisoProcesandoRP = document.getElementById('rp-procesando');
     const inputFechaRP = document.getElementById('rp-fecha');
     const contenedorEmojisRP = document.getElementById('rp-emojis');
@@ -3246,15 +3320,65 @@
     const btnEnviarTextoPersonalizado = document.getElementById('btn-enviar-texto-personalizado');
     const btnCancelarTextoPersonalizado = document.getElementById('btn-cancelar-texto-personalizado');
 
+    const MAX_PAGINAS_RP = 5;
     let emojiElegidoRP = EMOJIS_RP[0];
     let fondoElegidoRP = FONDOS_RP[0].id;
     let colorCajaElegidoRP = COLORES_CAJA_RP[0].id;
     let particulasElegidasRP = PARTICULAS_RP[0].id;
     let tamanoElegidoRP = TAMANOS_RP[0].id;
     let sonidoElegidoRP = SONIDOS_RP[0].id;
+    let paginasRP = ['']; // cada elemento es el texto de una página
     let fotosRP = []; // hasta 4 dataUrl ya comprimidas
     let videoArchivoRP = null;
     let audioArchivoRP = null;
+
+    function actualizarPreviewRP() {
+      previewEmojiRP.textContent = emojiElegidoRP;
+      previewTituloRP.textContent = inputTituloRP.value.trim();
+      previewTextoRP.textContent = (paginasRP[0] || '').trim() || 'Así se verá...';
+      const tema = FONDOS_RP.find(f => f.id === fondoElegidoRP) || FONDOS_RP[0];
+      previewCajaRP.style.background = tema.color;
+      previewCajaRP.style.color = tema.id === 'negro' ? '#f4ede3' : '#262220';
+    }
+
+    // ---------- Páginas del mensaje ----------
+    function renderizarPaginasRP() {
+      contenedorPaginasRP.innerHTML = '';
+      paginasRP.forEach((texto, i) => {
+        const envoltorio = document.createElement('div');
+        envoltorio.className = 'rp-pagina';
+        envoltorio.innerHTML = `
+          <textarea maxlength="500" placeholder="Lo que quieras decirle...">${texto}</textarea>
+          <div class="rp-pagina-pie">
+            <span class="rp-pagina-numero">Página ${i + 1} de ${paginasRP.length}</span>
+            <span class="rp-pagina-contador">${texto.length} / 500</span>
+            ${paginasRP.length > 1 ? '<button type="button" class="rp-pagina-quitar">Quitar página</button>' : ''}
+          </div>
+        `;
+        const textarea = envoltorio.querySelector('textarea');
+        const contador = envoltorio.querySelector('.rp-pagina-contador');
+        textarea.addEventListener('input', () => {
+          paginasRP[i] = textarea.value;
+          contador.textContent = `${textarea.value.length} / 500`;
+          if (i === 0) actualizarPreviewRP();
+        });
+        const btnQuitar = envoltorio.querySelector('.rp-pagina-quitar');
+        if (btnQuitar) {
+          btnQuitar.addEventListener('click', () => {
+            paginasRP.splice(i, 1);
+            renderizarPaginasRP();
+            actualizarPreviewRP();
+          });
+        }
+        contenedorPaginasRP.appendChild(envoltorio);
+      });
+      btnAnadirPaginaRP.hidden = paginasRP.length >= MAX_PAGINAS_RP;
+    }
+    btnAnadirPaginaRP.addEventListener('click', () => {
+      if (paginasRP.length >= MAX_PAGINAS_RP) return;
+      paginasRP.push('');
+      renderizarPaginasRP();
+    });
 
     // Construir los botones de emoji y de fondo una sola vez
     EMOJIS_RP.forEach(emoji => {
@@ -3265,6 +3389,7 @@
       btn.addEventListener('click', () => {
         emojiElegidoRP = emoji;
         contenedorEmojisRP.querySelectorAll('button').forEach(b => b.classList.toggle('elegido', b === btn));
+        actualizarPreviewRP();
       });
       contenedorEmojisRP.appendChild(btn);
     });
@@ -3277,9 +3402,11 @@
       btn.addEventListener('click', () => {
         fondoElegidoRP = fondo.id;
         contenedorFondosRP.querySelectorAll('button').forEach(b => b.classList.toggle('elegido', b === btn));
+        actualizarPreviewRP();
       });
       contenedorFondosRP.appendChild(btn);
     });
+    inputTituloRP.addEventListener('input', actualizarPreviewRP);
 
     // Constructor genérico para grupos de "chips" tipo botón (partículas, tamaño, sonido)
     function construirChips(contenedor, opciones, valorElegido, alElegir) {
@@ -3312,10 +3439,6 @@
     construirChips(contenedorParticulasRP, PARTICULAS_RP, particulasElegidasRP, id => particulasElegidasRP = id);
     construirChips(contenedorTamanosRP, TAMANOS_RP, tamanoElegidoRP, id => tamanoElegidoRP = id);
     construirChips(contenedorSonidosRP, SONIDOS_RP, sonidoElegidoRP, id => sonidoElegidoRP = id);
-
-    inputTextoPersonalizado.addEventListener('input', () => {
-      contadorTextoPersonalizado.textContent = `${inputTextoPersonalizado.value.length} / 500`;
-    });
 
     // ---------- Compresión de fotos (igual de buena que en index.html) ----------
     function comprimirDataUrlRP(dataUrl, calidad, maxAncho) {
@@ -3402,12 +3525,15 @@
       if (audioArchivoRP) {
         nombreAudioRP.textContent = `🎵 ${audioArchivoRP.name}`;
         vistaAudioRP.hidden = false;
+        etiquetaMusicaFondoRP.hidden = false;
       }
     });
     btnQuitarAudioRP.addEventListener('click', () => {
       audioArchivoRP = null;
       inputAudioRP.value = '';
       vistaAudioRP.hidden = true;
+      etiquetaMusicaFondoRP.hidden = true;
+      checkMusicaFondoRP.checked = false;
     });
 
     // Reutiliza la misma idea que ya tenías para comprimir videos de la
@@ -3489,8 +3615,8 @@
     }
 
     function limpiarFormularioRP() {
-      inputTextoPersonalizado.value = '';
-      contadorTextoPersonalizado.textContent = '0 / 500';
+      paginasRP = [''];
+      renderizarPaginasRP();
       inputTituloRP.value = '';
       inputFechaRP.value = '';
       inputFotosRP.value = '';
@@ -3502,6 +3628,9 @@
       inputAudioRP.value = '';
       audioArchivoRP = null;
       vistaAudioRP.hidden = true;
+      etiquetaMusicaFondoRP.hidden = true;
+      checkMusicaFondoRP.checked = false;
+      checkPermitirRespuestaRP.checked = true;
       emojiElegidoRP = EMOJIS_RP[0];
       fondoElegidoRP = FONDOS_RP[0].id;
       colorCajaElegidoRP = COLORES_CAJA_RP[0].id;
@@ -3514,25 +3643,28 @@
       contenedorParticulasRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorTamanosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorSonidosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
+      actualizarPreviewRP();
     }
 
     function pedirRegaloPersonalizado() {
       limpiarFormularioRP();
       modalTextoPersonalizado.hidden = false;
-      inputTextoPersonalizado.focus();
+      document.getElementById('modal-texto-personalizado-caja').scrollTop = 0;
 
       return new Promise(resolve => {
         function alEnviar() {
-          const mensaje = inputTextoPersonalizado.value.trim();
-          if (!mensaje) { inputTextoPersonalizado.focus(); return; }
+          const paginas = paginasRP.map(p => p.trim()).filter(Boolean);
+          if (!paginas.length) { renderizarPaginasRP(); return; }
           limpiar();
           resolve({
             emoji: emojiElegidoRP,
             titulo: inputTituloRP.value.trim(),
-            mensaje,
+            paginas,
             fotos: fotosRP.slice(),
             video: videoArchivoRP,
             audio: audioArchivoRP,
+            musicaFondo: !!audioArchivoRP && checkMusicaFondoRP.checked,
+            permitirRespuesta: checkPermitirRespuestaRP.checked,
             fondo: fondoElegidoRP,
             colorCaja: colorCajaElegidoRP,
             particulas: particulasElegidasRP,
@@ -3582,7 +3714,9 @@
       }
       if (regalo.audio) {
         const dataUrlAudio = await leerArchivoComoBase64RP(regalo.audio);
-        adjuntos.push(await guardarAdjuntoRP(docRef, 'audio', indiceAdjunto++, dataUrlAudio));
+        const adjuntoAudio = await guardarAdjuntoRP(docRef, 'audio', indiceAdjunto++, dataUrlAudio);
+        adjuntoAudio.musicaFondo = regalo.musicaFondo;
+        adjuntos.push(adjuntoAudio);
       }
 
       await docRef.set({
@@ -3591,7 +3725,8 @@
         personalizado: true,
         emoji: regalo.emoji,
         titulo: regalo.titulo || null,
-        mensaje: regalo.mensaje,
+        paginas: regalo.paginas,
+        permitirRespuesta: regalo.permitirRespuesta,
         adjuntos,
         fondo: regalo.fondo,
         colorCaja: regalo.colorCaja,

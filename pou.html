@@ -9,18 +9,18 @@
   <style>
     :root {
       --blanco: #ffffff;
-      --hueso: #faf7f9;
-      --tinta: #170d13;
-      --gris: #8b7684;
-      --naranja: #d6006f;
-      --naranja-suave: #f5cfe0;
-      --linea: #ecdfe8;
+      --hueso: #fff8f6;
+      --tinta: #1c1414;
+      --gris: #93807c;
+      --naranja: #ff6b5b;
+      --naranja-suave: #ffd9ce;
+      --linea: #ffe4dc;
       --rojo: #c96a4e;
       /* Nuevos tokens — solo se añaden, no sustituyen a los de arriba */
-      --naranja-brillo: #ff4fa3;
-      --dorado: #b8923f;
-      --dorado-suave: #ece0bd;
-      --sombra-calida: 23, 13, 19;
+      --naranja-brillo: #ff9478;
+      --dorado: #0f9488;
+      --dorado-suave: #cceae6;
+      --sombra-calida: 28, 20, 20;
       --sombra-media: 0 8px 24px rgba(var(--sombra-calida), 0.11);
       --radio-card: 2px;
     }
@@ -29,7 +29,7 @@
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(ellipse 60% 40% at 85% 95%, rgba(92,0,48,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 85% 95%, rgba(168,36,26,0.07) 0%, transparent 60%),
         radial-gradient(ellipse at top, #fffdfb 0%, var(--hueso) 60%);
       font-family: 'Poppins', sans-serif;
       color: var(--tinta);
@@ -264,7 +264,7 @@
       border-radius: 50%;
       border: 1.5px solid var(--naranja);
       background: radial-gradient(circle at 35% 30%, #fff4e8, var(--naranja-suave) 75%);
-      box-shadow: 0 4px 10px rgba(214,0,111,0.15);
+      box-shadow: 0 4px 10px rgba(255,107,91,0.15);
       font-size: 22px;
       margin: 0 auto 8px;
       font-style: normal;
@@ -647,31 +647,43 @@
 
     .contenedor.texto-grande { zoom: 1.14; }
 
-    /* ---------- Cabecera compacta: nombre + monedas ---------- */
+    /* ---------- Cabecera reorganizada: monedas flotantes arriba, racha/nivel antes que el nombre ---------- */
     .cabecera-mascota {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 10px;
       text-align: center;
+      margin-bottom: 6px;
     }
-    .cabecera-mascota h1 { margin: 0; }
-    #btn-monedas, #btn-monedas-tienda {
+    .cabecera-mascota h1 {
+      margin: 0;
+      font-size: 30px;
+    }
+    #btn-monedas {
+      position: absolute;
+      top: 14px;
+      left: 14px;
       background: var(--naranja-suave);
       color: #7a4a1f;
       border: none;
       padding: 6px 12px;
-      border-radius: 20px;
+      border-radius: var(--radio-chip);
       font-family: 'Poppins', sans-serif;
       font-weight: 600;
       font-size: 13px;
       cursor: pointer;
+      z-index: 2;
     }
-    #btn-monedas-tienda { cursor: default; }
+    #btn-monedas-tienda {
+      background: var(--naranja-suave);
+      color: #7a4a1f;
+      border: none;
+      padding: 6px 12px;
+      border-radius: var(--radio-chip);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: default;
+    }
 
-    /* ---------- Racha + nivel en una fila compacta ---------- */
+    /* ---------- Racha + nivel, ahora arriba del nombre ---------- */
     .linea-progreso-mascota {
       display: flex;
       align-items: center;
@@ -680,12 +692,13 @@
       margin-bottom: 14px;
       flex-wrap: wrap;
     }
+    .linea-progreso-arriba { margin-bottom: 8px; }
     .nivel-compacto { display: contents; }
 
     #racha-mascota, #nivel-mascota {
       background: var(--hueso);
       border: 1px solid var(--linea);
-      border-radius: 20px;
+      border-radius: var(--radio-chip);
       padding: 6px 13px;
       font-family: 'Poppins', sans-serif;
       font-size: 12.5px;
@@ -722,7 +735,7 @@
       border: 1px solid var(--linea);
     }
     .racha-cabecera-fuego {
-      background: linear-gradient(160deg, var(--naranja), #a10056);
+      background: linear-gradient(160deg, var(--naranja), #e8452f);
       color: var(--blanco);
       padding: 26px 22px 20px;
       text-align: center;
@@ -821,7 +834,7 @@
     }
     .racha-cal-dia.vacio { visibility: hidden; }
     .racha-cal-dia.activo {
-      background: linear-gradient(160deg, var(--naranja), #a10056);
+      background: linear-gradient(160deg, var(--naranja), #e8452f);
       color: var(--blanco);
       font-weight: 600;
     }
@@ -850,7 +863,7 @@
       border-color: var(--naranja);
     }
     .nivel-item.actual {
-      background: linear-gradient(135deg, var(--naranja), #a10056);
+      background: linear-gradient(135deg, var(--naranja), #e8452f);
       border-color: var(--naranja);
     }
     .nivel-item.actual .nivel-item-nombre,
@@ -893,7 +906,7 @@
       text-transform: uppercase;
       cursor: pointer;
       transition: transform 0.2s ease;
-      box-shadow: 0 6px 16px rgba(161,0,86,0.25);
+      box-shadow: 0 6px 16px rgba(232,69,47,0.25);
     }
     .tienda-btn-ruleta:disabled {
       background: var(--linea);
@@ -1403,15 +1416,16 @@
     <button id="btn-ajustes-flotante" type="button" aria-label="Configuración">⚙️</button>
 
     <div id="vista-mascota">
-    <div class="cabecera-mascota">
-      <h1 id="texto-nombre">Tu mascota</h1>
-      <button id="btn-monedas" type="button">🪙 <span id="valor-monedas">0</span></button>
-    </div>
+    <button id="btn-monedas" type="button">🪙 <span id="valor-monedas">0</span></button>
 
-    <div class="linea-progreso-mascota">
+    <div class="linea-progreso-mascota linea-progreso-arriba">
       <button id="racha-mascota" type="button"></button>
       <span class="nivel-compacto"><button id="nivel-mascota" type="button"><span class="emoji-nivel" id="emoji-nivel"></span><span class="texto-nivel" id="texto-nivel"></span></button></span>
     </div>
+    <div class="cabecera-mascota">
+      <h1 id="texto-nombre">Tu mascota</h1>
+    </div>
+
     <div id="barra-nivel-fondo"><div id="barra-nivel-relleno"></div></div>
     <span id="texto-nivel-progreso"></span>
 

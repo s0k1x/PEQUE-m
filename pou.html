@@ -5,42 +5,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Tu mascota</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --blanco: #ffffff;
-      --hueso: #fbf8f4;
-      --tinta: #262220;
-      --gris: #948c82;
-      --naranja: #e8703a;
-      --naranja-suave: #f6ddc9;
-      --linea: #ece4d8;
+      --hueso: #faf7f9;
+      --tinta: #170d13;
+      --gris: #8b7684;
+      --naranja: #d6006f;
+      --naranja-suave: #f5cfe0;
+      --linea: #ecdfe8;
       --rojo: #c96a4e;
+      /* Nuevos tokens — solo se añaden, no sustituyen a los de arriba */
+      --naranja-brillo: #ff4fa3;
+      --dorado: #b8923f;
+      --dorado-suave: #ece0bd;
+      --sombra-calida: 23, 13, 19;
+      --sombra-media: 0 8px 24px rgba(var(--sombra-calida), 0.11);
+      --radio-card: 2px;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
-      background: radial-gradient(ellipse at top, #fffdfb 0%, var(--hueso) 60%);
-      font-family: 'Work Sans', sans-serif;
+      background:
+        radial-gradient(ellipse 60% 40% at 85% 95%, rgba(92,0,48,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse at top, #fffdfb 0%, var(--hueso) 60%);
+      font-family: 'Poppins', sans-serif;
       color: var(--tinta);
       padding: 28px 16px 60px;
       touch-action: manipulation;
     }
+    /* Textura de grano muy sutil, igual que en el resto de la web */
+    .grano-global {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--naranja-suave); border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--naranja); }
     .contenedor {
       max-width: 380px;
       margin: 0 auto;
       background: var(--blanco);
-      border: 1px solid var(--linea);
+      border: 2px solid var(--tinta);
+      border-radius: var(--radio-card);
       padding: 30px 24px;
       position: relative;
+      box-shadow: var(--sombra-media);
     }
     .contenedor::before {
       content: '';
       position: absolute;
       top: 0; left: 24px; right: 24px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--naranja-suave), transparent);
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--naranja), transparent);
     }
     .volver-link {
       display: inline-block;
@@ -70,7 +95,7 @@
       color: var(--naranja);
     }
     h1 {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-weight: 600;
       font-size: 26px;
       margin: 0;
@@ -102,7 +127,7 @@
       border: none;
       border-bottom: 1px solid var(--linea);
       padding: 6px 0;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 13px;
       background: transparent;
       color: var(--tinta);
@@ -128,7 +153,7 @@
 
     #animo-mascota {
       text-align: center;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 12px;
       letter-spacing: 1px;
       text-transform: uppercase;
@@ -198,7 +223,7 @@
       text-transform: uppercase;
     }
     .necesidad-fila span.valor {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 14px;
       color: var(--naranja);
@@ -238,7 +263,8 @@
       height: 56px;
       border-radius: 50%;
       border: 1.5px solid var(--naranja);
-      background: var(--naranja-suave);
+      background: radial-gradient(circle at 35% 30%, #fff4e8, var(--naranja-suave) 75%);
+      box-shadow: 0 4px 10px rgba(214,0,111,0.15);
       font-size: 22px;
       margin: 0 auto 8px;
       font-style: normal;
@@ -249,7 +275,7 @@
     }
     .btn-accion span.etiqueta-accion {
       display: block;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 500;
       font-size: 10px;
       letter-spacing: 1px;
@@ -262,7 +288,7 @@
       right: 6px;
       background: var(--naranja);
       color: var(--blanco);
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 600;
       font-size: 10px;
       min-width: 17px;
@@ -285,7 +311,7 @@
 
     #mensaje-mascota {
       text-align: center;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 13.5px;
       color: var(--gris);
@@ -377,7 +403,7 @@
     }
     #nivel-vinculo .emoji-nivel { font-size: 15px; margin-right: 4px; }
     #nivel-vinculo .texto-nivel {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-weight: 600;
       font-size: 14px;
@@ -413,7 +439,7 @@
     }
     .estadistica .numero-estadistica {
       display: block;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-weight: 600;
       font-size: 20px;
@@ -436,7 +462,7 @@
       background: var(--tinta);
       color: var(--blanco);
       padding: 12px 20px;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 14px;
       opacity: 0;
@@ -493,7 +519,7 @@
       font-size: 11px;
       padding: 7px 13px;
       cursor: pointer;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
     }
     .config-cat-btn.activa {
       background: var(--tinta);
@@ -507,7 +533,7 @@
       font-size: 11px;
       padding: 7px 13px;
       cursor: pointer;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
     }
     .config-efecto-btn.activa {
       background: var(--naranja);
@@ -527,7 +553,7 @@
     }
     .config-titulo {
       display: block;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-weight: 600;
       font-size: 16px;
@@ -548,7 +574,7 @@
       border: none;
       border-bottom: 1px solid var(--linea);
       padding: 8px 0;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 14px;
       background: transparent;
       color: var(--tinta);
@@ -558,7 +584,7 @@
       color: var(--blanco);
       border: none;
       padding: 8px 16px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 500;
       font-size: 10.5px;
       letter-spacing: 1px;
@@ -571,7 +597,7 @@
       border: 1px solid var(--linea);
       color: var(--gris);
       padding: 10px 18px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 500;
       font-size: 11px;
       letter-spacing: 1px;
@@ -638,7 +664,7 @@
       border: none;
       padding: 6px 12px;
       border-radius: 20px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 600;
       font-size: 13px;
       cursor: pointer;
@@ -661,7 +687,7 @@
       border: 1px solid var(--linea);
       border-radius: 20px;
       padding: 6px 13px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 12.5px;
       font-weight: 600;
       color: var(--tinta);
@@ -696,7 +722,7 @@
       border: 1px solid var(--linea);
     }
     .racha-cabecera-fuego {
-      background: linear-gradient(160deg, var(--naranja), #f0985a);
+      background: linear-gradient(160deg, var(--naranja), #a10056);
       color: var(--blanco);
       padding: 26px 22px 20px;
       text-align: center;
@@ -717,7 +743,7 @@
     }
     .racha-fuego-grande { font-size: 40px; display: block; margin-bottom: 2px; }
     .racha-numero-grande {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-weight: 600;
       font-size: 40px;
@@ -725,7 +751,7 @@
       display: block;
     }
     .nivel-nombre-grande {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-weight: 600;
       font-size: 24px;
@@ -764,7 +790,7 @@
       font-size: 13px;
     }
     .racha-cal-mes {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-weight: 600;
       font-size: 15px;
@@ -795,7 +821,7 @@
     }
     .racha-cal-dia.vacio { visibility: hidden; }
     .racha-cal-dia.activo {
-      background: linear-gradient(160deg, var(--naranja), #f0985a);
+      background: linear-gradient(160deg, var(--naranja), #a10056);
       color: var(--blanco);
       font-weight: 600;
     }
@@ -824,7 +850,7 @@
       border-color: var(--naranja);
     }
     .nivel-item.actual {
-      background: linear-gradient(135deg, var(--naranja), #f0985a);
+      background: linear-gradient(135deg, var(--naranja), #a10056);
       border-color: var(--naranja);
     }
     .nivel-item.actual .nivel-item-nombre,
@@ -839,7 +865,7 @@
       color: var(--blanco);
       border: none;
       padding: 13px 18px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 500;
       font-size: 11.5px;
       letter-spacing: 1.5px;
@@ -856,17 +882,18 @@
     .tienda-btn-ruleta {
       display: block;
       width: 100%;
-      background: linear-gradient(135deg, var(--naranja), #f0985a);
+      background: linear-gradient(135deg, var(--naranja-brillo), var(--naranja) 55%, #d15f2c);
       color: var(--blanco);
       border: none;
       padding: 13px 18px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 600;
       font-size: 11.5px;
       letter-spacing: 1.5px;
       text-transform: uppercase;
       cursor: pointer;
       transition: transform 0.2s ease;
+      box-shadow: 0 6px 16px rgba(161,0,86,0.25);
     }
     .tienda-btn-ruleta:disabled {
       background: var(--linea);
@@ -919,7 +946,7 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 700;
       font-size: 12.5px;
       color: var(--tinta);
@@ -979,7 +1006,7 @@
     .tienda-item-nombre { font-size: 13px; color: var(--tinta); font-weight: 500; }
     .tienda-item-frase {
       display: block;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 12px;
       color: var(--naranja);
@@ -1026,7 +1053,7 @@
       font-size: 10.5px;
       padding: 6px 10px;
       cursor: pointer;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
     }
     .tienda-pestana.activa {
       background: var(--tinta);
@@ -1098,7 +1125,7 @@
       border: 1px solid var(--linea);
     }
     #tienda-selector-titulo {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 18px;
       margin: 0 0 14px;
@@ -1145,7 +1172,7 @@
       border: 1px solid var(--linea);
     }
     #texto-personalizado-titulo {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 18px;
       margin: 0 0 16px;
@@ -1183,7 +1210,7 @@
       border: 1px solid var(--linea);
       background: var(--hueso);
       padding: 9px 10px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 13px;
       color: var(--tinta);
     }
@@ -1199,7 +1226,7 @@
     #rp-preview-emoji { display: block; font-size: 32px; margin-bottom: 4px; }
     #rp-preview-titulo {
       display: block;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-weight: 600;
       font-size: 14px;
@@ -1208,7 +1235,7 @@
     }
     #rp-preview-titulo:empty { display: none; }
     #rp-preview-texto {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 13px;
       color: var(--tinta);
@@ -1226,7 +1253,7 @@
       border: 1px solid var(--linea);
       background: var(--hueso);
       padding: 10px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 13.5px;
       color: var(--tinta);
       resize: vertical;
@@ -1352,7 +1379,7 @@
       border: 1.5px solid var(--linea);
       border-radius: 20px;
       padding: 7px 13px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 12px;
       color: var(--tinta);
       cursor: pointer;
@@ -1368,6 +1395,8 @@
   </style>
 </head>
 <body>
+
+  <div class="grano-global"></div>
 
   <div class="contenedor">
     <a href="index.html" class="volver-link">‹ Volver</a>

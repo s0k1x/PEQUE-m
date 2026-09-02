@@ -1290,6 +1290,27 @@
     }
     .rp-fondos button.elegido { border-color: var(--naranja); }
 
+    .rp-opciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .rp-opciones button {
+      background: var(--hueso);
+      border: 1.5px solid var(--linea);
+      border-radius: 20px;
+      padding: 7px 13px;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 12px;
+      color: var(--tinta);
+      cursor: pointer;
+    }
+    .rp-opciones button.elegido {
+      background: var(--naranja);
+      border-color: var(--naranja);
+      color: var(--blanco);
+    }
+
     #btn-enviar-texto-personalizado { margin-top: 18px; }
 
   </style>
@@ -1605,6 +1626,18 @@
 
       <span class="rp-etiqueta">Color de fondo al abrirlo</span>
       <div class="rp-fondos" id="rp-fondos"></div>
+
+      <span class="rp-etiqueta">Color del lazo de la caja</span>
+      <div class="rp-fondos" id="rp-colores-caja"></div>
+
+      <span class="rp-etiqueta">Efecto al abrir</span>
+      <div class="rp-opciones" id="rp-particulas"></div>
+
+      <span class="rp-etiqueta">Tamaño del texto</span>
+      <div class="rp-opciones" id="rp-tamanos"></div>
+
+      <span class="rp-etiqueta">Sonido al abrir</span>
+      <div class="rp-opciones" id="rp-sonidos"></div>
 
       <span class="rp-etiqueta">¿Bloquearlo hasta una fecha? (opcional)</span>
       <input type="datetime-local" id="rp-fecha">
@@ -3162,6 +3195,31 @@
       { id: 'durazno', color: '#fbe8d9' },
       { id: 'negro', color: '#1c1a18' }
     ];
+    const COLORES_CAJA_RP = [
+      { id: 'naranja', color: '#f6ddc9' },
+      { id: 'rosa', color: '#f6c9d3' },
+      { id: 'dorado', color: '#f0deA0' },
+      { id: 'menta', color: '#c9ecd8' },
+      { id: 'lavanda', color: '#dccdf0' },
+      { id: 'cielo', color: '#c9e2f6' },
+      { id: 'blanco', color: '#ffffff' }
+    ];
+    const PARTICULAS_RP = [
+      { id: 'chispas', etiqueta: '✨ Chispas' },
+      { id: 'confeti', etiqueta: '🎊 Confeti' },
+      { id: 'corazones', etiqueta: '❤️ Corazones' },
+      { id: 'estrellas', etiqueta: '⭐ Estrellas' }
+    ];
+    const TAMANOS_RP = [
+      { id: 'normal', etiqueta: 'Normal' },
+      { id: 'grande', etiqueta: 'Grande' }
+    ];
+    const SONIDOS_RP = [
+      { id: 'ninguno', etiqueta: 'Sin sonido' },
+      { id: 'suave', etiqueta: '🎵 Suave' },
+      { id: 'festivo', etiqueta: '🎉 Festivo' },
+      { id: 'romantico', etiqueta: '💞 Romántico' }
+    ];
 
     const modalTextoPersonalizado = document.getElementById('modal-texto-personalizado');
     const inputTextoPersonalizado = document.getElementById('texto-personalizado-input');
@@ -3181,11 +3239,19 @@
     const inputFechaRP = document.getElementById('rp-fecha');
     const contenedorEmojisRP = document.getElementById('rp-emojis');
     const contenedorFondosRP = document.getElementById('rp-fondos');
+    const contenedorColoresCajaRP = document.getElementById('rp-colores-caja');
+    const contenedorParticulasRP = document.getElementById('rp-particulas');
+    const contenedorTamanosRP = document.getElementById('rp-tamanos');
+    const contenedorSonidosRP = document.getElementById('rp-sonidos');
     const btnEnviarTextoPersonalizado = document.getElementById('btn-enviar-texto-personalizado');
     const btnCancelarTextoPersonalizado = document.getElementById('btn-cancelar-texto-personalizado');
 
     let emojiElegidoRP = EMOJIS_RP[0];
     let fondoElegidoRP = FONDOS_RP[0].id;
+    let colorCajaElegidoRP = COLORES_CAJA_RP[0].id;
+    let particulasElegidasRP = PARTICULAS_RP[0].id;
+    let tamanoElegidoRP = TAMANOS_RP[0].id;
+    let sonidoElegidoRP = SONIDOS_RP[0].id;
     let fotosRP = []; // hasta 4 dataUrl ya comprimidas
     let videoArchivoRP = null;
     let audioArchivoRP = null;
@@ -3214,6 +3280,38 @@
       });
       contenedorFondosRP.appendChild(btn);
     });
+
+    // Constructor genérico para grupos de "chips" tipo botón (partículas, tamaño, sonido)
+    function construirChips(contenedor, opciones, valorElegido, alElegir) {
+      opciones.forEach(opcion => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = opcion.etiqueta;
+        btn.className = opcion.id === valorElegido ? 'elegido' : '';
+        btn.addEventListener('click', () => {
+          alElegir(opcion.id);
+          contenedor.querySelectorAll('button').forEach(b => b.classList.toggle('elegido', b === btn));
+        });
+        contenedor.appendChild(btn);
+      });
+    }
+
+    COLORES_CAJA_RP.forEach(c => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.style.background = c.color;
+      btn.className = c.id === colorCajaElegidoRP ? 'elegido' : '';
+      btn.setAttribute('aria-label', c.id);
+      btn.addEventListener('click', () => {
+        colorCajaElegidoRP = c.id;
+        contenedorColoresCajaRP.querySelectorAll('button').forEach(b => b.classList.toggle('elegido', b === btn));
+      });
+      contenedorColoresCajaRP.appendChild(btn);
+    });
+
+    construirChips(contenedorParticulasRP, PARTICULAS_RP, particulasElegidasRP, id => particulasElegidasRP = id);
+    construirChips(contenedorTamanosRP, TAMANOS_RP, tamanoElegidoRP, id => tamanoElegidoRP = id);
+    construirChips(contenedorSonidosRP, SONIDOS_RP, sonidoElegidoRP, id => sonidoElegidoRP = id);
 
     inputTextoPersonalizado.addEventListener('input', () => {
       contadorTextoPersonalizado.textContent = `${inputTextoPersonalizado.value.length} / 500`;
@@ -3406,8 +3504,16 @@
       vistaAudioRP.hidden = true;
       emojiElegidoRP = EMOJIS_RP[0];
       fondoElegidoRP = FONDOS_RP[0].id;
+      colorCajaElegidoRP = COLORES_CAJA_RP[0].id;
+      particulasElegidasRP = PARTICULAS_RP[0].id;
+      tamanoElegidoRP = TAMANOS_RP[0].id;
+      sonidoElegidoRP = SONIDOS_RP[0].id;
       contenedorEmojisRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorFondosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
+      contenedorColoresCajaRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
+      contenedorParticulasRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
+      contenedorTamanosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
+      contenedorSonidosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
     }
 
     function pedirRegaloPersonalizado() {
@@ -3428,6 +3534,10 @@
             video: videoArchivoRP,
             audio: audioArchivoRP,
             fondo: fondoElegidoRP,
+            colorCaja: colorCajaElegidoRP,
+            particulas: particulasElegidasRP,
+            tamano: tamanoElegidoRP,
+            sonido: sonidoElegidoRP,
             fechaApertura: inputFechaRP.value || null
           });
         }
@@ -3484,6 +3594,10 @@
         mensaje: regalo.mensaje,
         adjuntos,
         fondo: regalo.fondo,
+        colorCaja: regalo.colorCaja,
+        particulas: regalo.particulas,
+        tamano: regalo.tamano,
+        sonido: regalo.sonido,
         fechaApertura: regalo.fechaApertura,
         abierto: false,
         creado: firebase.firestore.FieldValue.serverTimestamp()

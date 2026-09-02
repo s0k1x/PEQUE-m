@@ -1138,7 +1138,9 @@
     #modal-texto-personalizado-caja {
       background: var(--blanco);
       width: 100%;
-      max-width: 300px;
+      max-width: 320px;
+      max-height: 88vh;
+      overflow-y: auto;
       padding: 22px;
       border: 1px solid var(--linea);
     }
@@ -1146,12 +1148,50 @@
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-size: 18px;
-      margin: 0 0 14px;
+      margin: 0 0 16px;
       color: var(--tinta);
     }
+    .rp-etiqueta {
+      display: block;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--gris);
+      margin: 14px 0 6px;
+    }
+    .rp-etiqueta:first-of-type { margin-top: 0; }
+
+    .rp-emojis {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .rp-emojis button {
+      width: 38px;
+      height: 38px;
+      font-size: 18px;
+      background: var(--hueso);
+      border: 1.5px solid var(--linea);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .rp-emojis button.elegido { border-color: var(--naranja); background: var(--naranja-suave); }
+
+    #rp-titulo, #rp-fecha {
+      width: 100%;
+      border: 1px solid var(--linea);
+      background: var(--hueso);
+      padding: 9px 10px;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 13px;
+      color: var(--tinta);
+    }
+    #rp-titulo:focus, #rp-fecha:focus { outline: none; border-color: var(--naranja); }
+
     #texto-personalizado-input {
       width: 100%;
-      min-height: 110px;
+      min-height: 90px;
       border: 1px solid var(--linea);
       background: var(--hueso);
       padding: 10px;
@@ -1167,8 +1207,90 @@
       text-align: right;
       font-size: 10px;
       color: var(--gris);
-      margin-bottom: 14px;
     }
+
+    #rp-fotos-etiqueta, #rp-video-etiqueta, #rp-audio-etiqueta {
+      display: block;
+      text-align: center;
+      border: 1.5px dashed var(--linea);
+      padding: 10px;
+      font-size: 12.5px;
+      color: var(--gris);
+      cursor: pointer;
+    }
+    .rp-fotos-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .rp-fotos-grid:empty { margin-top: 0; }
+    .rp-foto-miniatura {
+      position: relative;
+      aspect-ratio: 1;
+    }
+    .rp-foto-miniatura img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 4px;
+    }
+    .rp-foto-miniatura button {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: rgba(38,34,32,0.75);
+      color: var(--blanco);
+      border: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      font-size: 9px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    #rp-video-vista, #rp-audio-vista {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--hueso);
+      border: 1px solid var(--linea);
+      padding: 8px 10px;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--tinta);
+    }
+    #rp-video-vista button, #rp-audio-vista button {
+      background: none;
+      border: none;
+      color: var(--gris);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    #rp-procesando {
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--naranja);
+      margin: 8px 0 0;
+    }
+    #rp-procesando[hidden] { display: none; }
+
+    .rp-fondos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .rp-fondos button {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+    .rp-fondos button.elegido { border-color: var(--naranja); }
+
+    #btn-enviar-texto-personalizado { margin-top: 18px; }
 
   </style>
 </head>
@@ -1446,9 +1568,47 @@
 
   <div id="modal-texto-personalizado" hidden>
     <div id="modal-texto-personalizado-caja">
-      <p id="texto-personalizado-titulo">Escribe tu mensaje</p>
-      <textarea id="texto-personalizado-input" maxlength="300" placeholder="Lo que quieras decirle..."></textarea>
-      <span id="texto-personalizado-contador">0 / 300</span>
+      <p id="texto-personalizado-titulo">Crea tu regalo personalizado</p>
+
+      <span class="rp-etiqueta">Elige un ícono</span>
+      <div class="rp-emojis" id="rp-emojis"></div>
+
+      <span class="rp-etiqueta">Título (opcional)</span>
+      <input type="text" id="rp-titulo" maxlength="40" placeholder="Un título bonito...">
+
+      <span class="rp-etiqueta">Tu mensaje</span>
+      <textarea id="texto-personalizado-input" maxlength="500" placeholder="Lo que quieras decirle..."></textarea>
+      <span id="texto-personalizado-contador">0 / 500</span>
+
+      <span class="rp-etiqueta">Fotos (hasta 4, opcional)</span>
+      <label id="rp-fotos-etiqueta" for="rp-fotos">📷 Añadir fotos</label>
+      <input type="file" id="rp-fotos" accept="image/*" multiple hidden>
+      <div class="rp-fotos-grid" id="rp-fotos-grid"></div>
+
+      <span class="rp-etiqueta">Video (opcional)</span>
+      <label id="rp-video-etiqueta" for="rp-video">🎥 Adjuntar un video</label>
+      <input type="file" id="rp-video" accept="video/*" hidden>
+      <div id="rp-video-vista" hidden>
+        <span id="rp-video-nombre"></span>
+        <button type="button" id="rp-video-quitar" aria-label="Quitar video">✕</button>
+      </div>
+
+      <span class="rp-etiqueta">Audio (opcional)</span>
+      <label id="rp-audio-etiqueta" for="rp-audio">🎵 Adjuntar un audio</label>
+      <input type="file" id="rp-audio" accept="audio/*" hidden>
+      <div id="rp-audio-vista" hidden>
+        <span id="rp-audio-nombre"></span>
+        <button type="button" id="rp-audio-quitar" aria-label="Quitar audio">✕</button>
+      </div>
+
+      <p id="rp-procesando" hidden>Preparando los archivos, un momento...</p>
+
+      <span class="rp-etiqueta">Color de fondo al abrirlo</span>
+      <div class="rp-fondos" id="rp-fondos"></div>
+
+      <span class="rp-etiqueta">¿Bloquearlo hasta una fecha? (opcional)</span>
+      <input type="datetime-local" id="rp-fecha">
+
       <button id="btn-enviar-texto-personalizado" type="button" class="tienda-btn-ruleta">Enviar por 500 🪙</button>
       <button id="btn-cancelar-texto-personalizado" type="button" class="config-btn-secundario">Cancelar</button>
     </div>
@@ -2983,30 +3143,293 @@
       return localStorage.getItem('nombreUsuario') || 'Alguien';
     }
 
-    // ---------- Regalo personalizado (500 🪙, con mensaje escrito a mano) ----------
+    // ---------- Regalo personalizado (500 🪙, súper personalizable) ----------
     const COSTO_REGALO_PERSONALIZADO = 500;
+    const LIMITE_BASE64_RP = 700000;
+    // Un documento de Firestore aguanta ~1MB — cualquier adjunto que se pase
+    // de esto se parte en trozos guardados como sub-documentos (igual que
+    // los videos de la galería) y se vuelven a unir al abrir el regalo
+    const TAMANO_FRAGMENTO_RP = 900000;
+    const MAX_FOTOS_RP = 4;
+
+    const EMOJIS_RP = ['💝', '🎁', '💌', '🌹', '⭐', '🎉', '🦙', '💫', '🍀', '🎈', '🔥', '👑'];
+    const FONDOS_RP = [
+      { id: 'crema', color: '#fbf8f4' },
+      { id: 'rosa', color: '#fbe4e4' },
+      { id: 'lavanda', color: '#ece4f6' },
+      { id: 'menta', color: '#e2f4ea' },
+      { id: 'cielo', color: '#e3eefb' },
+      { id: 'durazno', color: '#fbe8d9' },
+      { id: 'negro', color: '#1c1a18' }
+    ];
+
     const modalTextoPersonalizado = document.getElementById('modal-texto-personalizado');
     const inputTextoPersonalizado = document.getElementById('texto-personalizado-input');
     const contadorTextoPersonalizado = document.getElementById('texto-personalizado-contador');
+    const inputTituloRP = document.getElementById('rp-titulo');
+    const inputFotosRP = document.getElementById('rp-fotos');
+    const gridFotosRP = document.getElementById('rp-fotos-grid');
+    const inputVideoRP = document.getElementById('rp-video');
+    const vistaVideoRP = document.getElementById('rp-video-vista');
+    const nombreVideoRP = document.getElementById('rp-video-nombre');
+    const btnQuitarVideoRP = document.getElementById('rp-video-quitar');
+    const inputAudioRP = document.getElementById('rp-audio');
+    const vistaAudioRP = document.getElementById('rp-audio-vista');
+    const nombreAudioRP = document.getElementById('rp-audio-nombre');
+    const btnQuitarAudioRP = document.getElementById('rp-audio-quitar');
+    const avisoProcesandoRP = document.getElementById('rp-procesando');
+    const inputFechaRP = document.getElementById('rp-fecha');
+    const contenedorEmojisRP = document.getElementById('rp-emojis');
+    const contenedorFondosRP = document.getElementById('rp-fondos');
     const btnEnviarTextoPersonalizado = document.getElementById('btn-enviar-texto-personalizado');
     const btnCancelarTextoPersonalizado = document.getElementById('btn-cancelar-texto-personalizado');
 
-    inputTextoPersonalizado.addEventListener('input', () => {
-      contadorTextoPersonalizado.textContent = `${inputTextoPersonalizado.value.length} / 300`;
+    let emojiElegidoRP = EMOJIS_RP[0];
+    let fondoElegidoRP = FONDOS_RP[0].id;
+    let fotosRP = []; // hasta 4 dataUrl ya comprimidas
+    let videoArchivoRP = null;
+    let audioArchivoRP = null;
+
+    // Construir los botones de emoji y de fondo una sola vez
+    EMOJIS_RP.forEach(emoji => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = emoji;
+      btn.className = emoji === emojiElegidoRP ? 'elegido' : '';
+      btn.addEventListener('click', () => {
+        emojiElegidoRP = emoji;
+        contenedorEmojisRP.querySelectorAll('button').forEach(b => b.classList.toggle('elegido', b === btn));
+      });
+      contenedorEmojisRP.appendChild(btn);
+    });
+    FONDOS_RP.forEach(fondo => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.style.background = fondo.color;
+      btn.className = fondo.id === fondoElegidoRP ? 'elegido' : '';
+      btn.setAttribute('aria-label', fondo.id);
+      btn.addEventListener('click', () => {
+        fondoElegidoRP = fondo.id;
+        contenedorFondosRP.querySelectorAll('button').forEach(b => b.classList.toggle('elegido', b === btn));
+      });
+      contenedorFondosRP.appendChild(btn);
     });
 
-    function pedirTextoPersonalizado() {
+    inputTextoPersonalizado.addEventListener('input', () => {
+      contadorTextoPersonalizado.textContent = `${inputTextoPersonalizado.value.length} / 500`;
+    });
+
+    // ---------- Compresión de fotos (igual de buena que en index.html) ----------
+    function comprimirDataUrlRP(dataUrl, calidad, maxAncho) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => {
+          const escala = Math.min(1, maxAncho / img.width);
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width * escala;
+          canvas.height = img.height * escala;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', calidad));
+        };
+        img.src = dataUrl;
+      });
+    }
+
+    function leerArchivoComoBase64RP(archivo) {
+      return new Promise(resolve => {
+        const lector = new FileReader();
+        lector.onload = () => resolve(lector.result);
+        lector.readAsDataURL(archivo);
+      });
+    }
+
+    async function procesarFotoRP(archivo) {
+      const dataUrlOriginal = await leerArchivoComoBase64RP(archivo);
+      if (dataUrlOriginal.length <= LIMITE_BASE64_RP) return dataUrlOriginal;
+
+      let resultado = dataUrlOriginal;
+      let calidad = 0.8;
+      let maxAncho = 1600;
+      while (resultado.length > LIMITE_BASE64_RP && (calidad > 0.25 || maxAncho > 400)) {
+        resultado = await comprimirDataUrlRP(dataUrlOriginal, calidad, maxAncho);
+        if (calidad > 0.25) calidad -= 0.15; else maxAncho -= 300;
+      }
+      return resultado;
+    }
+
+    function renderizarFotosRP() {
+      gridFotosRP.innerHTML = '';
+      fotosRP.forEach((foto, i) => {
+        const mini = document.createElement('div');
+        mini.className = 'rp-foto-miniatura';
+        mini.innerHTML = `<img src="${foto}" alt=""><button type="button" aria-label="Quitar">✕</button>`;
+        mini.querySelector('button').addEventListener('click', () => {
+          fotosRP.splice(i, 1);
+          renderizarFotosRP();
+        });
+        gridFotosRP.appendChild(mini);
+      });
+    }
+
+    inputFotosRP.addEventListener('change', async () => {
+      const disponibles = MAX_FOTOS_RP - fotosRP.length;
+      if (disponibles <= 0) { alert(`Máximo ${MAX_FOTOS_RP} fotos.`); inputFotosRP.value = ''; return; }
+      const archivos = Array.from(inputFotosRP.files).slice(0, disponibles);
+      inputFotosRP.value = '';
+      avisoProcesandoRP.hidden = false;
+      for (const archivo of archivos) {
+        fotosRP.push(await procesarFotoRP(archivo));
+      }
+      avisoProcesandoRP.hidden = true;
+      renderizarFotosRP();
+    });
+
+    // ---------- Video y audio: se procesan al enviar, no al elegir (así no se duplica trabajo) ----------
+    inputVideoRP.addEventListener('change', () => {
+      videoArchivoRP = inputVideoRP.files[0] || null;
+      if (videoArchivoRP) {
+        nombreVideoRP.textContent = `🎥 ${videoArchivoRP.name}`;
+        vistaVideoRP.hidden = false;
+      }
+    });
+    btnQuitarVideoRP.addEventListener('click', () => {
+      videoArchivoRP = null;
+      inputVideoRP.value = '';
+      vistaVideoRP.hidden = true;
+    });
+
+    inputAudioRP.addEventListener('change', () => {
+      audioArchivoRP = inputAudioRP.files[0] || null;
+      if (audioArchivoRP) {
+        nombreAudioRP.textContent = `🎵 ${audioArchivoRP.name}`;
+        vistaAudioRP.hidden = false;
+      }
+    });
+    btnQuitarAudioRP.addEventListener('click', () => {
+      audioArchivoRP = null;
+      inputAudioRP.value = '';
+      vistaAudioRP.hidden = true;
+    });
+
+    // Reutiliza la misma idea que ya tenías para comprimir videos de la
+    // galería: graba el video de nuevo a un bitrate más bajo. Si el
+    // navegador no lo soporta, se sube tal cual.
+    function comprimirVideoRP(archivo) {
+      return new Promise(resolve => {
+        if (!('MediaRecorder' in window)) { resolve(null); return; }
+
+        const videoURL = URL.createObjectURL(archivo);
+        const video = document.createElement('video');
+        video.src = videoURL;
+        video.muted = false;
+        video.playsInline = true;
+        video.preload = 'auto';
+
+        video.onloadedmetadata = () => {
+          const duracion = video.duration || 5;
+          const bytesObjetivo = 4000000;
+          let bitsPorSegundo = Math.floor((bytesObjetivo * 8) / duracion);
+          bitsPorSegundo = Math.max(250000, Math.min(bitsPorSegundo, 4000000));
+
+          let stream;
+          try { stream = video.captureStream ? video.captureStream() : video.mozCaptureStream(); }
+          catch (e) { URL.revokeObjectURL(videoURL); resolve(null); return; }
+          if (!stream) { URL.revokeObjectURL(videoURL); resolve(null); return; }
+
+          let mimeType = 'video/webm;codecs=vp8,opus';
+          if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
+          if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = '';
+
+          let mediaRecorder;
+          try {
+            mediaRecorder = mimeType
+              ? new MediaRecorder(stream, { mimeType, videoBitsPerSecond: bitsPorSegundo })
+              : new MediaRecorder(stream, { videoBitsPerSecond: bitsPorSegundo });
+          } catch (e) { URL.revokeObjectURL(videoURL); resolve(null); return; }
+
+          const chunks = [];
+          mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+          mediaRecorder.onstop = () => {
+            URL.revokeObjectURL(videoURL);
+            resolve(chunks.length ? new Blob(chunks, { type: mimeType || 'video/webm' }) : null);
+          };
+          mediaRecorder.onerror = () => { URL.revokeObjectURL(videoURL); resolve(null); };
+          video.onended = () => { try { mediaRecorder.stop(); } catch (e) {} };
+
+          mediaRecorder.start();
+          video.play().catch(() => {
+            try { mediaRecorder.stop(); } catch (e) {}
+            URL.revokeObjectURL(videoURL);
+            resolve(null);
+          });
+        };
+        video.onerror = () => resolve(null);
+      });
+    }
+
+    async function procesarVideoRP(archivo) {
+      const blobComprimido = await comprimirVideoRP(archivo);
+      if (blobComprimido) return leerArchivoComoBase64RP(blobComprimido);
+      return leerArchivoComoBase64RP(archivo);
+    }
+
+    // Guarda un adjunto grande partido en fragmentos dentro de una subcolección
+    // del propio documento del regalo, o entero si ya cabe en un solo documento
+    async function guardarAdjuntoRP(docRef, tipo, indice, dataUrl) {
+      if (dataUrl.length <= TAMANO_FRAGMENTO_RP) {
+        return { tipo, fragmentado: false, src: dataUrl };
+      }
+      const fragmentos = [];
+      for (let i = 0; i < dataUrl.length; i += TAMANO_FRAGMENTO_RP) {
+        fragmentos.push(dataUrl.slice(i, i + TAMANO_FRAGMENTO_RP));
+      }
+      await Promise.all(fragmentos.map((fragmento, i) =>
+        docRef.collection('fragmentos').doc(`${indice}-${i}`).set({ adjunto: indice, indice: i, data: fragmento })
+      ));
+      return { tipo, fragmentado: true, totalFragmentos: fragmentos.length };
+    }
+
+    function limpiarFormularioRP() {
       inputTextoPersonalizado.value = '';
-      contadorTextoPersonalizado.textContent = '0 / 300';
+      contadorTextoPersonalizado.textContent = '0 / 500';
+      inputTituloRP.value = '';
+      inputFechaRP.value = '';
+      inputFotosRP.value = '';
+      fotosRP = [];
+      renderizarFotosRP();
+      inputVideoRP.value = '';
+      videoArchivoRP = null;
+      vistaVideoRP.hidden = true;
+      inputAudioRP.value = '';
+      audioArchivoRP = null;
+      vistaAudioRP.hidden = true;
+      emojiElegidoRP = EMOJIS_RP[0];
+      fondoElegidoRP = FONDOS_RP[0].id;
+      contenedorEmojisRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
+      contenedorFondosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
+    }
+
+    function pedirRegaloPersonalizado() {
+      limpiarFormularioRP();
       modalTextoPersonalizado.hidden = false;
       inputTextoPersonalizado.focus();
 
       return new Promise(resolve => {
         function alEnviar() {
-          const texto = inputTextoPersonalizado.value.trim();
-          if (!texto) { inputTextoPersonalizado.focus(); return; }
+          const mensaje = inputTextoPersonalizado.value.trim();
+          if (!mensaje) { inputTextoPersonalizado.focus(); return; }
           limpiar();
-          resolve(texto);
+          resolve({
+            emoji: emojiElegidoRP,
+            titulo: inputTituloRP.value.trim(),
+            mensaje,
+            fotos: fotosRP.slice(),
+            video: videoArchivoRP,
+            audio: audioArchivoRP,
+            fondo: fondoElegidoRP,
+            fechaApertura: inputFechaRP.value || null
+          });
         }
         function alCancelar() {
           limpiar();
@@ -3026,40 +3449,60 @@
       const destinatario = await elegirDestinatarioTienda();
       if (!destinatario) return;
 
-      const texto = await pedirTextoPersonalizado();
-      if (!texto) return;
+      const regalo = await pedirRegaloPersonalizado();
+      if (!regalo) return;
 
       const exito = await gastarMonedas(COSTO_REGALO_PERSONALIZADO);
       if (!exito) { alert('No tienes suficientes monedas todavía (hacen falta 500 🪙).'); return; }
 
       const remitente = obtenerNombreUsuarioLocal();
+      const docRef = db.collection('regalosRecibidos').doc();
+
+      // Se procesan y guardan video/audio (pueden tardar un poco si son grandes)
+      if (regalo.video || regalo.audio) mostrarMensaje('Preparando tu regalo, un momento...');
+      const adjuntos = [];
+      let indiceAdjunto = 0;
+
+      for (const foto of regalo.fotos) {
+        adjuntos.push(await guardarAdjuntoRP(docRef, 'foto', indiceAdjunto++, foto));
+      }
+      if (regalo.video) {
+        const dataUrlVideo = await procesarVideoRP(regalo.video);
+        adjuntos.push(await guardarAdjuntoRP(docRef, 'video', indiceAdjunto++, dataUrlVideo));
+      }
+      if (regalo.audio) {
+        const dataUrlAudio = await leerArchivoComoBase64RP(regalo.audio);
+        adjuntos.push(await guardarAdjuntoRP(docRef, 'audio', indiceAdjunto++, dataUrlAudio));
+      }
+
+      await docRef.set({
+        destinatario,
+        remitente,
+        personalizado: true,
+        emoji: regalo.emoji,
+        titulo: regalo.titulo || null,
+        mensaje: regalo.mensaje,
+        adjuntos,
+        fondo: regalo.fondo,
+        fechaApertura: regalo.fechaApertura,
+        abierto: false,
+        creado: firebase.firestore.FieldValue.serverTimestamp()
+      });
 
       // Para la notificación push
       await db.collection('mensajesManual').add({
         destinatarios: [destinatario],
         remitente,
         tipo: 'regalo',
-        texto: `💝 Te ha escrito algo especial`,
+        texto: regalo.titulo ? `${regalo.emoji} Te ha escrito: "${regalo.titulo}"` : `${regalo.emoji} Te ha escrito algo especial`,
         enviado: false,
-        creado: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      // Marcado como "personalizado" para que index.html lo enseñe en
-      // grande ANTES de la contraseña, no después como los demás regalos
-      await db.collection('regalosRecibidos').add({
-        destinatario,
-        remitente,
-        emoji: '💝',
-        personalizado: true,
-        mensaje: texto,
-        abierto: false,
         creado: firebase.firestore.FieldValue.serverTimestamp()
       });
 
       regalosEnviados += 1;
       referenciaUsuario.set({ regalosEnviados: firebase.firestore.FieldValue.increment(1) }, { merge: true });
 
-      alert(`¡Listo! Tu mensaje para ${destinatario} está en camino 💝`);
+      alert(`¡Listo! Tu regalo para ${destinatario} está en camino ${regalo.emoji}`);
       revisarLogrosTienda();
     });
 

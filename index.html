@@ -8,28 +8,28 @@
   <link rel="apple-touch-icon" href="MENU.PNG">
   <link rel="icon" type="image/png" href="MENU.PNG">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --blanco: #fffdfc;
-      --hueso: #fbf3f1;
-      --marfil: #f6e5e0;
-      --tinta: #2a1f22;
-      --gris: #9a848a;
-      --naranja: #b8395f;
-      --naranja-suave: #f3d6de;
-      --linea: #efdedd;
+      --blanco: #ffffff;
+      --hueso: #faf7f9;
+      --marfil: #f2e6ee;
+      --tinta: #170d13;
+      --gris: #8b7684;
+      --naranja: #d6006f;
+      --naranja-suave: #f5cfe0;
+      --linea: #ecdfe8;
       /* Nuevos tokens — solo se añaden, no sustituyen a los de arriba */
-      --naranja-fuerte: #8f2c49;
-      --naranja-brillo: #e8899f;
-      --burdeos: #6b1f37;
-      --dorado: #c99a4a;
-      --dorado-suave: #f0e0bd;
-      --sombra-calida: 42, 31, 34;
-      --sombra-suave: 0 2px 8px rgba(var(--sombra-calida), 0.06);
-      --sombra-media: 0 8px 24px rgba(var(--sombra-calida), 0.09);
-      --sombra-fuerte: 0 16px 40px rgba(var(--sombra-calida), 0.14);
-      --radio-card: 14px;
+      --naranja-fuerte: #a10056;
+      --naranja-brillo: #ff4fa3;
+      --burdeos: #5c0030;
+      --dorado: #b8923f;
+      --dorado-suave: #ece0bd;
+      --sombra-calida: 23, 13, 19;
+      --sombra-suave: 0 2px 8px rgba(var(--sombra-calida), 0.07);
+      --sombra-media: 0 8px 24px rgba(var(--sombra-calida), 0.11);
+      --sombra-fuerte: 0 16px 40px rgba(var(--sombra-calida), 0.16);
+      --radio-card: 2px;
       --radio-chip: 999px;
     }
 
@@ -59,9 +59,9 @@
     body {
       margin: 0;
       background:
-        radial-gradient(ellipse 60% 40% at 85% 95%, rgba(107,31,55,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 85% 95%, rgba(92,0,48,0.06) 0%, transparent 60%),
         radial-gradient(ellipse at top, #fffdfb 0%, var(--hueso) 60%);
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       color: var(--tinta);
       padding: 28px 16px 60px;
       min-height: 100vh;
@@ -133,19 +133,19 @@
       max-width: 420px;
       margin: 0 auto;
       background: linear-gradient(175deg, var(--blanco) 0%, var(--blanco) 70%, var(--hueso) 100%);
-      border: 1px solid var(--linea);
+      border: 2px solid var(--tinta);
       border-radius: var(--radio-card);
       padding: 38px 26px;
       position: relative;
       z-index: 1;
-      box-shadow: var(--sombra-media), 0 1px 2px rgba(38,34,32,0.04);
+      box-shadow: var(--sombra-media), 0 1px 2px rgba(23,13,19,0.04);
     }
     .contenedor::before {
       content: '';
       position: absolute;
       top: 0; left: 26px; right: 26px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--naranja-suave), transparent);
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--naranja), transparent);
     }
 
     section { animation: aparecer 0.5s ease; }
@@ -155,10 +155,10 @@
     }
 
     h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 26px;
-      letter-spacing: 0.2px;
+      font-family: 'Playfair Display', serif;
+      font-weight: 800;
+      font-size: 30px;
+      letter-spacing: -0.3px;
       color: var(--tinta);
       margin: 0 0 22px;
       padding-bottom: 12px;
@@ -168,14 +168,14 @@
     h2::after {
       content: '';
       position: absolute;
-      left: 0; bottom: -1px;
+      left: 0; bottom: -2px;
       width: 34px;
-      height: 2px;
+      height: 3px;
       background: var(--naranja);
       border-radius: 2px;
     }
     h3 {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-weight: 600;
       font-size: 15px;
@@ -184,7 +184,7 @@
     }
 
     #mensaje-inicial > p:first-of-type {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-size: 22px;
       font-weight: 600;
       line-height: 1.4;
@@ -200,7 +200,7 @@
 
     /* Botones */
     button {
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       cursor: pointer;
     }
 
@@ -218,7 +218,7 @@
       letter-spacing: 2px;
       text-transform: uppercase;
       margin-top: 8px;
-      box-shadow: 0 6px 18px rgba(143,44,73,0.28);
+      box-shadow: 0 6px 18px rgba(161,0,86,0.28);
     }
 
     #btn-cancelar-carta, #btn-cancelar-multimedia {
@@ -297,7 +297,7 @@
       transition: width 0.3s;
     }
     #texto-progreso {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 14px;
       color: var(--naranja);
@@ -306,7 +306,7 @@
     }
 
     .pregunta p {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-size: 22px;
       font-weight: 600;
       color: var(--tinta);
@@ -334,13 +334,13 @@
       color: var(--naranja);
       font-size: 12.5px;
       font-style: italic;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       margin-top: 8px;
     }
 
     /* Contraseña */
     #titulo-pantalla-clave {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-size: 22px;
       font-weight: 600;
       color: var(--tinta);
@@ -374,7 +374,7 @@
       border: none;
       border-bottom: 1.5px solid var(--tinta);
       background: transparent;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 16px;
       letter-spacing: 6px;
       padding: 8px 0;
@@ -386,14 +386,14 @@
     /* ---------- Pantalla grande de regalo (tras la contraseña) ---------- */
     #pantalla-regalo-grande { text-align: center; }
     #regalo-grande-remitente {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 20px;
       color: var(--tinta);
       margin: 0 0 26px;
     }
     #regalo-personalizado-remitente {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 20px;
       color: inherit;
@@ -442,7 +442,7 @@
       height: 115px;
       border-radius: 8px;
       background: linear-gradient(160deg, #d68c4a, #a8632a);
-      box-shadow: 0 18px 36px rgba(0,0,0,0.4), 0 0 30px rgba(184,57,95,0.25);
+      box-shadow: 0 18px 36px rgba(0,0,0,0.4), 0 0 30px rgba(214,0,111,0.25);
       overflow: hidden;
       transition: transform 0.15s ease;
     }
@@ -550,7 +550,7 @@
     .regalo-grande-contenido.rg-visible { opacity: 1; transform: scale(1); }
     .regalo-grande-emoji { font-size: 64px; margin-bottom: 10px; }
     .regalo-grande-nombre {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-weight: 600;
       font-size: 23px;
@@ -626,7 +626,7 @@
       border-bottom: 1.5px solid currentColor;
       background: transparent;
       color: inherit;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 13px;
       padding: 6px 2px;
       margin-bottom: 8px;
@@ -646,7 +646,7 @@
     }
     #rp-responder-confirmacion {
       text-align: center;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 14px;
       margin: 0;
@@ -702,7 +702,7 @@
       border: none;
       border-bottom: 1px solid var(--linea);
       padding: 18px 0;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-size: 20px;
       font-weight: 600;
       color: var(--tinta);
@@ -718,7 +718,7 @@
     }
     .btn-opcion::after {
       content: '0' counter(opcion);
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 10.5px;
       color: var(--naranja);
       letter-spacing: 1.5px;
@@ -738,7 +738,7 @@
       background: none;
       border: none;
       text-align: left;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 18px;
       font-weight: 600;
@@ -747,7 +747,7 @@
       cursor: pointer;
     }
     .carta-fecha {
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-style: normal;
       font-size: 10px;
       letter-spacing: 0.5px;
@@ -756,7 +756,7 @@
     }
     .info-subida {
       display: block;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 10px;
       letter-spacing: 0.3px;
       color: var(--gris);
@@ -775,7 +775,7 @@
       max-height: 0;
       opacity: 0;
       overflow: hidden;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-size: 17px;
       line-height: 1.7;
       color: #4a3f36;
@@ -811,7 +811,7 @@
       border: none;
       border-bottom: 1px solid var(--linea);
       padding: 8px 0;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 14px;
       background: transparent;
       color: var(--tinta);
@@ -836,7 +836,7 @@
       border: none;
       border-bottom: 1px solid var(--linea);
       background: transparent;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 13px;
       padding: 6px 0;
       margin-left: 8px;
@@ -970,21 +970,21 @@
     /* Sorpresa */
     #candado-sorpresa, #sorpresa-desbloqueada { text-align: center; padding: 20px 0; }
     #candado-sorpresa p:first-child {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-size: 19px;
       font-weight: 600;
       color: var(--tinta);
       margin-bottom: 14px;
     }
     #cuenta-regresiva {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-size: 24px;
       font-weight: 600;
       font-style: italic;
       color: var(--naranja);
     }
     #sorpresa-desbloqueada p {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-size: 19px;
       font-weight: 600;
       color: var(--tinta);
@@ -1003,7 +1003,7 @@
       flex: 1;
       border: none;
       background: transparent;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 14px;
       color: var(--tinta);
     }
@@ -1065,7 +1065,7 @@
       border-bottom: 1px solid var(--linea);
       padding: 8px 0;
       margin-top: 4px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 14px;
       background: transparent;
       color: var(--tinta);
@@ -1084,7 +1084,7 @@
       background: none;
       border: none;
       text-align: left;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 18px;
       font-weight: 600;
@@ -1093,7 +1093,7 @@
       cursor: pointer;
     }
     .cita-fecha {
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-style: normal;
       font-size: 10px;
       letter-spacing: 0.5px;
@@ -1113,7 +1113,7 @@
       max-height: 0;
       opacity: 0;
       overflow: hidden;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-size: 17px;
       line-height: 1.7;
       color: #4a3f36;
@@ -1146,7 +1146,7 @@
     }
     .config-titulo {
       display: block;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-weight: 600;
       font-size: 17px;
@@ -1164,7 +1164,7 @@
       color: var(--blanco);
       border: none;
       padding: 10px 18px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 500;
       font-size: 11px;
       letter-spacing: 1.5px;
@@ -1183,7 +1183,7 @@
       border: 1px solid var(--linea);
       color: var(--gris);
       padding: 10px 18px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 500;
       font-size: 11px;
       letter-spacing: 1.5px;
@@ -1196,7 +1196,7 @@
     }
     .config-creditos {
       text-align: center;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 13px;
       color: var(--gris);
@@ -1216,7 +1216,7 @@
       font-size: 11px;
       padding: 7px 13px;
       cursor: pointer;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
     }
     .config-cat-btn.activa {
       background: var(--tinta);
@@ -1315,7 +1315,7 @@
       border: none;
       border-bottom: 1px solid var(--linea);
       padding: 8px 0;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 14px;
       background: transparent;
       color: var(--tinta);
@@ -1325,7 +1325,7 @@
       color: var(--blanco);
       border: none;
       padding: 8px 16px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 500;
       font-size: 10.5px;
       letter-spacing: 1px;
@@ -1353,14 +1353,14 @@
       max-height: 85vh;
       overflow-y: auto;
       padding: 18px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       border: 1px solid #2c2d33;
     }
     .panel-secreto-cabecera {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 19px;
       color: #f3c98a;
@@ -1388,7 +1388,7 @@
       font-size: 10px;
       padding: 6px 9px;
       cursor: pointer;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
     }
     .ps-pestana.activa {
       background: #f3c98a;
@@ -1424,7 +1424,7 @@
       text-align: left;
       margin-bottom: 7px;
       cursor: pointer;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
     }
     .panel-secreto-btn:active { background: #2c2d33; }
     .ps-btn-destacado {
@@ -1465,10 +1465,10 @@
       overflow-y: auto;
       padding: 18px;
       border: 1px solid #2c2d33;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
     }
     #ps-selector-titulo {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 18px;
       color: #f3c98a;
@@ -1562,7 +1562,7 @@
       transform: rotate(45deg);
     }
     #mascota-frase {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 14.5px;
       color: var(--tinta);
@@ -1577,7 +1577,7 @@
       color: var(--blanco);
       text-decoration: none;
       padding: 8px 18px;
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 500;
       font-size: 10.5px;
       letter-spacing: 1.5px;
@@ -1722,11 +1722,13 @@
 
       <div id="menu-principal">
         <h2>Selecciona una opción</h2>
-        <button class="btn-opcion" data-target="seccion-1">Cartas</button>
-        <button class="btn-opcion" data-target="seccion-2">Fotos y Videos</button>
-        <button class="btn-opcion" data-target="seccion-3" id="btn-sorpresa">🎁 Sorpresa</button>
-        <button class="btn-opcion" data-target="seccion-4">💫 Metas</button>
-        <button class="btn-opcion" data-target="seccion-5">💕 Citas</button>
+        <div class="grid-menu">
+          <button class="btn-opcion" data-target="seccion-1"><span class="opcion-icono">💌</span><span class="opcion-texto">Cartas</span></button>
+          <button class="btn-opcion" data-target="seccion-2"><span class="opcion-icono">📸</span><span class="opcion-texto">Fotos y Videos</span></button>
+          <button class="btn-opcion" data-target="seccion-3" id="btn-sorpresa"><span class="opcion-icono">🎁</span><span class="opcion-texto">Sorpresa</span></button>
+          <button class="btn-opcion" data-target="seccion-4"><span class="opcion-icono">💫</span><span class="opcion-texto">Metas</span></button>
+          <button class="btn-opcion" data-target="seccion-5"><span class="opcion-icono">💕</span><span class="opcion-texto">Citas</span></button>
+        </div>
       </div>
 
       <div id="seccion-1" class="seccion" hidden>

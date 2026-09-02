@@ -402,14 +402,14 @@
       left: 50%;
       width: 24px;
       margin-left: -12px;
-      background: var(--naranja-suave);
+      background: var(--color-lazo-personalizado, var(--naranja-suave));
     }
     .cg-cinta-h {
       position: absolute;
       left: 0; right: 0;
       top: 0;
       height: 24px;
-      background: var(--naranja-suave);
+      background: var(--color-lazo-personalizado, var(--naranja-suave));
     }
     .cg-tapa {
       position: absolute;
@@ -437,7 +437,7 @@
       top: 0;
       width: 20px;
       height: 24px;
-      background: var(--naranja-suave);
+      background: var(--color-lazo-personalizado, var(--naranja-suave));
       border-radius: 50% 50% 50% 0;
       box-shadow: inset 0 0 0 2px rgba(168,99,42,0.35);
     }
@@ -465,9 +465,24 @@
     }
     .particula-regalo-grande.pg-disparada { animation: dispararParticulaGrande 1s cubic-bezier(.2,.7,.4,1) forwards; }
     @keyframes dispararParticulaGrande {
-      0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1); }
-      100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0.4); }
+      0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1) rotate(0deg); }
+      100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0.4) rotate(var(--rot, 0deg)); }
     }
+    .particula-emoji {
+      width: auto; height: auto;
+      background: none;
+      box-shadow: none;
+      font-size: 16px;
+      line-height: 1;
+    }
+    .particula-confeti {
+      width: 8px; height: 5px;
+      border-radius: 1px;
+      box-shadow: none;
+    }
+
+    .regalo-grande-contenido.rp-texto-grande .regalo-grande-nombre { font-size: 28px; }
+    .regalo-grande-contenido.rp-texto-grande .regalo-grande-emoji { font-size: 68px; }
 
     .regalo-grande-contenido {
       position: absolute;
@@ -2397,6 +2412,79 @@
       durazno: { fondo: '#fbe8d9', texto: '#262220' },
       negro: { fondo: '#1c1a18', texto: '#f4ede3' }
     };
+    const COLORES_CAJA_RP_INDEX = {
+      naranja: '#f6ddc9',
+      rosa: '#f6c9d3',
+      dorado: '#f0deA0',
+      menta: '#c9ecd8',
+      lavanda: '#dccdf0',
+      cielo: '#c9e2f6',
+      blanco: '#ffffff'
+    };
+
+    // Un sonido cortito generado al vuelo (sin archivos de audio), distinto
+    // según lo que se eligió al comprar el regalo
+    function reproducirSonidoRP(estilo) {
+      if (!estilo || estilo === 'ninguno') return;
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const secuencias = {
+          suave: [523.25, 659.25],
+          festivo: [523.25, 659.25, 783.99, 1046.5],
+          romantico: [392.0, 523.25, 659.25]
+        };
+        const notas = secuencias[estilo] || secuencias.suave;
+        notas.forEach((frecuencia, i) => {
+          const osc = ctx.createOscillator();
+          const ganancia = ctx.createGain();
+          osc.frequency.value = frecuencia;
+          osc.type = 'sine';
+          const inicio = ctx.currentTime + i * 0.15;
+          ganancia.gain.setValueAtTime(0, inicio);
+          ganancia.gain.linearRampToValueAtTime(0.25, inicio + 0.02);
+          ganancia.gain.exponentialRampToValueAtTime(0.001, inicio + 0.4);
+          osc.connect(ganancia);
+          ganancia.connect(ctx.destination);
+          osc.start(inicio);
+          osc.stop(inicio + 0.4);
+        });
+      } catch (err) {
+        console.error('No se pudo reproducir el sonido del regalo:', err);
+      }
+    }
+
+    // Las partículas al abrir cambian según lo elegido: chispas (por
+    // defecto), confeti de colores, corazones o estrellas
+    function dispararParticulasSegunEstiloRP(contenedor, estilo) {
+      const cantidad = 22;
+      const coloresConfeti = ['#e8703a', '#f6ddc9', '#c9ecd8', '#c9e2f6', '#dccdf0', '#f6c9d3'];
+
+      for (let i = 0; i < cantidad; i++) {
+        const p = document.createElement('div');
+        const angulo = (Math.PI * 2 * i) / cantidad + Math.random() * 0.3;
+        const distancia = 70 + Math.random() * 55;
+        p.style.setProperty('--px', Math.cos(angulo) * distancia + 'px');
+        p.style.setProperty('--py', Math.sin(angulo) * distancia + 'px');
+
+        if (estilo === 'corazones') {
+          p.className = 'particula-regalo-grande particula-emoji';
+          p.textContent = '❤️';
+        } else if (estilo === 'estrellas') {
+          p.className = 'particula-regalo-grande particula-emoji';
+          p.textContent = '⭐';
+        } else if (estilo === 'confeti') {
+          p.className = 'particula-regalo-grande particula-confeti';
+          p.style.background = coloresConfeti[i % coloresConfeti.length];
+          p.style.setProperty('--rot', Math.random() * 360 + 'deg');
+        } else {
+          p.className = 'particula-regalo-grande';
+        }
+
+        contenedor.appendChild(p);
+        requestAnimationFrame(() => p.classList.add('pg-disparada'));
+        setTimeout(() => p.remove(), 1100);
+      }
+    }
 
     // Si un adjunto se guardó partido en fragmentos, los vuelve a unir
     // (leyendo cada trozo por su ID directo, sin necesitar índices especiales)
@@ -2467,24 +2555,53 @@
         particulasEl.innerHTML = '';
         btnContinuar.hidden = true;
 
+        // Color del lazo/cinta de la caja, elegido al comprarla
+        const colorCaja = (COLORES_CAJA_RP_INDEX[regalo.colorCaja] || COLORES_CAJA_RP_INDEX.naranja);
+        caja.style.setProperty('--color-lazo-personalizado', colorCaja);
+
+        // Tamaño del texto del mensaje
+        contenidoEl.classList.toggle('rp-texto-grande', regalo.tamano === 'grande');
+
         pantalla.hidden = false;
 
         // Si tiene fecha de apertura y todavía no ha llegado, se queda
         // bloqueado — se puede seguir usando la web con normalidad, pero
-        // este regalo en concreto no se puede abrir hasta esa fecha
+        // este regalo en concreto no se puede abrir hasta esa fecha.
+        // Mientras espera, se ve una cuenta atrás en vivo.
         const fechaLimite = regalo.fechaApertura ? new Date(regalo.fechaApertura) : null;
         const bloqueado = fechaLimite && new Date() < fechaLimite;
 
         if (bloqueado) {
           caja.hidden = true;
-          const fechaTexto = fechaLimite.toLocaleString('es-ES', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
           contenidoEl.innerHTML = `
             <span class="regalo-grande-emoji">🔒</span>
-            <span class="regalo-grande-nombre">Podrás abrirlo el ${fechaTexto}</span>
+            <span class="regalo-grande-nombre" id="rp-cuenta-atras"></span>
           `;
           contenidoEl.classList.add('rg-visible');
           btnContinuar.hidden = false;
+
+          const spanCuenta = document.getElementById('rp-cuenta-atras');
+          function actualizarCuentaAtrasRP() {
+            const restante = fechaLimite.getTime() - Date.now();
+            if (restante <= 0) {
+              clearInterval(intervaloCuenta);
+              spanCuenta.textContent = '¡Ya se puede abrir! Vuelve a entrar para verlo.';
+              return;
+            }
+            const dias = Math.floor(restante / (1000 * 60 * 60 * 24));
+            const horas = Math.floor((restante / (1000 * 60 * 60)) % 24);
+            const minutos = Math.floor((restante / (1000 * 60)) % 60);
+            const segundos = Math.floor((restante / 1000) % 60);
+            const partes = [];
+            if (dias > 0) partes.push(`${dias}d`);
+            partes.push(`${String(horas).padStart(2, '0')}h`, `${String(minutos).padStart(2, '0')}m`, `${String(segundos).padStart(2, '0')}s`);
+            spanCuenta.textContent = `Podrás abrirlo en ${partes.join(' ')}`;
+          }
+          actualizarCuentaAtrasRP();
+          const intervaloCuenta = setInterval(actualizarCuentaAtrasRP, 1000);
+
           btnContinuar.addEventListener('click', () => {
+            clearInterval(intervaloCuenta);
             pantalla.hidden = true;
             iniciarFlujoNormal();
           }, { once: true });
@@ -2496,18 +2613,8 @@
           if (abierta) return;
           abierta = true;
           caja.classList.add('cg-abriendo');
-
-          for (let i = 0; i < 22; i++) {
-            const p = document.createElement('div');
-            p.className = 'particula-regalo-grande';
-            const angulo = (Math.PI * 2 * i) / 22 + Math.random() * 0.3;
-            const distancia = 70 + Math.random() * 55;
-            p.style.setProperty('--px', Math.cos(angulo) * distancia + 'px');
-            p.style.setProperty('--py', Math.sin(angulo) * distancia + 'px');
-            particulasEl.appendChild(p);
-            requestAnimationFrame(() => p.classList.add('pg-disparada'));
-            setTimeout(() => p.remove(), 1100);
-          }
+          reproducirSonidoRP(regalo.sonido);
+          dispararParticulasSegunEstiloRP(particulasEl, regalo.particulas);
 
           // Se cargan las fotos/video/audio (puede tardar un poco si son
           // grandes) al mismo tiempo que se desarrolla la animación

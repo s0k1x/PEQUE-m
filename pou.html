@@ -1116,6 +1116,60 @@
     }
     .tienda-selector-opcion:active { background: var(--hueso); }
 
+    /* ---------- Regalo personalizado ---------- */
+    .tienda-seccion-personalizado {
+      background: linear-gradient(135deg, #fff4e8, var(--naranja-suave));
+      border: 1px solid var(--naranja);
+      padding: 14px;
+      margin-bottom: 4px;
+    }
+
+    #modal-texto-personalizado {
+      position: fixed;
+      inset: 0;
+      background: rgba(38,34,32,0.6);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    #modal-texto-personalizado[hidden] { display: none; }
+    #modal-texto-personalizado-caja {
+      background: var(--blanco);
+      width: 100%;
+      max-width: 300px;
+      padding: 22px;
+      border: 1px solid var(--linea);
+    }
+    #texto-personalizado-titulo {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 18px;
+      margin: 0 0 14px;
+      color: var(--tinta);
+    }
+    #texto-personalizado-input {
+      width: 100%;
+      min-height: 110px;
+      border: 1px solid var(--linea);
+      background: var(--hueso);
+      padding: 10px;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 13.5px;
+      color: var(--tinta);
+      resize: vertical;
+      margin-bottom: 4px;
+    }
+    #texto-personalizado-input:focus { outline: none; border-color: var(--naranja); }
+    #texto-personalizado-contador {
+      display: block;
+      text-align: right;
+      font-size: 10px;
+      color: var(--gris);
+      margin-bottom: 14px;
+    }
+
   </style>
 </head>
 <body>
@@ -1364,6 +1418,11 @@
       </div>
 
       <div class="tienda-categoria" data-tcat-contenido="regalos" hidden>
+        <div class="tienda-seccion tienda-seccion-personalizado">
+          <span class="config-titulo">💝 Regalo personalizado</span>
+          <p class="config-descripcion">Escríbelo tú mismo — se ve en grande antes de que entre a la web.</p>
+          <button id="btn-regalo-personalizado" type="button" class="tienda-btn-ruleta">Crear regalo personalizado — 500 🪙</button>
+        </div>
         <p class="config-descripcion">Le llega como una notificación de verdad.</p>
         <div class="tienda-lista" id="tienda-lista-regalos"></div>
       </div>
@@ -1382,6 +1441,16 @@
       <p id="tienda-selector-titulo">¿Para quién es?</p>
       <div id="tienda-selector-lista"></div>
       <button id="tienda-selector-cancelar" type="button" class="config-btn-secundario">Cancelar</button>
+    </div>
+  </div>
+
+  <div id="modal-texto-personalizado" hidden>
+    <div id="modal-texto-personalizado-caja">
+      <p id="texto-personalizado-titulo">Escribe tu mensaje</p>
+      <textarea id="texto-personalizado-input" maxlength="300" placeholder="Lo que quieras decirle..."></textarea>
+      <span id="texto-personalizado-contador">0 / 300</span>
+      <button id="btn-enviar-texto-personalizado" type="button" class="tienda-btn-ruleta">Enviar por 500 🪙</button>
+      <button id="btn-cancelar-texto-personalizado" type="button" class="config-btn-secundario">Cancelar</button>
     </div>
   </div>
 
@@ -2913,6 +2982,86 @@
     function obtenerNombreUsuarioLocal() {
       return localStorage.getItem('nombreUsuario') || 'Alguien';
     }
+
+    // ---------- Regalo personalizado (500 🪙, con mensaje escrito a mano) ----------
+    const COSTO_REGALO_PERSONALIZADO = 500;
+    const modalTextoPersonalizado = document.getElementById('modal-texto-personalizado');
+    const inputTextoPersonalizado = document.getElementById('texto-personalizado-input');
+    const contadorTextoPersonalizado = document.getElementById('texto-personalizado-contador');
+    const btnEnviarTextoPersonalizado = document.getElementById('btn-enviar-texto-personalizado');
+    const btnCancelarTextoPersonalizado = document.getElementById('btn-cancelar-texto-personalizado');
+
+    inputTextoPersonalizado.addEventListener('input', () => {
+      contadorTextoPersonalizado.textContent = `${inputTextoPersonalizado.value.length} / 300`;
+    });
+
+    function pedirTextoPersonalizado() {
+      inputTextoPersonalizado.value = '';
+      contadorTextoPersonalizado.textContent = '0 / 300';
+      modalTextoPersonalizado.hidden = false;
+      inputTextoPersonalizado.focus();
+
+      return new Promise(resolve => {
+        function alEnviar() {
+          const texto = inputTextoPersonalizado.value.trim();
+          if (!texto) { inputTextoPersonalizado.focus(); return; }
+          limpiar();
+          resolve(texto);
+        }
+        function alCancelar() {
+          limpiar();
+          resolve(null);
+        }
+        function limpiar() {
+          modalTextoPersonalizado.hidden = true;
+          btnEnviarTextoPersonalizado.removeEventListener('click', alEnviar);
+          btnCancelarTextoPersonalizado.removeEventListener('click', alCancelar);
+        }
+        btnEnviarTextoPersonalizado.addEventListener('click', alEnviar);
+        btnCancelarTextoPersonalizado.addEventListener('click', alCancelar);
+      });
+    }
+
+    document.getElementById('btn-regalo-personalizado').addEventListener('click', async () => {
+      const destinatario = await elegirDestinatarioTienda();
+      if (!destinatario) return;
+
+      const texto = await pedirTextoPersonalizado();
+      if (!texto) return;
+
+      const exito = await gastarMonedas(COSTO_REGALO_PERSONALIZADO);
+      if (!exito) { alert('No tienes suficientes monedas todavía (hacen falta 500 🪙).'); return; }
+
+      const remitente = obtenerNombreUsuarioLocal();
+
+      // Para la notificación push
+      await db.collection('mensajesManual').add({
+        destinatarios: [destinatario],
+        remitente,
+        tipo: 'regalo',
+        texto: `💝 Te ha escrito algo especial`,
+        enviado: false,
+        creado: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      // Marcado como "personalizado" para que index.html lo enseñe en
+      // grande ANTES de la contraseña, no después como los demás regalos
+      await db.collection('regalosRecibidos').add({
+        destinatario,
+        remitente,
+        emoji: '💝',
+        personalizado: true,
+        mensaje: texto,
+        abierto: false,
+        creado: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      regalosEnviados += 1;
+      referenciaUsuario.set({ regalosEnviados: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+
+      alert(`¡Listo! Tu mensaje para ${destinatario} está en camino 💝`);
+      revisarLogrosTienda();
+    });
 
     // ---------- Abrir y cerrar la tienda ----------
     function abrirTienda() {

@@ -3710,6 +3710,7 @@
     }
 
     document.getElementById('btn-regalo-personalizado').addEventListener('click', async () => {
+     try {
       const destinatario = await elegirDestinatarioTienda();
       if (!destinatario) return;
 
@@ -3784,6 +3785,10 @@
         }, { merge: true });
         alert('No se pudo enviar el regalo (puede que las fotos/video sean muy pesados). Se te devolvieron las 500 🪙 — inténtalo con menos adjuntos o más ligeros.');
       }
+     } catch (errExterno) {
+      console.error('Error creando el regalo personalizado:', errExterno);
+      alert('Algo falló al crear el regalo: ' + (errExterno && errExterno.message ? errExterno.message : errExterno));
+     }
     });
 
     function abrirTienda() {

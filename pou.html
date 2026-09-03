@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Tu mascota</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,7 +16,6 @@
       --naranja-suave: #ffd9ce;
       --linea: #ffe4dc;
       --rojo: #c96a4e;
-      /* Nuevos tokens — solo se añaden, no sustituyen a los de arriba */
       --naranja-brillo: #ff9478;
       --dorado: #0f9488;
       --dorado-suave: #cceae6;
@@ -33,10 +32,9 @@
         radial-gradient(ellipse at top, #fffdfb 0%, var(--hueso) 60%);
       font-family: 'Poppins', sans-serif;
       color: var(--tinta);
-      padding: 28px 16px 60px;
+      padding: max(28px, env(safe-area-inset-top)) 16px max(60px, env(safe-area-inset-bottom));
       touch-action: manipulation;
     }
-    /* Textura de grano muy sutil, igual que en el resto de la web */
     .grano-global {
       position: fixed;
       inset: 0;
@@ -54,11 +52,10 @@
       max-width: 380px;
       margin: 0 auto;
       background: var(--blanco);
-      border: 2px solid var(--tinta);
+      border: none;
       border-radius: var(--radio-card);
       padding: 30px 24px;
       position: relative;
-      box-shadow: var(--sombra-media);
     }
     .contenedor::before {
       content: '';
@@ -150,7 +147,6 @@
       padding: 6px 10px;
       cursor: pointer;
     }
-
     #animo-mascota {
       text-align: center;
       font-family: 'Poppins', sans-serif;
@@ -161,7 +157,6 @@
       font-weight: 500;
       margin: 0;
     }
-
     #video-envoltorio {
       position: relative;
       max-width: 260px;
@@ -195,7 +190,6 @@
       0%, 100% { transform: scale(1); }
       40% { transform: scale(1.05); }
     }
-
     .corazon-flotante {
       position: fixed;
       font-size: 22px;
@@ -208,7 +202,6 @@
       20% { transform: translate(-50%, -70%) scale(1.1); opacity: 1; }
       100% { transform: translate(-50%, -160%) scale(0.9); opacity: 0; }
     }
-
     .necesidad {
       margin-bottom: 16px;
     }
@@ -240,7 +233,6 @@
       transition: width 0.4s ease, background 0.4s ease;
     }
     .barra-relleno.baja { background: var(--rojo); }
-
     .acciones {
       display: flex;
       justify-content: space-between;
@@ -308,7 +300,6 @@
       margin: 8px 0 0;
     }
     #inventario-vacio-aviso[hidden] { display: none; }
-
     #mensaje-mascota {
       text-align: center;
       font-family: 'Playfair Display', serif;
@@ -318,7 +309,6 @@
       min-height: 18px;
       margin-top: 16px;
     }
-
     .personalizacion {
       display: flex;
       flex-direction: column;
@@ -369,7 +359,6 @@
       border-color: var(--naranja);
       background: var(--naranja-suave);
     }
-
     .contenedor.fondo-crema { background: #fbf8f4; }
     .contenedor.fondo-blanco { background: #ffffff; }
     .contenedor.fondo-menta { background: #eef6f1; }
@@ -378,10 +367,6 @@
     .contenedor.fondo-coral { background: #fcefe9; }
     .contenedor.fondo-durazno { background: #fdf1e7; }
     .contenedor.fondo-perla { background: #f1f1ef; }
-
-    /* Modo oscuro real: al cambiar estas variables, todo lo de dentro
-       (texto, líneas, fondo del video, etc) se adapta solo, porque todo
-       el diseño ya está construido con estas variables */
     .contenedor.fondo-negro {
       background: #211d1a;
       --tinta: #f3ede6;
@@ -389,14 +374,12 @@
       --linea: #3c3631;
       --hueso: #2b2622;
     }
-
     .contenedor.critica {
-      border-color: var(--rojo);
+      border: 2px solid var(--rojo);
     }
     .contenedor.critica::before {
       background: linear-gradient(90deg, transparent, var(--rojo), transparent);
     }
-
     #nivel-vinculo {
       text-align: center;
       margin-bottom: 4px;
@@ -429,7 +412,6 @@
       margin-top: 4px;
       letter-spacing: 0.5px;
     }
-
     .estadisticas {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -453,7 +435,6 @@
       color: var(--gris);
       margin-top: 2px;
     }
-
     .logro-toast {
       position: fixed;
       left: 50%;
@@ -475,15 +456,12 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
-
-    /* Feedback táctil consistente en botones */
     button { transition: transform 0.12s ease, opacity 0.12s ease; }
     button:active { transform: scale(0.97); opacity: 0.85; }
     a:focus-visible, button:focus-visible, input:focus-visible {
       outline: 2px solid var(--naranja);
       outline-offset: 2px;
     }
-
     #btn-ajustes-flotante {
       position: absolute;
       top: 14px;
@@ -505,7 +483,6 @@
       transform: rotate(45deg);
       border-color: var(--naranja);
     }
-
     .config-categorias {
       display: flex;
       flex-wrap: wrap;
@@ -546,7 +523,6 @@
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
     .config-grupo {
       padding: 16px 0;
       border-bottom: 1px solid var(--linea);
@@ -622,7 +598,6 @@
       width: 16px;
       height: 16px;
     }
-
     .swatch-acento {
       width: 28px;
       height: 28px;
@@ -637,17 +612,13 @@
       box-shadow: 0 0 0 2px var(--linea);
       transform: scale(1.12);
     }
-
     body.reducir-movimiento *,
     body.reducir-movimiento *::before,
     body.reducir-movimiento *::after {
       animation: none !important;
       transition: none !important;
     }
-
     .contenedor.texto-grande { zoom: 1.14; }
-
-    /* ---------- Cabecera reorganizada: monedas flotantes arriba, racha/nivel antes que el nombre ---------- */
     .cabecera-mascota {
       text-align: center;
       margin-bottom: 6px;
@@ -682,8 +653,6 @@
       font-size: 13px;
       cursor: default;
     }
-
-    /* ---------- Racha + nivel, ahora arriba del nombre ---------- */
     .linea-progreso-mascota {
       display: flex;
       align-items: center;
@@ -694,7 +663,6 @@
     }
     .linea-progreso-arriba { margin-bottom: 8px; }
     .nivel-compacto { display: contents; }
-
     #racha-mascota, #nivel-mascota {
       background: var(--hueso);
       border: 1px solid var(--linea);
@@ -713,8 +681,6 @@
     #racha-mascota:active, #nivel-mascota:active { transform: scale(0.94); }
     #racha-mascota:hover, #nivel-mascota:hover { border-color: var(--naranja); }
     #nivel-mascota .emoji-nivel { font-size: 14px; }
-
-    /* ---------- Modal del calendario de racha ---------- */
     #modal-racha, #modal-nivel {
       position: fixed;
       inset: 0;
@@ -784,7 +750,6 @@
       opacity: 0.9;
       margin-top: 10px;
     }
-
     .racha-calendario { padding: 18px 20px 22px; }
     .racha-cal-nav {
       display: flex;
@@ -841,8 +806,6 @@
     .racha-cal-dia.hoy:not(.activo) {
       border: 1.5px solid var(--naranja);
     }
-
-    /* ---------- Lista de niveles (modal) ---------- */
     .nivel-lista-envoltorio { padding: 16px 18px 20px; }
     .nivel-lista { display: flex; flex-direction: column; gap: 6px; }
     .nivel-item {
@@ -857,7 +820,6 @@
     .nivel-item-texto { flex: 1; min-width: 0; }
     .nivel-item-nombre { font-size: 13px; color: var(--tinta); font-weight: 500; display: block; }
     .nivel-item-detalle { font-size: 10.5px; color: var(--gris); }
-
     .nivel-item.conseguido {
       background: var(--naranja-suave);
       border-color: var(--naranja);
@@ -869,8 +831,6 @@
     .nivel-item.actual .nivel-item-nombre,
     .nivel-item.actual .nivel-item-detalle { color: var(--blanco); }
     .nivel-item.bloqueado { opacity: 0.55; }
-
-    /* ---------- Botón de ir a la tienda ---------- */
     #btn-abrir-tienda {
       display: block;
       width: 100%;
@@ -886,8 +846,6 @@
       cursor: pointer;
       margin-top: 18px;
     }
-
-    /* ---------- Tienda ---------- */
     .tienda-seccion {
       padding: 16px 0;
       border-bottom: 1px solid var(--linea);
@@ -918,8 +876,6 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
-    /* ---------- Ruleta visual de verdad ---------- */
     .ruleta-envoltorio {
       position: relative;
       width: 190px;
@@ -967,8 +923,6 @@
       pointer-events: none;
     }
     .ruleta-etiqueta.especial { color: var(--blanco); text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
-
-    /* ---------- Mini-juego de buscar monedas ---------- */
     .buscar-spots {
       display: flex;
       gap: 8px;
@@ -1003,7 +957,6 @@
       min-height: 14px;
     }
     .spot-buscar.encontrado { border-color: var(--naranja); background: var(--naranja-suave); }
-
     .tienda-lista { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
     .tienda-item {
       display: flex;
@@ -1051,8 +1004,6 @@
       color: var(--naranja);
       border: 1px solid var(--naranja);
     }
-
-    /* ---------- Pestañas dentro de la tienda ---------- */
     .tienda-pestanas {
       display: flex;
       flex-wrap: wrap;
@@ -1074,8 +1025,6 @@
       border-color: var(--tinta);
     }
     .tienda-categoria[hidden] { display: none; }
-
-    /* ---------- Oferta del día ---------- */
     .oferta-dia {
       background: linear-gradient(135deg, #fff4e8, var(--naranja-suave));
       border: 1px solid var(--naranja);
@@ -1101,8 +1050,6 @@
       opacity: 0.6;
       margin-right: 4px;
     }
-
-    /* ---------- Guía de cómo ganar monedas ---------- */
     .tienda-guia-ganar {
       list-style: none;
       padding: 0;
@@ -1117,8 +1064,6 @@
       justify-content: space-between;
     }
     .tienda-guia-ganar li:last-child { border-bottom: none; }
-
-    /* ---------- Selector de destinatario (para los regalos) ---------- */
     #tienda-selector-destinatario {
       position: fixed;
       inset: 0;
@@ -1155,15 +1100,12 @@
       border-bottom: 1px solid var(--linea);
     }
     .tienda-selector-opcion:active { background: var(--hueso); }
-
-    /* ---------- Regalo personalizado ---------- */
     .tienda-seccion-personalizado {
       background: linear-gradient(135deg, #fff4e8, var(--naranja-suave));
       border: 1px solid var(--naranja);
       padding: 14px;
       margin-bottom: 4px;
     }
-
     #modal-texto-personalizado {
       position: fixed;
       inset: 0;
@@ -1201,7 +1143,6 @@
       margin: 14px 0 6px;
     }
     .rp-etiqueta:first-of-type { margin-top: 0; }
-
     .rp-emojis {
       display: flex;
       flex-wrap: wrap;
@@ -1217,7 +1158,6 @@
       cursor: pointer;
     }
     .rp-emojis button.elegido { border-color: var(--naranja); background: var(--naranja-suave); }
-
     #rp-titulo, #rp-fecha {
       width: 100%;
       border: 1px solid var(--linea);
@@ -1228,7 +1168,6 @@
       color: var(--tinta);
     }
     #rp-titulo:focus, #rp-fecha:focus { outline: none; border-color: var(--naranja); }
-
     #rp-preview {
       background: var(--hueso);
       border: 1px solid var(--linea);
@@ -1255,7 +1194,6 @@
       margin: 0;
       word-break: break-word;
     }
-
     .rp-pagina {
       position: relative;
       margin-bottom: 8px;
@@ -1289,7 +1227,6 @@
       text-decoration: underline;
     }
     #rp-anadir-pagina { width: 100%; margin-bottom: 6px; }
-
     #rp-musica-fondo-etiqueta, #rp-permitir-respuesta-etiqueta {
       display: flex;
       align-items: center;
@@ -1300,7 +1237,6 @@
       cursor: pointer;
     }
     #rp-musica-fondo-etiqueta[hidden] { display: none; }
-
     #rp-fotos-etiqueta, #rp-video-etiqueta, #rp-audio-etiqueta {
       display: block;
       text-align: center;
@@ -1367,7 +1303,6 @@
       margin: 8px 0 0;
     }
     #rp-procesando[hidden] { display: none; }
-
     .rp-fondos {
       display: flex;
       flex-wrap: wrap;
@@ -1381,7 +1316,6 @@
       cursor: pointer;
     }
     .rp-fondos button.elegido { border-color: var(--naranja); }
-
     .rp-opciones {
       display: flex;
       flex-wrap: wrap;
@@ -1402,9 +1336,7 @@
       border-color: var(--naranja);
       color: var(--blanco);
     }
-
     #btn-enviar-texto-personalizado { margin-top: 18px; }
-
   </style>
 </head>
 <body>
@@ -1474,7 +1406,6 @@
         <button type="button" class="config-cat-btn" data-cat="sesion">🚪 Sesión</button>
       </div>
 
-      <!-- Mascota -->
       <div class="config-categoria-contenido" data-cat-contenido="mascota">
         <div class="config-grupo">
           <span class="config-titulo">🐾 Nombre de la mascota</span>
@@ -1525,8 +1456,6 @@
         </div>
       </div>
 
-      <!-- Apariencia -->
-      <!-- Estadísticas -->
       <div class="config-categoria-contenido" data-cat-contenido="estadisticas" hidden>
         <div class="estadisticas">
           <div class="estadistica"><span class="numero-estadistica" id="stat-comer">0</span><span class="etiqueta-estadistica">Comidas</span></div>
@@ -1559,7 +1488,6 @@
         </div>
       </div>
 
-      <!-- Avisos -->
       <div class="config-categoria-contenido" data-cat-contenido="avisos" hidden>
         <div class="config-grupo">
           <span class="config-titulo">🔔 Notificaciones</span>
@@ -1573,14 +1501,12 @@
         </div>
       </div>
 
-      <!-- Accesibilidad -->
       <div class="config-categoria-contenido" data-cat-contenido="accesibilidad" hidden>
         <div class="config-grupo">
           <label class="config-fila-check"><input type="checkbox" id="check-reducir-movimiento"> Reducir animaciones y movimiento</label>
         </div>
       </div>
 
-      <!-- Sesión -->
       <div class="config-categoria-contenido" data-cat-contenido="sesion" hidden>
         <div class="config-grupo">
           <span class="config-titulo">🚪 Sesión</span>
@@ -1792,7 +1718,6 @@
     </div>
   </div>
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script>
@@ -1817,8 +1742,6 @@
     const video = document.getElementById('video-mascota');
     const mensajeMascota = document.getElementById('mensaje-mascota');
 
-    // Respaldo por si el navegador (sobre todo en apps guardadas en pantalla
-    // de inicio) ignora el autoplay del HTML: la arrancamos a mano
     video.play().catch(() => {});
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden && video.paused) {
@@ -1837,16 +1760,13 @@
       felicidad: document.getElementById('valor-felicidad')
     };
 
-    // Cada necesidad baja a su propio ritmo por hora real transcurrida
     const TASAS_DECAIMIENTO = { hambre: 6, sueno: 3, felicidad: 3.75 };
-    // Si el hambre o el sueño están muy bajos, la felicidad baja más rápido (mascota descuidada = triste)
     const PENALIZACION_DESCUIDO = 2;
     const MAX = 100;
 
     let estadoActual = { hambre: MAX, sueno: MAX, felicidad: MAX };
     let referenciaDoc = null;
 
-    // Personalización y racha
     let nombreMascota = '';
     let fondoElegido = 'crema';
     let accesorioElegido = '';
@@ -1854,11 +1774,9 @@
     let rachaMaxima = 0;
     let ultimoDiaCuidado = null;
     let contadores = { comer: 0, dormir: 0, jugar: 0, saltar: 0, caricias: 0 };
-    let inventario = {}; // compartido: lo que se compra en la tienda queda aquí hasta que se usa
+    let inventario = {};
     let logrosDesbloqueados = [];
 
-    // Economía — es PERSONAL de cada uno (usa el nombre puesto en Perfil),
-    // vive en su propio documento, no en el de la mascota compartida
     let referenciaUsuario = null;
     let monedas = 0;
     let ultimoGiroRuleta = null;
@@ -1872,26 +1790,22 @@
     const RECOMPENSAS_ACCION = { comer: 3, dormir: 3, jugar: 4, saltar: 2, caricias: 1 };
 
     const ITEMS_MASCOTA = [
-      // Comida — de barato a lujoso
       { id: 'manzana', emoji: '🍎', nombre: 'Manzana', costo: 8, categoria: 'comida', efecto: { hambre: 15 } },
       { id: 'snack', emoji: '🍕', nombre: 'Snack especial', costo: 15, categoria: 'comida', efecto: { hambre: 25 } },
       { id: 'hamburguesa', emoji: '🍔', nombre: 'Hamburguesa', costo: 22, categoria: 'comida', efecto: { hambre: 32 } },
       { id: 'postre', emoji: '🍰', nombre: 'Postre delicioso', costo: 28, categoria: 'comida', efecto: { hambre: 40 } },
       { id: 'bento', emoji: '🍱', nombre: 'Bento gourmet', costo: 38, categoria: 'comida', efecto: { hambre: 55 } },
       { id: 'banquete', emoji: '🥘', nombre: 'Banquete real', costo: 55, categoria: 'comida', efecto: { hambre: 75 } },
-      // Descanso — de barato a lujoso
       { id: 'sofa', emoji: '🛋️', nombre: 'Ratito en el sofá', costo: 10, categoria: 'descanso', efecto: { sueno: 15 } },
       { id: 'siesta', emoji: '🛏️', nombre: 'Siesta cómoda', costo: 15, categoria: 'descanso', efecto: { sueno: 25 } },
       { id: 'noche', emoji: '🌙', nombre: 'Noche de descanso total', costo: 28, categoria: 'descanso', efecto: { sueno: 40 } },
       { id: 'spa', emoji: '🧖', nombre: 'Spa relajante', costo: 38, categoria: 'descanso', efecto: { sueno: 55 } },
       { id: 'retiro', emoji: '🏝️', nombre: 'Retiro de descanso', costo: 55, categoria: 'descanso', efecto: { sueno: 75 } },
-      // Juego — de barato a lujoso
       { id: 'yoyo', emoji: '🪀', nombre: 'Yo-yo', costo: 10, categoria: 'juego', efecto: { felicidad: 15 } },
       { id: 'ratito', emoji: '🧸', nombre: 'Ratito de juego', costo: 15, categoria: 'juego', efecto: { felicidad: 25 } },
       { id: 'tarde', emoji: '🎨', nombre: 'Tarde de diversión', costo: 28, categoria: 'juego', efecto: { felicidad: 40 } },
       { id: 'feria', emoji: '🎡', nombre: 'Día de feria', costo: 38, categoria: 'juego', efecto: { felicidad: 55 } },
       { id: 'fiesta', emoji: '🎪', nombre: 'Fiesta sorpresa', costo: 55, categoria: 'juego', efecto: { felicidad: 75 } },
-      // Especial — se aplica ya, no va al inventario
       { id: 'pack', emoji: '🎉', nombre: 'Pack completo', costo: 45, categoria: 'especial', efecto: { hambre: 100, sueno: 100, felicidad: 100 } }
     ];
 
@@ -1941,7 +1855,6 @@
       { id: 'anillo-dedo', emoji: '💍', nombre: 'Algo para el dedo...', detalle: 'Ya sabes lo que es 👀', costo: 200 }
     ];
 
-    // Logros: recompensa única de monedas al conseguir el hito por primera vez
     const LOGROS = [
       { id: 'primera-compra', emoji: '🥇', nombre: 'Primera compra', descripcion: 'Compra cualquier cosa en la tienda', recompensa: 10, comprobar: () => monedasGastadasTotal > 0 },
       { id: 'racha-7', emoji: '🔥', nombre: 'Una semana seguida', descripcion: 'Consigue una racha de 7 días', recompensa: 25, comprobar: () => racha >= 7 },
@@ -1975,7 +1888,6 @@
       total: document.getElementById('stat-total')
     };
 
-    // Niveles de vínculo según el total de cuidados acumulados
     const NIVELES = [
       { min: 0, emoji: '🌱', nombre: 'Empezando' },
       { min: 10, emoji: '💛', nombre: 'Enamorados' },
@@ -2049,7 +1961,6 @@
 
     let temporizadorAccion = null;
 
-    // Cambia el video con un fundido: se apaga, cambia de clip, y vuelve a aparecer
     function cambiarVideo(src, loop) {
       video.style.opacity = 0;
       setTimeout(() => {
@@ -2088,13 +1999,10 @@
       rachaMascotaEl.textContent = racha > 0 ? `🔥 ${racha}` : '🔥';
     }
 
-    // ---------- Calendario de racha (modal tipo Duolingo) ----------
     const MESES_ES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     const DIAS_SEMANA_ES = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
     let mesCalendarioMostrado = new Date();
 
-    // Como la racha son siempre días consecutivos que terminan en
-    // "ultimoDiaCuidado", no hace falta guardar un historial: se calcula solo
     function fechaEnRachaActiva(fecha) {
       if (!ultimoDiaCuidado || racha <= 0) return false;
       const fechaStr = fechaAString(fecha);
@@ -2172,14 +2080,6 @@
       });
     }
 
-    // Cuenta el día de hoy como "cuidado". Usa una transacción para leer y escribir
-    // el valor REAL que hay en el servidor en ese mismo instante — así no importa
-    // si el teléfono llevaba un rato abierto sin refrescar, siempre se compara
-    // contra el dato de verdad, no contra lo que el teléfono cree que es.
-    // Cuenta el día de hoy como "visitado" — la racha ahora sube por entrar
-    // a la web cada día, no por realizar una acción concreta. Además da un
-    // bonito de monedas la primera vez del día. Usa una transacción para leer
-    // y escribir el valor REAL del servidor en ese mismo instante.
     async function registrarVisitaHoy() {
       if (!referenciaDoc || !db) return;
       const hoy = fechaAString(new Date());
@@ -2194,7 +2094,6 @@
           const ultimoGuardado = datos.ultimoDiaCuidado || null;
 
           if (ultimoGuardado === hoy) {
-            // Ya se había contado hoy (quizá desde otro dispositivo) — no hay nada que cambiar
             racha = datos.racha || racha;
             rachaMaxima = datos.rachaMaxima || rachaMaxima;
             ultimoDiaCuidado = ultimoGuardado;
@@ -2223,8 +2122,6 @@
       revisarLogroRacha();
     }
 
-    // Bono diario de monedas, PERSONAL — cada uno lo gana en su propio
-    // documento la primera vez que entra a la web ese día
     async function registrarBonoDiarioPersonal() {
       if (!referenciaUsuario || !db) return;
       const hoy = fechaAString(new Date());
@@ -2303,7 +2200,6 @@
       }
     }
 
-    // ---------- Modal de niveles de vínculo ----------
     function abrirModalNivel() {
       const total = contadores.comer + contadores.dormir + contadores.jugar + contadores.saltar + contadores.caricias;
       const nivel = calcularNivel(total);
@@ -2395,8 +2291,6 @@
       }, { merge: true });
     }
 
-    // cambios es un objeto con lo que sube o baja cada necesidad, ej: {hambre: -5, felicidad: 35}
-    // claveContador identifica qué estadística sumar (comer, dormir, jugar, saltar, caricias)
     async function realizarAccion(cambios, srcVideo, mensaje, duracionMs, claveContador) {
       if (!referenciaDoc) return;
       reproducirVideo(srcVideo, duracionMs);
@@ -2460,7 +2354,7 @@
     }
 
     let ultimaCaricia = 0;
-    const ENFRIAMIENTO_CARICIA = 1200; // ms entre caricias que sí suman felicidad
+    const ENFRIAMIENTO_CARICIA = 1200;
 
     video.addEventListener('click', async (e) => {
       const rect = video.getBoundingClientRect();
@@ -2490,22 +2384,18 @@
       guardarEstado();
     });
 
-    // ---------- Inventario: Comer, Dormir y Jugar ahora necesitan tener
-    // comprado algo de esa categoría — Saltar sigue siendo siempre gratis ----------
     const VIDEOS_ACCION = {
       comida: { src: 'Comer.mp4?v=2', duracion: 4000, claveContador: 'comer', botonId: 'btn-comer' },
       descanso: { src: 'Dormir.mp4?v=2', duracion: 15000, claveContador: 'dormir', botonId: 'btn-dormir' },
       juego: { src: 'Jugar.mp4?v=2', duracion: 5000, claveContador: 'jugar', botonId: 'btn-jugar-mascota' }
     };
 
-    // Suma cuántas unidades hay guardadas de una categoría en total
     function unidadesEnInventario(categoria) {
       return ITEMS_MASCOTA
         .filter(i => i.categoria === categoria)
         .reduce((total, i) => total + (inventario[i.id] || 0), 0);
     }
 
-    // Busca el primer artículo de esa categoría que quede en existencias
     function elegirArticuloDisponible(categoria) {
       return ITEMS_MASCOTA.find(i => i.categoria === categoria && (inventario[i.id] || 0) > 0);
     }
@@ -2518,7 +2408,6 @@
         return;
       }
 
-      // Se descuenta 1 unidad de forma segura (por si el otro lo usa a la vez)
       let exito = false;
       await db.runTransaction(async (transaccion) => {
         const doc = await transaccion.get(referenciaDoc);
@@ -2557,12 +2446,10 @@
       document.getElementById('inventario-vacio-aviso').hidden = !todoVacio;
     }
 
-
     document.getElementById('btn-saltar').addEventListener('click', () => {
       realizarAccion({ felicidad: 10, sueno: -3 }, 'Saltar.mp4?v=2', '¡Wiii! 🦘', 2500, 'saltar');
     });
 
-    // ---------- Notificaciones push ----------
     const VAPID_PUBLIC_KEY = 'BOXRvDCyRFSZIvHdJk2z2auDIU75W7nrhx_SUgXu6OKrSpJXlMkHMokKsUfyEUgU-HAH9pn8C6jJYIJ16bkvQDc';
     const btnNotificaciones = document.getElementById('btn-notificaciones');
 
@@ -2609,7 +2496,7 @@
           return;
         }
         const registro = await navigator.serviceWorker.register('sw.js');
-        await navigator.serviceWorker.ready; // espera a que el service worker esté realmente activo
+        await navigator.serviceWorker.ready;
         const suscripcion = await registro.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
@@ -2636,13 +2523,11 @@
 
     btnNotificaciones.addEventListener('click', activarNotificaciones);
 
-    // Si el navegador ya tiene permiso concedido, refleja el botón como activo
     if ('Notification' in window && Notification.permission === 'granted') {
       btnNotificaciones.textContent = '🔔 Avisos activados';
       btnNotificaciones.classList.add('activo');
     }
 
-    // ---------- Configuración: cambiar entre la mascota y los ajustes ----------
     const vistaMascota = document.getElementById('vista-mascota');
     const vistaConfiguracion = document.getElementById('vista-configuracion');
     const btnAjustesFlotante = document.getElementById('btn-ajustes-flotante');
@@ -2657,7 +2542,6 @@
       vistaMascota.hidden = false;
     });
 
-    // ---------- Configuración: navegación por categorías ----------
     document.querySelectorAll('.config-cat-btn').forEach(boton => {
       boton.addEventListener('click', () => {
         document.querySelectorAll('.config-cat-btn').forEach(b => b.classList.remove('activa'));
@@ -2668,7 +2552,6 @@
       });
     });
 
-    // ---------- Configuración: color de acento ----------
     const COLORES_ACENTO = {
       naranja: { principal: '#e8703a', suave: '#f6ddc9' },
       rosa:    { principal: '#d46a8a', suave: '#f8dde6' },
@@ -2695,7 +2578,6 @@
       });
     });
 
-    // ---------- Configuración: tamaño del texto ----------
     function aplicarTamanoTexto(tamano) {
       contenedorEl.classList.toggle('texto-grande', tamano === 'grande');
     }
@@ -2710,7 +2592,6 @@
       });
     });
 
-    // ---------- Configuración: qué tipo de avisos recibir ----------
     const checkAvisosContenido = document.getElementById('check-avisos-contenido');
     const checkAvisosMascota = document.getElementById('check-avisos-mascota');
     checkAvisosContenido.checked = localStorage.getItem('avisosContenido') !== 'false';
@@ -2735,7 +2616,6 @@
     checkAvisosContenido.addEventListener('change', actualizarPreferenciasAvisos);
     checkAvisosMascota.addEventListener('change', actualizarPreferenciasAvisos);
 
-    // ---------- Configuración: efecto al acariciar ----------
     const efectoGuardado = localStorage.getItem('efectoCaricia') || 'corazones';
     document.querySelectorAll('#opciones-efecto-caricia .config-efecto-btn').forEach(boton => {
       boton.classList.toggle('activa', boton.dataset.efecto === efectoGuardado);
@@ -2746,7 +2626,6 @@
       });
     });
 
-    // ---------- Configuración: vibración al acariciar ----------
     const checkVibracion = document.getElementById('check-vibracion');
     checkVibracion.checked = localStorage.getItem('vibracionCaricia') === 'true';
     if (!navigator.vibrate) {
@@ -2757,7 +2636,6 @@
       localStorage.setItem('vibracionCaricia', checkVibracion.checked);
     });
 
-    // ---------- Configuración: reducir movimiento ----------
     const checkReducirMovimiento = document.getElementById('check-reducir-movimiento');
     const reducirGuardado = localStorage.getItem('reducirMovimiento') === 'true';
     checkReducirMovimiento.checked = reducirGuardado;
@@ -2768,22 +2646,18 @@
       localStorage.setItem('reducirMovimiento', checkReducirMovimiento.checked);
     });
 
-    // ---------- Configuración: cerrar sesión ----------
     document.getElementById('btn-cerrar-sesion').addEventListener('click', () => {
       sessionStorage.removeItem('claveOk');
       location.href = 'index.html';
     });
 
-    // ---------- Economía: ganar y gastar monedas (documento personal) ----------
     function ganarMonedas(cantidad) {
-      if (!referenciaUsuario) return; // sin nombre puesto, no hay dónde guardar sus monedas
+      if (!referenciaUsuario) return;
       monedas += cantidad;
       actualizarMonedasUI();
       referenciaUsuario.set({ monedas: firebase.firestore.FieldValue.increment(cantidad) }, { merge: true });
     }
 
-    // Resta monedas de forma segura (comprueba el saldo real del servidor en
-    // el momento, para que dos compras a la vez no dejen el saldo en negativo)
     async function gastarMonedas(costo) {
       if (!referenciaUsuario || !db) return false;
       let exito = false;
@@ -2805,10 +2679,6 @@
       return exito;
     }
 
-    // ---------- Ruleta diaria — de verdad, con rueda que gira ----------
-    // Cada segmento tiene un valor fijo o un multiplicador ('x2'/'x3'), que
-    // se aplica sobre una base al azar. Los pesos deciden la probabilidad
-    // real de cada uno (no tiene por qué coincidir con el tamaño visual).
     const RULETA_SEGMENTOS = [
       { texto: '10', valor: 10 },
       { texto: '×2', valor: 'x2', especial: true },
@@ -2819,7 +2689,7 @@
       { texto: '8', valor: 8 },
       { texto: '80', valor: 80, especial: true }
     ];
-    const PESOS_RULETA = [18, 13, 22, 10, 15, 6, 14, 2]; // suman 100
+    const PESOS_RULETA = [18, 13, 22, 10, 15, 6, 14, 2];
 
     const btnRuleta = document.getElementById('btn-ruleta');
     const ruletaDescripcion = document.getElementById('ruleta-descripcion');
@@ -2877,12 +2747,12 @@
       await db.runTransaction(async (transaccion) => {
         const doc = await transaccion.get(referenciaUsuario);
         const datos = doc.data() || {};
-        if ((datos.ultimoGiroRuleta || null) === hoy) return; // ya giró hoy
+        if ((datos.ultimoGiroRuleta || null) === hoy) return;
 
         if (typeof segmento.valor === 'number') {
           premio = segmento.valor;
         } else {
-          const base = 8 + Math.floor(Math.random() * 13); // 8 a 20
+          const base = 8 + Math.floor(Math.random() * 13);
           const multiplicador = segmento.valor === 'x2' ? 2 : 3;
           premio = base * multiplicador;
         }
@@ -2900,8 +2770,6 @@
 
       btnRuleta.disabled = true;
 
-      // Calcula cuánto girar para que el puntero termine exacto en el
-      // centro del segmento premiado, sumando siempre vueltas de más
       const n = RULETA_SEGMENTOS.length;
       const anguloSeg = 360 / n;
       const centro = indice * anguloSeg + anguloSeg / 2;
@@ -2920,13 +2788,10 @@
       }, 4300);
     });
 
-    // ---------- Buscar monedas: mini-juego de elegir un sitio (cada 20 min) ----------
     const MINUTOS_ENFRIAMIENTO_BUSQUEDA = 20;
     const buscarDescripcion = document.getElementById('buscar-descripcion');
     const spotsBuscar = Array.from(document.querySelectorAll('.spot-buscar'));
 
-    // El pozo de premios: casi siempre poco, a veces un multiplicador,
-    // rara vez un tesoro grande
     const POZO_BUSQUEDA = [
       { texto: '+2 🪙', valor: 2, peso: 20 },
       { texto: '+4 🪙', valor: 4, peso: 18 },
@@ -2982,14 +2847,14 @@
           const datos = doc.data() || {};
           const ultimo = datos.ultimaBusquedaMonedas || null;
           const pasados = ultimo ? (Date.now() - ultimo.toDate().getTime()) / (1000 * 60) : Infinity;
-          if (pasados < MINUTOS_ENFRIAMIENTO_BUSQUEDA) return; // todavía en espera
+          if (pasados < MINUTOS_ENFRIAMIENTO_BUSQUEDA) return;
 
           const elegido = elegirPremioBusqueda();
           textoPremio = elegido.texto;
           if (typeof elegido.valor === 'number') {
             premio = elegido.valor;
           } else {
-            const base = 3 + Math.floor(Math.random() * 8); // 3 a 10
+            const base = 3 + Math.floor(Math.random() * 8);
             const multiplicador = elegido.valor === 'x2' ? 2 : 3;
             premio = base * multiplicador;
           }
@@ -3017,11 +2882,8 @@
       });
     });
 
-    // Refresca la cuenta atrás cada 30 segundos, para que los sitios se
-    // reactiven solos sin tener que recargar la página
     setInterval(actualizarBotonBuscarMonedas, 30000);
 
-    // ---------- Tienda: renderizado de artículos ----------
     const listaMascotaEl = document.getElementById('tienda-lista-mascota');
     const listaAccesoriosEl = document.getElementById('tienda-lista-accesorios');
     const listaRegalosEl = document.getElementById('tienda-lista-regalos');
@@ -3050,8 +2912,6 @@
       return fila;
     }
 
-    // La oferta del día se calcula a partir de la fecha, así que es la misma
-    // para los dos durante todo el día, y cambia sola a la mañana siguiente
     function obtenerOfertaDelDia() {
       const todos = [...ITEMS_MASCOTA, ...ITEMS_ACCESORIOS, ...ITEMS_REGALO];
       const hoy = fechaAString(new Date());
@@ -3115,7 +2975,6 @@
       });
     }
 
-    // Comprueba todos los logros y da la recompensa la primera vez que se cumplen
     async function revisarLogrosTienda() {
       if (!referenciaUsuario || !db) return;
       const nuevos = LOGROS.filter(l => !logrosTiendaConseguidos.includes(l.id) && l.comprobar());
@@ -3137,7 +2996,7 @@
     async function comprarItemMascota(item, precioForzado) {
       if (!referenciaUsuario || !referenciaDoc || !db) return;
       const costo = precioForzado || item.costo;
-      const esEspecial = item.categoria === 'especial'; // el pack completo se aplica ya, no se guarda
+      const esEspecial = item.categoria === 'especial';
       let exito = false;
       await db.runTransaction(async (transaccion) => {
         const docUsuario = await transaccion.get(referenciaUsuario);
@@ -3198,7 +3057,6 @@
       revisarLogrosTienda();
     }
 
-    // ---------- Selector de a quién regalar (personas registradas) ----------
     const selectorDestinatario = document.getElementById('tienda-selector-destinatario');
     const selectorLista = document.getElementById('tienda-selector-lista');
     const selectorCancelar = document.getElementById('tienda-selector-cancelar');
@@ -3254,7 +3112,6 @@
 
       const remitente = obtenerNombreUsuarioLocal();
 
-      // Para la notificación push (esto se borra en cuanto se entrega)
       await db.collection('mensajesManual').add({
         destinatarios: [destinatario],
         remitente,
@@ -3264,8 +3121,6 @@
         creado: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      // Para que le aparezca la cajita dentro de la app (esto sí se queda,
-      // hasta que la persona lo abra)
       await db.collection('regalosRecibidos').add({
         destinatario,
         remitente,
@@ -3286,12 +3141,8 @@
       return localStorage.getItem('nombreUsuario') || 'Alguien';
     }
 
-    // ---------- Regalo personalizado (500 🪙, súper personalizable) ----------
     const COSTO_REGALO_PERSONALIZADO = 500;
     const LIMITE_BASE64_RP = 700000;
-    // Un documento de Firestore aguanta ~1MB — cualquier adjunto que se pase
-    // de esto se parte en trozos guardados como sub-documentos (igual que
-    // los videos de la galería) y se vuelven a unir al abrir el regalo
     const TAMANO_FRAGMENTO_RP = 900000;
     const MAX_FOTOS_RP = 4;
 
@@ -3370,8 +3221,8 @@
     let particulasElegidasRP = PARTICULAS_RP[0].id;
     let tamanoElegidoRP = TAMANOS_RP[0].id;
     let sonidoElegidoRP = SONIDOS_RP[0].id;
-    let paginasRP = ['']; // cada elemento es el texto de una página
-    let fotosRP = []; // hasta 4 dataUrl ya comprimidas
+    let paginasRP = [''];
+    let fotosRP = [];
     let videoArchivoRP = null;
     let audioArchivoRP = null;
 
@@ -3384,7 +3235,6 @@
       previewCajaRP.style.color = tema.id === 'negro' ? '#f4ede3' : '#262220';
     }
 
-    // ---------- Páginas del mensaje ----------
     function renderizarPaginasRP() {
       contenedorPaginasRP.innerHTML = '';
       paginasRP.forEach((texto, i) => {
@@ -3423,7 +3273,6 @@
       renderizarPaginasRP();
     });
 
-    // Construir los botones de emoji y de fondo una sola vez
     EMOJIS_RP.forEach(emoji => {
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -3451,7 +3300,6 @@
     });
     inputTituloRP.addEventListener('input', actualizarPreviewRP);
 
-    // Constructor genérico para grupos de "chips" tipo botón (partículas, tamaño, sonido)
     function construirChips(contenedor, opciones, valorElegido, alElegir) {
       opciones.forEach(opcion => {
         const btn = document.createElement('button');
@@ -3483,7 +3331,6 @@
     construirChips(contenedorTamanosRP, TAMANOS_RP, tamanoElegidoRP, id => tamanoElegidoRP = id);
     construirChips(contenedorSonidosRP, SONIDOS_RP, sonidoElegidoRP, id => sonidoElegidoRP = id);
 
-    // ---------- Compresión de fotos (igual de buena que en index.html) ----------
     function comprimirDataUrlRP(dataUrl, calidad, maxAncho) {
       return new Promise(resolve => {
         const img = new Image();
@@ -3549,7 +3396,6 @@
       renderizarFotosRP();
     });
 
-    // ---------- Video y audio: se procesan al enviar, no al elegir (así no se duplica trabajo) ----------
     inputVideoRP.addEventListener('change', () => {
       videoArchivoRP = inputVideoRP.files[0] || null;
       if (videoArchivoRP) {
@@ -3579,9 +3425,6 @@
       checkMusicaFondoRP.checked = false;
     });
 
-    // Reutiliza la misma idea que ya tenías para comprimir videos de la
-    // galería: graba el video de nuevo a un bitrate más bajo. Si el
-    // navegador no lo soporta, se sube tal cual.
     function comprimirVideoRP(archivo) {
       return new Promise(resolve => {
         if (!('MediaRecorder' in window)) { resolve(null); return; }
@@ -3641,8 +3484,6 @@
       return leerArchivoComoBase64RP(archivo);
     }
 
-    // Guarda un adjunto grande partido en fragmentos dentro de una subcolección
-    // del propio documento del regalo, o entero si ya cabe en un solo documento
     async function guardarAdjuntoRP(docRef, tipo, indice, dataUrl) {
       if (dataUrl.length <= TAMANO_FRAGMENTO_RP) {
         return { tipo, fragmentado: false, src: dataUrl };
@@ -3743,7 +3584,6 @@
       const remitente = obtenerNombreUsuarioLocal();
       const docRef = db.collection('regalosRecibidos').doc();
 
-      // Se procesan y guardan video/audio (pueden tardar un poco si son grandes)
       if (regalo.video || regalo.audio) mostrarMensaje('Preparando tu regalo, un momento...');
       const adjuntos = [];
       let indiceAdjunto = 0;
@@ -3781,7 +3621,6 @@
         creado: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      // Para la notificación push
       await db.collection('mensajesManual').add({
         destinatarios: [destinatario],
         remitente,
@@ -3798,7 +3637,6 @@
       revisarLogrosTienda();
     });
 
-    // ---------- Abrir y cerrar la tienda ----------
     function abrirTienda() {
       if (!referenciaUsuario) {
         alert('Antes de usar la tienda, pon tu nombre en index.html → Configuración → Perfil — así tus monedas son solo tuyas.');
@@ -3817,7 +3655,6 @@
       vistaMascota.hidden = false;
     });
 
-    // Navegación por pestañas dentro de la tienda
     document.querySelectorAll('.tienda-pestana').forEach(pestana => {
       pestana.addEventListener('click', () => {
         document.querySelectorAll('.tienda-pestana').forEach(p => p.classList.remove('activa'));
@@ -3849,7 +3686,6 @@
           });
         }
       }).then(() => {
-        // Escucha en tiempo real: si el otro también está cuidando a la mascota, se ve reflejado al instante
         referenciaDoc.onSnapshot(doc => {
           if (!doc.exists) return;
           const datos = doc.data();
@@ -3884,15 +3720,11 @@
           actualizarBotonesAccionConInventario();
         });
       }).then(() => {
-        // Una sola vez por carga de página: cuenta el día de hoy como
-        // "visitado" para la racha compartida
         registrarVisitaHoy();
       });
 
-      // Cada minuto, vuelve a calcular el decaimiento y lo guarda (así avanza aunque no toques nada)
       setInterval(guardarEstado, 60000);
 
-      // ---------- Documento personal (economía: monedas, ruleta, logros) ----------
       const nombreParaEconomia = localStorage.getItem('nombreUsuario');
       if (nombreParaEconomia) {
         const idUsuario = nombreParaEconomia.trim().toLowerCase();
@@ -3900,7 +3732,6 @@
 
         referenciaUsuario.get().then(doc => {
           if (!doc.exists) {
-            // Por si alguien llega aquí sin haber pasado antes por index.html
             return referenciaUsuario.set({
               nombre: nombreParaEconomia.trim(),
               monedas: 0,
@@ -3928,8 +3759,6 @@
           registrarBonoDiarioPersonal();
         });
       } else {
-        // Todavía no ha puesto su nombre — sin identidad no hay dónde guardar
-        // sus propias monedas, así que se avisa y se desactiva la tienda
         valorMonedas.textContent = '–';
         document.getElementById('btn-monedas').title = 'Pon tu nombre en index.html → Configuración → Perfil para tener tus propias monedas';
       }

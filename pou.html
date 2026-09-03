@@ -3671,12 +3671,16 @@
       return new Promise(resolve => {
         function alEnviar() {
           const paginas = paginasRP.map(p => p.trim()).filter(Boolean);
-          if (!paginas.length) { renderizarPaginasRP(); return; }
+          const hayContenido = paginas.length || fotosRP.length || videoArchivoRP || audioArchivoRP || inputTituloRP.value.trim();
+          if (!hayContenido) {
+            alert('Añade al menos un mensaje, una foto, un dibujo, un video o un audio antes de enviarlo.');
+            return;
+          }
           limpiar();
           resolve({
             emoji: emojiElegidoRP,
             titulo: inputTituloRP.value.trim(),
-            paginas,
+            paginas: paginas.length ? paginas : [''],
             fotos: fotosRP.slice(),
             video: videoArchivoRP,
             audio: audioArchivoRP,
@@ -3718,43 +3722,44 @@
       const remitente = obtenerNombreUsuarioLocal();
       const docRef = db.collection('regalosRecibidos').doc();
 
-      if (regalo.video || regalo.audio) mostrarMensaje('Preparando tu regalo, un momento...');
-      const adjuntos = [];
-      let indiceAdjunto = 0;
+      try {
+        if (regalo.video || regalo.audio) mostrarMensaje('Preparando tu regalo, un momento...');
+        const adjuntos = [];
+        let indiceAdjunto = 0;
 
-      for (const foto of regalo.fotos) {
-        adjuntos.push(await guardarAdjuntoRP(docRef, 'foto', indiceAdjunto++, foto));
-      }
-      if (regalo.video) {
-        const dataUrlVideo = await procesarVideoRP(regalo.video);
-        adjuntos.push(await guardarAdjuntoRP(docRef, 'video', indiceAdjunto++, dataUrlVideo));
-      }
-      if (regalo.audio) {
-        const dataUrlAudio = await leerArchivoComoBase64RP(regalo.audio);
-        const adjuntoAudio = await guardarAdjuntoRP(docRef, 'audio', indiceAdjunto++, dataUrlAudio);
-        adjuntoAudio.musicaFondo = regalo.musicaFondo;
-        adjuntos.push(adjuntoAudio);
-      }
+        for (const foto of regalo.fotos) {
+          adjuntos.push(await guardarAdjuntoRP(docRef, 'foto', indiceAdjunto++, foto));
+        }
+        if (regalo.video) {
+          const dataUrlVideo = await procesarVideoRP(regalo.video);
+          adjuntos.push(await guardarAdjuntoRP(docRef, 'video', indiceAdjunto++, dataUrlVideo));
+        }
+        if (regalo.audio) {
+          const dataUrlAudio = await leerArchivoComoBase64RP(regalo.audio);
+          const adjuntoAudio = await guardarAdjuntoRP(docRef, 'audio', indiceAdjunto++, dataUrlAudio);
+          adjuntoAudio.musicaFondo = regalo.musicaFondo;
+          adjuntos.push(adjuntoAudio);
+        }
 
-      await docRef.set({
-        destinatario,
-        remitente,
-        personalizado: true,
-        emoji: regalo.emoji,
-        titulo: regalo.titulo || null,
-        paginas: regalo.paginas,
-        permitirRespuesta: regalo.permitirRespuesta,
-        adjuntos,
-        fondo: regalo.fondo,
-        colorCaja: regalo.colorCaja,
-        patron: regalo.patron,
-        particulas: regalo.particulas,
-        tamano: regalo.tamano,
-        sonido: regalo.sonido,
-        fechaApertura: regalo.fechaApertura,
-        abierto: false,
-        creado: firebase.firestore.FieldValue.serverTimestamp()
-      });
+        await docRef.set({
+          destinatario,
+          remitente,
+          personalizado: true,
+          emoji: regalo.emoji,
+          titulo: regalo.titulo || null,
+          paginas: regalo.paginas,
+          permitirRespuesta: regalo.permitirRespuesta,
+          adjuntos,
+          fondo: regalo.fondo,
+          colorCaja: regalo.colorCaja,
+          patron: regalo.patron,
+          particulas: regalo.particulas,
+          tamano: regalo.tamano,
+          sonido: regalo.sonido,
+          fechaApertura: regalo.fechaApertura,
+          abierto: false,
+          creado: firebase.firestore.FieldValue.serverTimestamp()
+        });
 
       await db.collection('mensajesManual').add({
         destinatarios: [destinatario],
@@ -3765,11 +3770,20 @@
         creado: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      regalosEnviados += 1;
-      referenciaUsuario.set({ regalosEnviados: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+        regalosEnviados += 1;
+        referenciaUsuario.set({ regalosEnviados: firebase.firestore.FieldValue.increment(1) }, { merge: true });
 
-      alert(`¡Listo! Tu regalo para ${destinatario} está en camino ${regalo.emoji}`);
-      revisarLogrosTienda();
+        alert(`¡Listo! Tu regalo para ${destinatario} está en camino ${regalo.emoji}`);
+        revisarLogrosTienda();
+      } catch (err) {
+        console.error('No se pudo enviar el regalo personalizado:', err);
+        try { await docRef.delete(); } catch (e) {}
+        await referenciaUsuario.set({
+          monedas: firebase.firestore.FieldValue.increment(COSTO_REGALO_PERSONALIZADO),
+          monedasGastadasTotal: firebase.firestore.FieldValue.increment(-COSTO_REGALO_PERSONALIZADO)
+        }, { merge: true });
+        alert('No se pudo enviar el regalo (puede que las fotos/video sean muy pesados). Se te devolvieron las 500 🪙 — inténtalo con menos adjuntos o más ligeros.');
+      }
     });
 
     function abrirTienda() {

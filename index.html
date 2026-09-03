@@ -185,6 +185,31 @@
     .caja-regalo-grande.cg-abriendo .cg-tapa { transform: translateY(-80px) rotate(-50deg); opacity: 0; }
     .caja-regalo-grande.cg-abriendo .cg-lazo { transform: translateY(-80px) scale(0.7); opacity: 0; }
     .caja-regalo-grande.cg-abriendo .cg-cuerpo { animation: temblarCajaGrande 0.35s ease; }
+
+    /* ---------- Variante "carta": mismo botón, aspecto de sobre en vez de caja ---------- */
+    .caja-regalo-grande.tipo-carta .cg-cinta-v,
+    .caja-regalo-grande.tipo-carta .cg-cinta-h,
+    .caja-regalo-grande.tipo-carta .cg-lazo { display: none; }
+    .caja-regalo-grande.tipo-carta .cg-cuerpo {
+      background: linear-gradient(160deg, #fdf6ec, #ecd9b3);
+      box-shadow: 0 18px 36px rgba(0,0,0,0.28), 0 0 0 1px rgba(168,99,42,0.18) inset;
+    }
+    .caja-regalo-grande.tipo-carta .cg-cuerpo::before {
+      content: '';
+      position: absolute; left: 0; right: 0; bottom: 0; top: 0;
+      background: linear-gradient(35deg, transparent 49%, rgba(168,99,42,0.16) 50%, transparent 51%),
+                  linear-gradient(-35deg, transparent 49%, rgba(168,99,42,0.16) 50%, transparent 51%);
+    }
+    .caja-regalo-grande.tipo-carta .cg-tapa {
+      height: 62px; top: -8px;
+      background: linear-gradient(160deg, #f6e7c9, #d9b878);
+      clip-path: polygon(0 0, 50% 68%, 100% 0);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    }
+    .caja-regalo-grande.tipo-carta .cg-tapa::after {
+      content: '💌'; position: absolute; left: 50%; top: 30%; transform: translate(-50%, -50%); font-size: 16px;
+    }
+    .caja-regalo-grande.tipo-carta.cg-abriendo .cg-tapa { transform: translateY(-70px) rotate(12deg); }
     @keyframes temblarCajaGrande { 0%, 100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-4px) rotate(-2deg); } 75% { transform: translateX(4px) rotate(2deg); } }
 
     .particulas-regalo-grande { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
@@ -205,13 +230,14 @@
       position: absolute; inset: 0; margin: auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
       opacity: 0; transform: scale(0.85); transition: opacity 0.9s ease, transform 0.9s cubic-bezier(.2,.8,.3,1.15); pointer-events: none;
     }
-    .regalo-grande-contenido.rg-visible { opacity: 1; transform: scale(1); }
+    .regalo-grande-contenido.rg-visible { opacity: 1; transform: scale(1); pointer-events: auto; }
     .regalo-grande-emoji { font-size: 64px; margin-bottom: 10px; }
     .regalo-grande-nombre { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 600; font-size: 23px; color: inherit; text-align: center; padding: 0 10px; }
     .regalo-personalizado-galeria { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 10px; }
     .regalo-personalizado-galeria img { width: 90px; height: 90px; object-fit: cover; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.22); }
     .regalo-personalizado-video { display: block; width: 100%; max-width: 260px; margin: 0 auto 10px; border-radius: 8px; box-shadow: 0 6px 16px rgba(0,0,0,0.22); }
     .regalo-personalizado-audio { display: block; width: 100%; max-width: 260px; margin: 0 auto 10px; }
+    .regalo-personalizado-audio-oculto { display: none; }
     .rp-nav-paginas { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 10px; }
     .rp-nav-paginas button { background: rgba(38,34,32,0.06); border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 15px; color: inherit; cursor: pointer; }
     .rp-nav-puntos { display: flex; gap: 5px; }
@@ -1276,7 +1302,7 @@
         else if (adj.tipo === 'video') { videoHtml = `<video src="${src}" class="regalo-personalizado-video" controls playsinline></video>`; }
         else if (adj.tipo === 'audio') {
           audioHtml = adj.musicaFondo
-            ? `<audio src="${src}" class="regalo-personalizado-audio" controls autoplay loop></audio>`
+            ? `<audio src="${src}" class="regalo-personalizado-audio-oculto" autoplay loop></audio>`
             : `<audio src="${src}" class="regalo-personalizado-audio" controls></audio>`;
         }
       }
@@ -1303,7 +1329,7 @@
         const contenidoEl = document.getElementById('regalo-personalizado-contenido');
         const particulasEl = document.getElementById('particulas-regalo-personalizado');
         const btnContinuar = document.getElementById('btn-continuar-regalo-personalizado');
-        caja.className = 'caja-regalo-grande';
+        caja.className = 'caja-regalo-grande' + (regalo.tipo === 'carta' ? ' tipo-carta' : '');
         caja.hidden = false;
         contenidoEl.className = 'regalo-grande-contenido';
         contenidoEl.innerHTML = '';
@@ -1422,7 +1448,12 @@
             console.error('No se pudo marcar el regalo personalizado como abierto:', err);
           }
         }, { once: true });
-        btnContinuar.addEventListener('click', () => { pantalla.hidden = true; iniciarFlujoNormal(); }, { once: true });
+        btnContinuar.addEventListener('click', () => {
+          cancionFondo.pause();
+          contenidoEl.querySelectorAll('audio').forEach(a => { a.pause(); });
+          pantalla.hidden = true;
+          iniciarFlujoNormal();
+        }, { once: true });
       } catch (err) {
         console.error('No se pudo comprobar el regalo personalizado:', err);
         iniciarFlujoNormal();

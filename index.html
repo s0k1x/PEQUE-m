@@ -219,10 +219,14 @@
       clip-path: polygon(0 0, 50% 68%, 100% 0);
       box-shadow: 0 6px 14px rgba(0,0,0,0.2);
     }
-    .caja-regalo-grande.tipo-carta .cg-tapa::after {
-      content: '💌'; position: absolute; left: 50%; top: 30%; transform: translate(-50%, -50%); font-size: 16px;
+    .cg-sello {
+      position: absolute; left: 50%; bottom: -13px; transform: translateX(-50%);
+      width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 14px; background: radial-gradient(circle at 35% 30%, #c0392b, #7a1f18);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.35), inset 0 0 0 2px rgba(255,255,255,0.15); z-index: 2;
     }
     .caja-regalo-grande.tipo-carta.cg-abriendo .cg-tapa { transform: translateY(-70px) rotate(12deg); }
+    .caja-regalo-grande.tipo-carta.cg-abriendo .cg-sello { opacity: 0; transition: opacity 0.25s ease; }
     @keyframes temblarCajaGrande { 0%, 100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-4px) rotate(-2deg); } 75% { transform: translateX(4px) rotate(2deg); } }
 
     .particulas-regalo-grande { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
@@ -244,6 +248,17 @@
       opacity: 0; transform: scale(0.85); transition: opacity 0.9s ease, transform 0.9s cubic-bezier(.2,.8,.3,1.15); pointer-events: none;
     }
     .regalo-grande-contenido.rg-visible { opacity: 1; transform: scale(1); pointer-events: auto; }
+    .regalo-grande-contenido.contenido-tipo-carta {
+      background: repeating-linear-gradient(180deg, transparent 0 26px, rgba(0,0,0,0.055) 26px 27px);
+      border-left: 2px solid rgba(196,60,42,0.35);
+      padding: 16px 14px 6px 18px;
+      border-radius: 2px;
+    }
+    .regalo-grande-contenido.contenido-tipo-regalo {
+      background: radial-gradient(circle at 50% 15%, rgba(255,214,168,0.4), transparent 62%);
+      padding: 10px 8px;
+    }
+    .regalo-grande-emoji.emoji-sello { font-size: 40px; margin-bottom: 4px; }
     .regalo-grande-emoji { font-size: 64px; margin-bottom: 10px; }
     .regalo-grande-nombre { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 600; font-size: 23px; color: inherit; text-align: center; padding: 0 10px; transition: opacity 0.25s ease; }
     .regalo-grande-nombre.rp-fuente-manuscrita { font-family: 'Caveat', cursive; font-style: normal; font-weight: 700; font-size: 30px; }
@@ -261,6 +276,17 @@
     .regalo-personalizado-video { display: block; width: 100%; max-width: 260px; margin: 0 auto 10px; border-radius: 8px; box-shadow: 0 6px 16px rgba(0,0,0,0.22); }
     .regalo-personalizado-audio { display: block; width: 100%; max-width: 260px; margin: 0 auto 10px; }
     .regalo-personalizado-audio-oculto { display: none; }
+    .regalo-audio-player {
+      display: flex; align-items: center; gap: 10px; background: rgba(38,34,32,0.07);
+      border-radius: 999px; padding: 8px 14px 8px 8px; margin: 0 auto 12px; max-width: 260px;
+    }
+    #rp-audio-toggle {
+      flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer;
+      background: var(--naranja); color: var(--blanco); font-size: 12px; display: flex; align-items: center; justify-content: center;
+    }
+    .regalo-audio-barra { flex: 1; height: 4px; background: rgba(38,34,32,0.15); border-radius: 4px; overflow: hidden; }
+    .regalo-audio-relleno { height: 100%; width: 0%; background: var(--naranja); transition: width 0.1s linear; }
+    .regalo-audio-tiempo { font-size: 10.5px; color: inherit; opacity: 0.7; flex-shrink: 0; min-width: 30px; text-align: right; }
     .rp-nav-paginas { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 10px; }
     .rp-nav-paginas button { background: rgba(38,34,32,0.06); border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 15px; color: inherit; cursor: pointer; }
     .rp-nav-puntos { display: flex; gap: 5px; }
@@ -1330,7 +1356,12 @@
         else if (adj.tipo === 'audio') {
           audioHtml = adj.musicaFondo
             ? `<audio src="${src}" class="regalo-personalizado-audio-oculto" autoplay loop></audio>`
-            : `<audio src="${src}" class="regalo-personalizado-audio" controls></audio>`;
+            : `<div class="regalo-audio-player" id="rp-audio-player">
+                 <button type="button" id="rp-audio-toggle" aria-label="Reproducir">▶</button>
+                 <div class="regalo-audio-barra"><div class="regalo-audio-relleno" id="rp-audio-relleno"></div></div>
+                 <span class="regalo-audio-tiempo" id="rp-audio-tiempo">0:00</span>
+                 <audio src="${src}" id="rp-audio-elemento" preload="metadata"></audio>
+               </div>`;
         }
       }
       return (fotosHtml.length ? `<div class="regalo-personalizado-galeria">${fotosHtml.join('')}</div>` : '') + videoHtml + audioHtml;
@@ -1366,6 +1397,15 @@
         caja.style.setProperty('--color-lazo-personalizado', colorCaja);
         const cuerpoEl = caja.querySelector('.cg-cuerpo');
         cuerpoEl.className = 'cg-cuerpo ' + (PATRON_CAJA_RP[regalo.patron] || '');
+        const tapaEl = caja.querySelector('.cg-tapa');
+        const selloExistente = caja.querySelector('.cg-sello');
+        if (selloExistente) selloExistente.remove();
+        if (regalo.tipo === 'carta') {
+          const sello = document.createElement('span');
+          sello.className = 'cg-sello';
+          sello.textContent = regalo.emoji || '💌';
+          tapaEl.appendChild(sello);
+        }
         contenidoEl.classList.toggle('rp-texto-grande', regalo.tamano === 'grande');
         pantalla.hidden = false;
         const fechaLimite = regalo.fechaApertura ? new Date(regalo.fechaApertura) : null;
@@ -1433,7 +1473,36 @@
             ` : ''}
           `;
           contenidoEl.classList.add('rg-visible');
+          contenidoEl.classList.add(regalo.tipo === 'carta' ? 'contenido-tipo-carta' : 'contenido-tipo-regalo');
           btnContinuar.hidden = false;
+          const audioToggleEl = document.getElementById('rp-audio-toggle');
+          if (audioToggleEl) {
+            const audioElRP = document.getElementById('rp-audio-elemento');
+            const rellenoAudioRP = document.getElementById('rp-audio-relleno');
+            const tiempoAudioRP = document.getElementById('rp-audio-tiempo');
+            function formatoTiempoRP(segundos) {
+              if (!isFinite(segundos)) return '0:00';
+              const m = Math.floor(segundos / 60);
+              const s = Math.floor(segundos % 60);
+              return `${m}:${String(s).padStart(2, '0')}`;
+            }
+            audioToggleEl.addEventListener('click', () => {
+              if (audioElRP.paused) { audioElRP.play(); audioToggleEl.textContent = '⏸'; }
+              else { audioElRP.pause(); audioToggleEl.textContent = '▶'; }
+            });
+            audioElRP.addEventListener('timeupdate', () => {
+              const progreso = audioElRP.duration ? (audioElRP.currentTime / audioElRP.duration) * 100 : 0;
+              rellenoAudioRP.style.width = progreso + '%';
+              tiempoAudioRP.textContent = formatoTiempoRP(audioElRP.duration - audioElRP.currentTime);
+            });
+            audioElRP.addEventListener('ended', () => {
+              audioToggleEl.textContent = '▶';
+              rellenoAudioRP.style.width = '0%';
+            });
+            audioElRP.addEventListener('loadedmetadata', () => {
+              tiempoAudioRP.textContent = formatoTiempoRP(audioElRP.duration);
+            });
+          }
           let paginaActual = 0;
           const spanTexto = document.getElementById('rp-pagina-texto');
           const puntosEl = document.getElementById('rp-nav-puntos');

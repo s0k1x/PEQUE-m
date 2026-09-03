@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="MENU.PNG">
   <link rel="icon" type="image/png" href="MENU.PNG">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Poppins:wght@400;500;600;700&family=Caveat:wght@500;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --blanco: #ffffff;
@@ -142,7 +142,20 @@
     #regalo-personalizado-remitente { font-family: 'Playfair Display', serif; font-style: italic; font-size: 20px; color: inherit; margin: 0 0 26px; padding: 0 6px; overflow-wrap: break-word; word-break: break-word; }
     #regalo-grande-escenario { position: relative; width: 100%; height: 260px; margin-bottom: 10px; }
     #regalo-personalizado-escenario { position: relative; width: 100%; min-height: 260px; margin-bottom: 10px; }
-    #pantalla-regalo-personalizado-previo { text-align: center; padding: 0 4px; }
+    #pantalla-regalo-personalizado-previo {
+      text-align: center; padding: 34px 22px 30px; border-radius: 18px; position: relative;
+      box-shadow: 0 22px 50px rgba(38,34,32,0.16), 0 2px 0 rgba(255,255,255,0.5) inset;
+      overflow: hidden;
+    }
+    #pantalla-regalo-personalizado-previo::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+      background-image: radial-gradient(currentColor 1px, transparent 1px);
+      background-size: 26px 26px; opacity: 0.05;
+    }
+    #pantalla-regalo-personalizado-previo::after {
+      content: ''; position: absolute; top: 0; left: 14%; right: 14%; height: 4px; border-radius: 0 0 6px 6px;
+      background: linear-gradient(90deg, transparent, currentColor, transparent); opacity: 0.35;
+    }
     #regalo-personalizado-contenido.rg-visible { position: static; inset: auto; margin: 14px auto 0; }
 
     .caja-regalo-grande {
@@ -232,9 +245,19 @@
     }
     .regalo-grande-contenido.rg-visible { opacity: 1; transform: scale(1); pointer-events: auto; }
     .regalo-grande-emoji { font-size: 64px; margin-bottom: 10px; }
-    .regalo-grande-nombre { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 600; font-size: 23px; color: inherit; text-align: center; padding: 0 10px; }
-    .regalo-personalizado-galeria { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 10px; }
-    .regalo-personalizado-galeria img { width: 90px; height: 90px; object-fit: cover; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.22); }
+    .regalo-grande-nombre { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 600; font-size: 23px; color: inherit; text-align: center; padding: 0 10px; transition: opacity 0.25s ease; }
+    .regalo-grande-nombre.rp-fuente-manuscrita { font-family: 'Caveat', cursive; font-style: normal; font-weight: 700; font-size: 30px; }
+    .regalo-grande-nombre.rp-fuente-moderna { font-family: 'Quicksand', sans-serif; font-style: normal; font-weight: 600; font-size: 19px; }
+    .regalo-personalizado-galeria { display: flex; flex-wrap: wrap; gap: 10px 8px; justify-content: center; margin-bottom: 14px; padding: 4px 6px; }
+    .regalo-personalizado-galeria img {
+      width: 92px; height: 92px; object-fit: cover; border-radius: 4px; background: var(--blanco);
+      padding: 6px 6px 16px; box-shadow: 0 8px 18px rgba(0,0,0,0.24);
+      transform: rotate(var(--giro-polaroid, -3deg));
+    }
+    .regalo-personalizado-galeria img:nth-child(1) { --giro-polaroid: -4deg; }
+    .regalo-personalizado-galeria img:nth-child(2) { --giro-polaroid: 3deg; }
+    .regalo-personalizado-galeria img:nth-child(3) { --giro-polaroid: -2deg; }
+    .regalo-personalizado-galeria img:nth-child(4) { --giro-polaroid: 4deg; }
     .regalo-personalizado-video { display: block; width: 100%; max-width: 260px; margin: 0 auto 10px; border-radius: 8px; box-shadow: 0 6px 16px rgba(0,0,0,0.22); }
     .regalo-personalizado-audio { display: block; width: 100%; max-width: 260px; margin: 0 auto 10px; }
     .regalo-personalizado-audio-oculto { display: none; }
@@ -254,7 +277,6 @@
       font-weight: 500; font-size: 12.5px; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer;
     }
     #btn-continuar-regalo-grande[hidden], #btn-continuar-regalo-personalizado[hidden] { display: none; }
-    #pantalla-regalo-personalizado-previo { text-align: center; }
 
     #menu-principal { }
     .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -1218,16 +1240,21 @@
     }
 
     const FONDOS_RP_INDEX = {
-      crema: { fondo: '#fbf8f4', texto: '#262220' }, rosa: { fondo: '#fbe4e4', texto: '#262220' },
-      lavanda: { fondo: '#ece4f6', texto: '#262220' }, menta: { fondo: '#e2f4ea', texto: '#262220' },
-      cielo: { fondo: '#e3eefb', texto: '#262220' }, durazno: { fondo: '#fbe8d9', texto: '#262220' },
-      dorado: { fondo: '#faf1dc', texto: '#3a2c10' }, azulnoche: { fondo: '#1e2a3f', texto: '#eef2fb' },
-      negro: { fondo: '#1c1a18', texto: '#f4ede3' }
+      crema: { fondo: 'linear-gradient(160deg, #fffdfb, #fbf0e8)', texto: '#262220' },
+      rosa: { fondo: 'linear-gradient(160deg, #fef0f0, #fad7d7)', texto: '#262220' },
+      lavanda: { fondo: 'linear-gradient(160deg, #f4eefc, #e4d6f6)', texto: '#262220' },
+      menta: { fondo: 'linear-gradient(160deg, #eefaf3, #d3f0e0)', texto: '#262220' },
+      cielo: { fondo: 'linear-gradient(160deg, #eef6fd, #d6e9fa)', texto: '#262220' },
+      durazno: { fondo: 'linear-gradient(160deg, #fff1e4, #fbdcb8)', texto: '#262220' },
+      dorado: { fondo: 'linear-gradient(160deg, #fff8e6, #f3dfa0)', texto: '#3a2c10' },
+      azulnoche: { fondo: 'linear-gradient(160deg, #263652, #101827)', texto: '#eef2fb' },
+      negro: { fondo: 'linear-gradient(160deg, #2a2521, #17130f)', texto: '#f4ede3' }
     };
     const COLORES_CAJA_RP_INDEX = {
       naranja: '#e8703a', rosa: '#d46a8a', dorado: '#c9971f', menta: '#3f9c6e',
       lavanda: '#7c5fb8', cielo: '#4a86c9', burdeos: '#a8241a', negro: '#2b2622', blanco: '#ffffff'
     };
+    const FUENTES_RP_INDEX = { elegante: '', manuscrita: 'rp-fuente-manuscrita', moderna: 'rp-fuente-moderna' };
     const PATRON_CAJA_RP = { solido: '', rayas: 'cg-patron-rayas', lunares: 'cg-patron-lunares' };
 
     function reproducirSonidoRP(estilo) {
@@ -1410,16 +1437,22 @@
           let paginaActual = 0;
           const spanTexto = document.getElementById('rp-pagina-texto');
           const puntosEl = document.getElementById('rp-nav-puntos');
-          function mostrarPagina() {
-            spanTexto.textContent = paginas[paginaActual];
-            if (puntosEl) { puntosEl.innerHTML = paginas.map((_, i) => `<span class="${i === paginaActual ? 'activo' : ''}"></span>`).join(''); }
+          spanTexto.classList.add(FUENTES_RP_INDEX[regalo.fuente] || '');
+          function mostrarPagina(animar) {
+            const escribir = () => {
+              spanTexto.textContent = paginas[paginaActual];
+              if (puntosEl) { puntosEl.innerHTML = paginas.map((_, i) => `<span class="${i === paginaActual ? 'activo' : ''}"></span>`).join(''); }
+              spanTexto.style.opacity = 1;
+            };
+            if (animar) { spanTexto.style.opacity = 0; setTimeout(escribir, 180); }
+            else { escribir(); }
           }
-          mostrarPagina();
+          mostrarPagina(false);
           const btnAnteriorPagina = document.getElementById('rp-pagina-anterior');
           const btnSiguientePagina = document.getElementById('rp-pagina-siguiente');
           if (btnAnteriorPagina) {
-            btnAnteriorPagina.addEventListener('click', () => { paginaActual = (paginaActual - 1 + paginas.length) % paginas.length; mostrarPagina(); });
-            btnSiguientePagina.addEventListener('click', () => { paginaActual = (paginaActual + 1) % paginas.length; mostrarPagina(); });
+            btnAnteriorPagina.addEventListener('click', () => { paginaActual = (paginaActual - 1 + paginas.length) % paginas.length; mostrarPagina(true); });
+            btnSiguientePagina.addEventListener('click', () => { paginaActual = (paginaActual + 1) % paginas.length; mostrarPagina(true); });
           }
           const btnResponder = document.getElementById('rp-responder-btn');
           if (btnResponder) {

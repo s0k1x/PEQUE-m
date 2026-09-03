@@ -1652,6 +1652,9 @@
         <p id="rp-preview-texto">Así se verá...</p>
       </div>
 
+      <span class="rp-etiqueta">¿Regalo o carta?</span>
+      <div class="rp-opciones" id="rp-tipos"></div>
+
       <span class="rp-etiqueta">Elige un ícono</span>
       <div class="rp-emojis" id="rp-emojis"></div>
 
@@ -3221,6 +3224,10 @@
       { id: 'rayas', etiqueta: 'Rayas' },
       { id: 'lunares', etiqueta: 'Lunares' }
     ];
+    const TIPOS_RP = [
+      { id: 'regalo', etiqueta: '🎁 Regalo' },
+      { id: 'carta', etiqueta: '💌 Carta' }
+    ];
     const PARTICULAS_RP = [
       { id: 'chispas', etiqueta: '✨ Chispas' },
       { id: 'confeti', etiqueta: '🎊 Confeti' },
@@ -3268,6 +3275,7 @@
     const contenedorTamanosRP = document.getElementById('rp-tamanos');
     const contenedorSonidosRP = document.getElementById('rp-sonidos');
     const contenedorPatronesRP = document.getElementById('rp-patrones');
+    const contenedorTiposRP = document.getElementById('rp-tipos');
     const btnEnviarTextoPersonalizado = document.getElementById('btn-enviar-texto-personalizado');
     const btnCancelarTextoPersonalizado = document.getElementById('btn-cancelar-texto-personalizado');
 
@@ -3276,6 +3284,7 @@
     let fondoElegidoRP = FONDOS_RP[0].id;
     let colorCajaElegidoRP = COLORES_CAJA_RP[0].id;
     let patronElegidoRP = PATRONES_RP[0].id;
+    let tipoElegidoRP = TIPOS_RP[0].id;
     let particulasElegidasRP = PARTICULAS_RP[0].id;
     let tamanoElegidoRP = TAMANOS_RP[0].id;
     let sonidoElegidoRP = SONIDOS_RP[0].id;
@@ -3385,6 +3394,7 @@
       contenedorColoresCajaRP.appendChild(btn);
     });
 
+    construirChips(contenedorTiposRP, TIPOS_RP, tipoElegidoRP, id => tipoElegidoRP = id);
     construirChips(contenedorPatronesRP, PATRONES_RP, patronElegidoRP, id => patronElegidoRP = id);
     construirChips(contenedorParticulasRP, PARTICULAS_RP, particulasElegidasRP, id => particulasElegidasRP = id);
     construirChips(contenedorTamanosRP, TAMANOS_RP, tamanoElegidoRP, id => tamanoElegidoRP = id);
@@ -3649,6 +3659,7 @@
       fondoElegidoRP = FONDOS_RP[0].id;
       colorCajaElegidoRP = COLORES_CAJA_RP[0].id;
       patronElegidoRP = PATRONES_RP[0].id;
+      tipoElegidoRP = TIPOS_RP[0].id;
       particulasElegidasRP = PARTICULAS_RP[0].id;
       tamanoElegidoRP = TAMANOS_RP[0].id;
       sonidoElegidoRP = SONIDOS_RP[0].id;
@@ -3657,6 +3668,7 @@
       contenedorFondosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorColoresCajaRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorPatronesRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
+      contenedorTiposRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorParticulasRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorTamanosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorSonidosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
@@ -3689,6 +3701,7 @@
             fondo: fondoElegidoRP,
             colorCaja: colorCajaElegidoRP,
             patron: patronElegidoRP,
+            tipo: tipoElegidoRP,
             particulas: particulasElegidasRP,
             tamano: tamanoElegidoRP,
             sonido: sonidoElegidoRP,
@@ -3754,6 +3767,7 @@
           fondo: regalo.fondo,
           colorCaja: regalo.colorCaja,
           patron: regalo.patron,
+          tipo: regalo.tipo,
           particulas: regalo.particulas,
           tamano: regalo.tamano,
           sonido: regalo.sonido,

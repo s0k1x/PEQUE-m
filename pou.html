@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Tu mascota</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,500&family=Poppins:wght@400;500;600;700&family=Caveat:wght@500;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --blanco: #ffffff;
@@ -1191,6 +1191,15 @@
       margin: 0;
       word-break: break-word;
     }
+    #rp-preview-texto.rp-fuente-manuscrita, #rp-preview-titulo.rp-fuente-manuscrita { font-family: 'Caveat', cursive; font-style: normal; font-size: 19px; }
+    #rp-preview-texto.rp-fuente-moderna, #rp-preview-titulo.rp-fuente-moderna { font-family: 'Quicksand', sans-serif; font-style: normal; font-weight: 600; }
+    .rp-temas-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      background: var(--hueso); border: 1.5px solid var(--linea); border-radius: 10px; padding: 8px 10px; cursor: pointer;
+      font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--tinta);
+    }
+    .rp-temas-btn .rp-temas-swatch { width: 22px; height: 22px; border-radius: 50%; }
+    .rp-temas-btn.elegido { border-color: var(--naranja); background: var(--naranja-suave); }
     .rp-pagina {
       position: relative;
       margin-bottom: 8px;
@@ -1652,6 +1661,9 @@
         <p id="rp-preview-texto">Así se verá...</p>
       </div>
 
+      <span class="rp-etiqueta">✨ Temas rápidos (opcional)</span>
+      <div class="rp-opciones" id="rp-temas"></div>
+
       <span class="rp-etiqueta">¿Regalo o carta?</span>
       <div class="rp-opciones" id="rp-tipos"></div>
 
@@ -1660,6 +1672,9 @@
 
       <span class="rp-etiqueta">Título (opcional)</span>
       <input type="text" id="rp-titulo" maxlength="40" placeholder="Un título bonito...">
+
+      <span class="rp-etiqueta">Estilo de letra del mensaje</span>
+      <div class="rp-opciones" id="rp-fuentes"></div>
 
       <span class="rp-etiqueta">Tu mensaje (puedes añadir varias páginas)</span>
       <div id="rp-paginas"></div>
@@ -3228,6 +3243,18 @@
       { id: 'regalo', etiqueta: '🎁 Regalo' },
       { id: 'carta', etiqueta: '💌 Carta' }
     ];
+    const FUENTES_RP = [
+      { id: 'elegante', etiqueta: 'Elegante' },
+      { id: 'manuscrita', etiqueta: 'Manuscrita' },
+      { id: 'moderna', etiqueta: 'Moderna' }
+    ];
+    const TEMAS_RP = [
+      { id: 'romantico', nombre: 'Romántico', swatch: '#d46a8a', fondo: 'rosa', colorCaja: 'rosa', patron: 'lunares', particulas: 'corazones', fuente: 'manuscrita' },
+      { id: 'elegante', nombre: 'Elegante', swatch: '#c9971f', fondo: 'dorado', colorCaja: 'dorado', patron: 'solido', particulas: 'estrellas', fuente: 'elegante' },
+      { id: 'fiesta', nombre: 'Fiesta', swatch: '#4a86c9', fondo: 'cielo', colorCaja: 'menta', patron: 'rayas', particulas: 'confeti', fuente: 'moderna' },
+      { id: 'tierno', nombre: 'Tierno', swatch: '#3f9c6e', fondo: 'menta', colorCaja: 'lavanda', patron: 'lunares', particulas: 'chispas', fuente: 'manuscrita' },
+      { id: 'nocturno', nombre: 'Nocturno', swatch: '#7c5fb8', fondo: 'azulnoche', colorCaja: 'lavanda', patron: 'solido', particulas: 'estrellas', fuente: 'elegante' }
+    ];
     const PARTICULAS_RP = [
       { id: 'chispas', etiqueta: '✨ Chispas' },
       { id: 'confeti', etiqueta: '🎊 Confeti' },
@@ -3276,6 +3303,8 @@
     const contenedorSonidosRP = document.getElementById('rp-sonidos');
     const contenedorPatronesRP = document.getElementById('rp-patrones');
     const contenedorTiposRP = document.getElementById('rp-tipos');
+    const contenedorFuentesRP = document.getElementById('rp-fuentes');
+    const contenedorTemasRP = document.getElementById('rp-temas');
     const btnEnviarTextoPersonalizado = document.getElementById('btn-enviar-texto-personalizado');
     const btnCancelarTextoPersonalizado = document.getElementById('btn-cancelar-texto-personalizado');
 
@@ -3285,6 +3314,7 @@
     let colorCajaElegidoRP = COLORES_CAJA_RP[0].id;
     let patronElegidoRP = PATRONES_RP[0].id;
     let tipoElegidoRP = TIPOS_RP[0].id;
+    let fuenteElegidaRP = FUENTES_RP[0].id;
     let particulasElegidasRP = PARTICULAS_RP[0].id;
     let tamanoElegidoRP = TAMANOS_RP[0].id;
     let sonidoElegidoRP = SONIDOS_RP[0].id;
@@ -3299,7 +3329,10 @@
       previewTextoRP.textContent = (paginasRP[0] || '').trim() || 'Así se verá...';
       const tema = FONDOS_RP.find(f => f.id === fondoElegidoRP) || FONDOS_RP[0];
       previewCajaRP.style.background = tema.color;
-      previewCajaRP.style.color = tema.id === 'negro' ? '#f4ede3' : '#262220';
+      previewCajaRP.style.color = (tema.id === 'negro' || tema.id === 'azulnoche') ? '#f4ede3' : '#262220';
+      previewTextoRP.className = 'rp-fuente-' + fuenteElegidaRP;
+      previewTituloRP.className = 'rp-fuente-' + fuenteElegidaRP;
+      if (fuenteElegidaRP === 'elegante') { previewTextoRP.className = ''; previewTituloRP.className = ''; }
     }
 
     function renderizarPaginasRP() {
@@ -3395,6 +3428,32 @@
     });
 
     construirChips(contenedorTiposRP, TIPOS_RP, tipoElegidoRP, id => tipoElegidoRP = id);
+    construirChips(contenedorFuentesRP, FUENTES_RP, fuenteElegidaRP, id => { fuenteElegidaRP = id; actualizarPreviewRP(); });
+
+    // ---------- Temas rápidos: aplican fondo + caja + patrón + partículas + fuente de golpe ----------
+    function aplicarTemaRP(tema) {
+      fondoElegidoRP = tema.fondo;
+      colorCajaElegidoRP = tema.colorCaja;
+      patronElegidoRP = tema.patron;
+      particulasElegidasRP = tema.particulas;
+      fuenteElegidaRP = tema.fuente;
+      contenedorFondosRP.querySelectorAll('button').forEach(b => b.classList.toggle('elegido', b.getAttribute('aria-label') === tema.fondo));
+      contenedorColoresCajaRP.querySelectorAll('button').forEach(b => b.classList.toggle('elegido', b.getAttribute('aria-label') === tema.colorCaja));
+      contenedorPatronesRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', PATRONES_RP[i].id === tema.patron));
+      contenedorParticulasRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', PARTICULAS_RP[i].id === tema.particulas));
+      contenedorFuentesRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', FUENTES_RP[i].id === tema.fuente));
+      contenedorTemasRP.querySelectorAll('button').forEach(b => b.classList.toggle('elegido', b.dataset.tema === tema.id));
+      actualizarPreviewRP();
+    }
+    TEMAS_RP.forEach(tema => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'rp-temas-btn';
+      btn.dataset.tema = tema.id;
+      btn.innerHTML = `<span class="rp-temas-swatch" style="background:${tema.swatch}"></span>${tema.nombre}`;
+      btn.addEventListener('click', () => aplicarTemaRP(tema));
+      contenedorTemasRP.appendChild(btn);
+    });
     construirChips(contenedorPatronesRP, PATRONES_RP, patronElegidoRP, id => patronElegidoRP = id);
     construirChips(contenedorParticulasRP, PARTICULAS_RP, particulasElegidasRP, id => particulasElegidasRP = id);
     construirChips(contenedorTamanosRP, TAMANOS_RP, tamanoElegidoRP, id => tamanoElegidoRP = id);
@@ -3660,6 +3719,7 @@
       colorCajaElegidoRP = COLORES_CAJA_RP[0].id;
       patronElegidoRP = PATRONES_RP[0].id;
       tipoElegidoRP = TIPOS_RP[0].id;
+      fuenteElegidaRP = FUENTES_RP[0].id;
       particulasElegidasRP = PARTICULAS_RP[0].id;
       tamanoElegidoRP = TAMANOS_RP[0].id;
       sonidoElegidoRP = SONIDOS_RP[0].id;
@@ -3669,6 +3729,8 @@
       contenedorColoresCajaRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorPatronesRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorTiposRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
+      contenedorFuentesRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
+      contenedorTemasRP.querySelectorAll('button').forEach(b => b.classList.remove('elegido'));
       contenedorParticulasRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorTamanosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorSonidosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
@@ -3702,6 +3764,7 @@
             colorCaja: colorCajaElegidoRP,
             patron: patronElegidoRP,
             tipo: tipoElegidoRP,
+            fuente: fuenteElegidaRP,
             particulas: particulasElegidasRP,
             tamano: tamanoElegidoRP,
             sonido: sonidoElegidoRP,
@@ -3723,6 +3786,7 @@
     }
 
     document.getElementById('btn-regalo-personalizado').addEventListener('click', async () => {
+     const btnRegaloPersonalizado = document.getElementById('btn-regalo-personalizado');
      try {
       const destinatario = await elegirDestinatarioTienda();
       if (!destinatario) return;
@@ -3732,6 +3796,10 @@
 
       const exito = await gastarMonedas(COSTO_REGALO_PERSONALIZADO);
       if (!exito) { alert('No tienes suficientes monedas todavía (hacen falta 500 🪙).'); return; }
+
+      btnRegaloPersonalizado.disabled = true;
+      const textoOriginalBtnRegalo = btnRegaloPersonalizado.textContent;
+      btnRegaloPersonalizado.textContent = 'Enviando...';
 
       const remitente = obtenerNombreUsuarioLocal();
       const docRef = db.collection('regalosRecibidos').doc();
@@ -3768,6 +3836,7 @@
           colorCaja: regalo.colorCaja,
           patron: regalo.patron,
           tipo: regalo.tipo,
+          fuente: regalo.fuente,
           particulas: regalo.particulas,
           tamano: regalo.tamano,
           sonido: regalo.sonido,
@@ -3802,6 +3871,10 @@
      } catch (errExterno) {
       console.error('Error creando el regalo personalizado:', errExterno);
       alert('Algo falló al crear el regalo: ' + (errExterno && errExterno.message ? errExterno.message : errExterno));
+     } finally {
+      const btnRegaloPersonalizadoFin = document.getElementById('btn-regalo-personalizado');
+      btnRegaloPersonalizadoFin.disabled = false;
+      btnRegaloPersonalizadoFin.textContent = 'Crear regalo personalizado — 500 🪙';
      }
     });
 

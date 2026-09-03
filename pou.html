@@ -1313,6 +1313,43 @@
       cursor: pointer;
     }
     .rp-fondos button.elegido { border-color: var(--naranja); }
+    #rp-dibujo-envoltorio {
+      border: 1.5px dashed var(--linea);
+      padding: 10px;
+      margin-top: 8px;
+    }
+    #rp-dibujo-canvas {
+      display: block;
+      width: 100%;
+      max-width: 280px;
+      height: 200px;
+      margin: 0 auto;
+      background: var(--blanco);
+      border: 1px solid var(--linea);
+      border-radius: 6px;
+      touch-action: none;
+    }
+    #rp-dibujo-controles {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .rp-dibujo-colores {
+      display: flex;
+      gap: 5px;
+      flex: 1;
+    }
+    .rp-dibujo-colores button {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      padding: 0;
+    }
+    .rp-dibujo-colores button.elegido { border-color: var(--tinta); }
     .rp-opciones {
       display: flex;
       flex-wrap: wrap;
@@ -1630,6 +1667,16 @@
       <input type="file" id="rp-fotos" accept="image/*" multiple hidden>
       <div class="rp-fotos-grid" id="rp-fotos-grid"></div>
 
+      <span class="rp-etiqueta">O dibuja algo tú mismo (opcional)</span>
+      <div id="rp-dibujo-envoltorio">
+        <canvas id="rp-dibujo-canvas" width="280" height="200"></canvas>
+        <div id="rp-dibujo-controles">
+          <div class="rp-dibujo-colores" id="rp-dibujo-colores"></div>
+          <button type="button" id="rp-dibujo-borrar" class="config-btn-secundario">Borrar</button>
+          <button type="button" id="rp-dibujo-anadir" class="config-btn-secundario">+ Añadir dibujo</button>
+        </div>
+      </div>
+
       <span class="rp-etiqueta">Video (opcional)</span>
       <label id="rp-video-etiqueta" for="rp-video">🎥 Adjuntar un video</label>
       <input type="file" id="rp-video" accept="video/*" hidden>
@@ -1657,6 +1704,9 @@
 
       <span class="rp-etiqueta">Color del lazo de la caja</span>
       <div class="rp-fondos" id="rp-colores-caja"></div>
+
+      <span class="rp-etiqueta">Patrón de la caja</span>
+      <div class="rp-opciones" id="rp-patrones"></div>
 
       <span class="rp-etiqueta">Efecto al abrir</span>
       <div class="rp-opciones" id="rp-particulas"></div>
@@ -3151,16 +3201,25 @@
       { id: 'menta', color: '#e2f4ea' },
       { id: 'cielo', color: '#e3eefb' },
       { id: 'durazno', color: '#fbe8d9' },
+      { id: 'dorado', color: '#faf1dc' },
+      { id: 'azulnoche', color: '#1e2a3f' },
       { id: 'negro', color: '#1c1a18' }
     ];
     const COLORES_CAJA_RP = [
-      { id: 'naranja', color: '#f6ddc9' },
-      { id: 'rosa', color: '#f6c9d3' },
-      { id: 'dorado', color: '#f0deA0' },
-      { id: 'menta', color: '#c9ecd8' },
-      { id: 'lavanda', color: '#dccdf0' },
-      { id: 'cielo', color: '#c9e2f6' },
+      { id: 'naranja', color: '#e8703a' },
+      { id: 'rosa', color: '#d46a8a' },
+      { id: 'dorado', color: '#c9971f' },
+      { id: 'menta', color: '#3f9c6e' },
+      { id: 'lavanda', color: '#7c5fb8' },
+      { id: 'cielo', color: '#4a86c9' },
+      { id: 'burdeos', color: '#a8241a' },
+      { id: 'negro', color: '#2b2622' },
       { id: 'blanco', color: '#ffffff' }
+    ];
+    const PATRONES_RP = [
+      { id: 'solido', etiqueta: 'Sólido' },
+      { id: 'rayas', etiqueta: 'Rayas' },
+      { id: 'lunares', etiqueta: 'Lunares' }
     ];
     const PARTICULAS_RP = [
       { id: 'chispas', etiqueta: '✨ Chispas' },
@@ -3208,6 +3267,7 @@
     const contenedorParticulasRP = document.getElementById('rp-particulas');
     const contenedorTamanosRP = document.getElementById('rp-tamanos');
     const contenedorSonidosRP = document.getElementById('rp-sonidos');
+    const contenedorPatronesRP = document.getElementById('rp-patrones');
     const btnEnviarTextoPersonalizado = document.getElementById('btn-enviar-texto-personalizado');
     const btnCancelarTextoPersonalizado = document.getElementById('btn-cancelar-texto-personalizado');
 
@@ -3215,6 +3275,7 @@
     let emojiElegidoRP = EMOJIS_RP[0];
     let fondoElegidoRP = FONDOS_RP[0].id;
     let colorCajaElegidoRP = COLORES_CAJA_RP[0].id;
+    let patronElegidoRP = PATRONES_RP[0].id;
     let particulasElegidasRP = PARTICULAS_RP[0].id;
     let tamanoElegidoRP = TAMANOS_RP[0].id;
     let sonidoElegidoRP = SONIDOS_RP[0].id;
@@ -3324,6 +3385,7 @@
       contenedorColoresCajaRP.appendChild(btn);
     });
 
+    construirChips(contenedorPatronesRP, PATRONES_RP, patronElegidoRP, id => patronElegidoRP = id);
     construirChips(contenedorParticulasRP, PARTICULAS_RP, particulasElegidasRP, id => particulasElegidasRP = id);
     construirChips(contenedorTamanosRP, TAMANOS_RP, tamanoElegidoRP, id => tamanoElegidoRP = id);
     construirChips(contenedorSonidosRP, SONIDOS_RP, sonidoElegidoRP, id => sonidoElegidoRP = id);
@@ -3391,6 +3453,77 @@
       }
       avisoProcesandoRP.hidden = true;
       renderizarFotosRP();
+    });
+
+    // ---------- Dibujo a mano (se guarda como una foto más) ----------
+    const canvasDibujoRP = document.getElementById('rp-dibujo-canvas');
+    const ctxDibujoRP = canvasDibujoRP.getContext('2d');
+    const contenedorColoresDibujoRP = document.getElementById('rp-dibujo-colores');
+    const btnBorrarDibujoRP = document.getElementById('rp-dibujo-borrar');
+    const btnAnadirDibujoRP = document.getElementById('rp-dibujo-anadir');
+    const COLORES_DIBUJO_RP = ['#262220', '#e8703a', '#d46a8a', '#4a86c9', '#3f9c6e', '#c9971f'];
+    let colorDibujoElegidoRP = COLORES_DIBUJO_RP[0];
+    let dibujandoRP = false;
+
+    function limpiarCanvasDibujoRP() {
+      ctxDibujoRP.fillStyle = '#ffffff';
+      ctxDibujoRP.fillRect(0, 0, canvasDibujoRP.width, canvasDibujoRP.height);
+    }
+    limpiarCanvasDibujoRP();
+
+    COLORES_DIBUJO_RP.forEach((color, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.style.background = color;
+      btn.className = i === 0 ? 'elegido' : '';
+      btn.setAttribute('aria-label', color);
+      btn.addEventListener('click', () => {
+        colorDibujoElegidoRP = color;
+        contenedorColoresDibujoRP.querySelectorAll('button').forEach(b => b.classList.toggle('elegido', b === btn));
+      });
+      contenedorColoresDibujoRP.appendChild(btn);
+    });
+
+    function posicionDibujoRP(evento) {
+      const rect = canvasDibujoRP.getBoundingClientRect();
+      const escalaX = canvasDibujoRP.width / rect.width;
+      const escalaY = canvasDibujoRP.height / rect.height;
+      const punto = evento.touches ? evento.touches[0] : evento;
+      return { x: (punto.clientX - rect.left) * escalaX, y: (punto.clientY - rect.top) * escalaY };
+    }
+    function empezarDibujoRP(evento) {
+      evento.preventDefault();
+      dibujandoRP = true;
+      const { x, y } = posicionDibujoRP(evento);
+      ctxDibujoRP.beginPath();
+      ctxDibujoRP.moveTo(x, y);
+    }
+    function seguirDibujoRP(evento) {
+      if (!dibujandoRP) return;
+      evento.preventDefault();
+      const { x, y } = posicionDibujoRP(evento);
+      ctxDibujoRP.lineWidth = 4;
+      ctxDibujoRP.lineCap = 'round';
+      ctxDibujoRP.strokeStyle = colorDibujoElegidoRP;
+      ctxDibujoRP.lineTo(x, y);
+      ctxDibujoRP.stroke();
+    }
+    function terminarDibujoRP() { dibujandoRP = false; }
+
+    canvasDibujoRP.addEventListener('mousedown', empezarDibujoRP);
+    canvasDibujoRP.addEventListener('mousemove', seguirDibujoRP);
+    canvasDibujoRP.addEventListener('mouseup', terminarDibujoRP);
+    canvasDibujoRP.addEventListener('mouseleave', terminarDibujoRP);
+    canvasDibujoRP.addEventListener('touchstart', empezarDibujoRP);
+    canvasDibujoRP.addEventListener('touchmove', seguirDibujoRP);
+    canvasDibujoRP.addEventListener('touchend', terminarDibujoRP);
+
+    btnBorrarDibujoRP.addEventListener('click', limpiarCanvasDibujoRP);
+    btnAnadirDibujoRP.addEventListener('click', () => {
+      if (fotosRP.length >= MAX_FOTOS_RP) { alert(`Máximo ${MAX_FOTOS_RP} fotos (los dibujos cuentan igual).`); return; }
+      fotosRP.push(canvasDibujoRP.toDataURL('image/png'));
+      renderizarFotosRP();
+      limpiarCanvasDibujoRP();
     });
 
     inputVideoRP.addEventListener('change', () => {
@@ -3515,12 +3648,15 @@
       emojiElegidoRP = EMOJIS_RP[0];
       fondoElegidoRP = FONDOS_RP[0].id;
       colorCajaElegidoRP = COLORES_CAJA_RP[0].id;
+      patronElegidoRP = PATRONES_RP[0].id;
       particulasElegidasRP = PARTICULAS_RP[0].id;
       tamanoElegidoRP = TAMANOS_RP[0].id;
       sonidoElegidoRP = SONIDOS_RP[0].id;
+      limpiarCanvasDibujoRP();
       contenedorEmojisRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorFondosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorColoresCajaRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
+      contenedorPatronesRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorParticulasRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorTamanosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorSonidosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
@@ -3548,6 +3684,7 @@
             permitirRespuesta: checkPermitirRespuestaRP.checked,
             fondo: fondoElegidoRP,
             colorCaja: colorCajaElegidoRP,
+            patron: patronElegidoRP,
             particulas: particulasElegidasRP,
             tamano: tamanoElegidoRP,
             sonido: sonidoElegidoRP,
@@ -3610,6 +3747,7 @@
         adjuntos,
         fondo: regalo.fondo,
         colorCaja: regalo.colorCaja,
+        patron: regalo.patron,
         particulas: regalo.particulas,
         tamano: regalo.tamano,
         sonido: regalo.sonido,

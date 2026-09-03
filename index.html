@@ -143,9 +143,8 @@
     #regalo-grande-escenario { position: relative; width: 100%; height: 260px; margin-bottom: 10px; }
     #regalo-personalizado-escenario { position: relative; width: 100%; min-height: 260px; margin-bottom: 10px; }
     #pantalla-regalo-personalizado-previo {
-      text-align: center; padding: 34px 22px 30px; border-radius: 18px; position: relative;
+      text-align: center; padding: 34px 20px 30px; border-radius: 18px; position: relative;
       box-shadow: 0 22px 50px rgba(38,34,32,0.16), 0 2px 0 rgba(255,255,255,0.5) inset;
-      overflow: hidden;
     }
     #pantalla-regalo-personalizado-previo::before {
       content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
@@ -249,10 +248,11 @@
     }
     .regalo-grande-contenido.rg-visible { opacity: 1; transform: scale(1); pointer-events: auto; }
     .regalo-grande-contenido.contenido-tipo-carta {
-      background: repeating-linear-gradient(180deg, transparent 0 26px, rgba(0,0,0,0.055) 26px 27px);
-      border-left: 2px solid rgba(196,60,42,0.35);
-      padding: 16px 14px 6px 18px;
+      background: repeating-linear-gradient(180deg, transparent 0 26px, rgba(0,0,0,0.05) 26px 27px);
+      border-left: 2px solid rgba(196,60,42,0.3);
+      padding: 12px 8px 4px 12px;
       border-radius: 2px;
+      width: 100%;
     }
     .regalo-grande-contenido.contenido-tipo-regalo {
       background: radial-gradient(circle at 50% 15%, rgba(255,214,168,0.4), transparent 62%);
@@ -260,9 +260,9 @@
     }
     .regalo-grande-emoji.emoji-sello { font-size: 40px; margin-bottom: 4px; }
     .regalo-grande-emoji { font-size: 64px; margin-bottom: 10px; }
-    .regalo-grande-nombre { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 600; font-size: 23px; color: inherit; text-align: center; padding: 0 10px; transition: opacity 0.25s ease; }
-    .regalo-grande-nombre.rp-fuente-manuscrita { font-family: 'Caveat', cursive; font-style: normal; font-weight: 700; font-size: 30px; }
-    .regalo-grande-nombre.rp-fuente-moderna { font-family: 'Quicksand', sans-serif; font-style: normal; font-weight: 600; font-size: 19px; }
+    .regalo-grande-nombre { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 600; font-size: 20px; line-height: 1.55; color: inherit; text-align: center; padding: 0 6px; transition: opacity 0.25s ease; }
+    .regalo-grande-nombre.rp-fuente-manuscrita { font-family: 'Caveat', cursive; font-style: normal; font-weight: 700; font-size: 22px; line-height: 1.35; }
+    .regalo-grande-nombre.rp-fuente-moderna { font-family: 'Quicksand', sans-serif; font-style: normal; font-weight: 600; font-size: 17px; line-height: 1.6; }
     .regalo-personalizado-galeria { display: flex; flex-wrap: wrap; gap: 10px 8px; justify-content: center; margin-bottom: 14px; padding: 4px 6px; }
     .regalo-personalizado-galeria img {
       width: 92px; height: 92px; object-fit: cover; border-radius: 4px; background: var(--blanco);
@@ -1281,6 +1281,7 @@
       lavanda: '#7c5fb8', cielo: '#4a86c9', burdeos: '#a8241a', negro: '#2b2622', blanco: '#ffffff'
     };
     const FUENTES_RP_INDEX = { elegante: '', manuscrita: 'rp-fuente-manuscrita', moderna: 'rp-fuente-moderna' };
+    function emojiRP(e) { return (!e || e === 'ninguno') ? '' : e; }
     const PATRON_CAJA_RP = { solido: '', rayas: 'cg-patron-rayas', lunares: 'cg-patron-lunares' };
 
     function reproducirSonidoRP(estilo) {
@@ -1381,8 +1382,8 @@
         pantalla.style.background = tema.fondo;
         pantalla.style.color = tema.texto;
         document.getElementById('regalo-personalizado-remitente').textContent = regalo.titulo
-          ? `${regalo.emoji || '💝'} "${regalo.titulo}" — de ${regalo.remitente || 'Alguien'}`
-          : `${regalo.emoji || '💝'} ${regalo.remitente || 'Alguien'} te ha escrito algo`;
+          ? `${emojiRP(regalo.emoji) ? emojiRP(regalo.emoji) + ' ' : ''}"${regalo.titulo}" — de ${regalo.remitente || 'Alguien'}`
+          : `${emojiRP(regalo.emoji) ? emojiRP(regalo.emoji) + ' ' : ''}${regalo.remitente || 'Alguien'} te ha escrito algo`;
         const caja = document.getElementById('caja-regalo-personalizado');
         const contenidoEl = document.getElementById('regalo-personalizado-contenido');
         const particulasEl = document.getElementById('particulas-regalo-personalizado');
@@ -1400,10 +1401,10 @@
         const tapaEl = caja.querySelector('.cg-tapa');
         const selloExistente = caja.querySelector('.cg-sello');
         if (selloExistente) selloExistente.remove();
-        if (regalo.tipo === 'carta') {
+        if (regalo.tipo === 'carta' && emojiRP(regalo.emoji)) {
           const sello = document.createElement('span');
           sello.className = 'cg-sello';
-          sello.textContent = regalo.emoji || '💌';
+          sello.textContent = emojiRP(regalo.emoji);
           tapaEl.appendChild(sello);
         }
         contenidoEl.classList.toggle('rp-texto-grande', regalo.tamano === 'grande');
@@ -1454,7 +1455,7 @@
           const paginas = (regalo.paginas && regalo.paginas.length) ? regalo.paginas : [regalo.mensaje || ''];
           caja.classList.add('cg-escondida');
           contenidoEl.innerHTML = `
-            <span class="regalo-grande-emoji">${regalo.emoji || '💝'}</span>
+            ${emojiRP(regalo.emoji) ? `<span class="regalo-grande-emoji">${emojiRP(regalo.emoji)}</span>` : ''}
             ${contenidoAdjuntos}
             <span class="regalo-grande-nombre" id="rp-pagina-texto"></span>
             ${paginas.length > 1 ? `

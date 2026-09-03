@@ -236,8 +236,6 @@
     #lista-cartas-controles { display: flex; gap: 8px; margin-bottom: 18px; }
     #buscador-cartas { flex: 1; border: 1.5px solid var(--linea); border-radius: 6px; background: var(--hueso); padding: 10px 12px; font-family: 'Poppins', sans-serif; font-size: 13px; color: var(--tinta); }
     #buscador-cartas:focus { outline: none; border-color: var(--naranja); }
-    #btn-filtro-favoritas { flex-shrink: 0; background: var(--hueso); border: 1.5px solid var(--linea); border-radius: 6px; padding: 10px 12px; font-family: 'Poppins', sans-serif; font-size: 11.5px; color: var(--gris); cursor: pointer; white-space: nowrap; }
-    #btn-filtro-favoritas.activo { border-color: var(--dorado); background: var(--dorado-suave); color: var(--tinta); }
     .btn-favorita-carta { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--linea); padding: 0 4px; }
     .btn-favorita-carta.marcada { color: var(--dorado); }
     #sin-resultados-cartas { text-align: center; color: var(--gris); font-size: 13px; padding: 20px 0; }
@@ -295,8 +293,8 @@
     #cuenta-regresiva { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 600; font-style: italic; color: var(--naranja); }
     #sorpresa-desbloqueada p { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 600; color: var(--tinta); }
 
-    #form-meta { display: flex; gap: 10px; align-items: center; border-bottom: 1.5px solid var(--tinta); padding-bottom: 10px; margin-bottom: 22px; }
-    #meta-texto { flex: 1; border: none; background: transparent; font-family: 'Poppins', sans-serif; font-size: 14px; color: var(--tinta); }
+    #form-meta { display: flex; gap: 10px; align-items: center; justify-content: flex-start; border-bottom: 1.5px solid var(--tinta); padding-bottom: 10px; margin-bottom: 22px; }
+    #meta-texto { flex: 0 1 65%; border: none; background: transparent; font-family: 'Poppins', sans-serif; font-size: 14px; color: var(--tinta); }
     #btn-agregar-meta { width: auto; display: inline-block; margin: 0; padding: 8px 16px; font-size: 11px; letter-spacing: 1.5px; }
     #lista-metas { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
     #lista-metas li { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1.5px solid var(--linea); border-radius: 6px; background: var(--hueso); font-size: 14px; transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease; }
@@ -530,7 +528,6 @@
         </div>
         <div id="lista-cartas-controles">
           <input type="text" id="buscador-cartas" placeholder="🔍 Buscar en las cartas...">
-          <button type="button" id="btn-filtro-favoritas">⭐ Solo favoritas</button>
         </div>
         <div id="lista-cartas"></div>
         <p id="sin-resultados-cartas" hidden>No hay cartas que coincidan con la búsqueda.</p>
@@ -1564,7 +1561,6 @@
     });
 
     let todasLasCartas = [];
-    let filtroSoloFavoritasCartas = false;
 
     function pintarCartas(cartas) {
       listaCartas.innerHTML = '';
@@ -1614,17 +1610,11 @@
     function aplicarFiltrosCartas() {
       const termino = (document.getElementById('buscador-cartas').value || '').trim().toLowerCase();
       let filtradas = todasLasCartas;
-      if (filtroSoloFavoritasCartas) filtradas = filtradas.filter(c => c.favorita);
       if (termino) { filtradas = filtradas.filter(c => (c.titulo || '').toLowerCase().includes(termino) || (c.texto || '').toLowerCase().includes(termino)); }
       pintarCartas(filtradas);
     }
     function renderizarCartas(cartas) { todasLasCartas = cartas; aplicarFiltrosCartas(); }
     document.getElementById('buscador-cartas').addEventListener('input', aplicarFiltrosCartas);
-    document.getElementById('btn-filtro-favoritas').addEventListener('click', function () {
-      filtroSoloFavoritasCartas = !filtroSoloFavoritasCartas;
-      this.classList.toggle('activo', filtroSoloFavoritasCartas);
-      aplicarFiltrosCartas();
-    });
     if (db) {
       db.collection('cartas').orderBy('creado').onSnapshot(snapshot => {
         const cartas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

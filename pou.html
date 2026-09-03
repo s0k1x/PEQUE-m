@@ -3211,7 +3211,8 @@
     const TAMANO_FRAGMENTO_RP = 900000;
     const MAX_FOTOS_RP = 4;
 
-    const EMOJIS_RP = ['💝', '🎁', '💌', '🌹', '⭐', '🎉', '🦙', '💫', '🍀', '🎈', '🔥', '👑'];
+    const EMOJIS_RP = ['ninguno', '💝', '🎁', '💌', '🌹', '⭐', '🎉', '🦙', '💫', '🍀', '🎈', '🔥', '👑'];
+    function textoEmojiRP(id) { return id === 'ninguno' ? '🚫' : id; }
     const FONDOS_RP = [
       { id: 'crema', color: '#fbf8f4' },
       { id: 'rosa', color: '#fbe4e4' },
@@ -3309,7 +3310,7 @@
     const btnCancelarTextoPersonalizado = document.getElementById('btn-cancelar-texto-personalizado');
 
     const MAX_PAGINAS_RP = 5;
-    let emojiElegidoRP = EMOJIS_RP[0];
+    let emojiElegidoRP = '💝';
     let fondoElegidoRP = FONDOS_RP[0].id;
     let colorCajaElegidoRP = COLORES_CAJA_RP[0].id;
     let patronElegidoRP = PATRONES_RP[0].id;
@@ -3324,7 +3325,8 @@
     let audioArchivoRP = null;
 
     function actualizarPreviewRP() {
-      previewEmojiRP.textContent = emojiElegidoRP;
+      previewEmojiRP.textContent = emojiElegidoRP === 'ninguno' ? '' : emojiElegidoRP;
+      previewEmojiRP.hidden = emojiElegidoRP === 'ninguno';
       previewTituloRP.textContent = inputTituloRP.value.trim();
       previewTextoRP.textContent = (paginasRP[0] || '').trim() || 'Así se verá...';
       const tema = FONDOS_RP.find(f => f.id === fondoElegidoRP) || FONDOS_RP[0];
@@ -3376,7 +3378,7 @@
     EMOJIS_RP.forEach(emoji => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.textContent = emoji;
+      btn.textContent = textoEmojiRP(emoji);
       btn.className = emoji === emojiElegidoRP ? 'elegido' : '';
       btn.addEventListener('click', () => {
         emojiElegidoRP = emoji;
@@ -3714,7 +3716,7 @@
       etiquetaMusicaFondoRP.hidden = true;
       checkMusicaFondoRP.checked = false;
       checkPermitirRespuestaRP.checked = true;
-      emojiElegidoRP = EMOJIS_RP[0];
+      emojiElegidoRP = '💝';
       fondoElegidoRP = FONDOS_RP[0].id;
       colorCajaElegidoRP = COLORES_CAJA_RP[0].id;
       patronElegidoRP = PATRONES_RP[0].id;
@@ -3724,7 +3726,7 @@
       tamanoElegidoRP = TAMANOS_RP[0].id;
       sonidoElegidoRP = SONIDOS_RP[0].id;
       limpiarCanvasDibujoRP();
-      contenedorEmojisRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
+      contenedorEmojisRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', EMOJIS_RP[i] === emojiElegidoRP));
       contenedorFondosRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorColoresCajaRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
       contenedorPatronesRP.querySelectorAll('button').forEach((b, i) => b.classList.toggle('elegido', i === 0));
